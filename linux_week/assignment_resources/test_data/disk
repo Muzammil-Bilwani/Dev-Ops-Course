@@ -1,0 +1,4 @@
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        50G   38G   12G  76% /
+/dev/sdb1        20G    8G   12G  42% /var/log
+/dev/sdc1       100G   28G   72G  28% /home

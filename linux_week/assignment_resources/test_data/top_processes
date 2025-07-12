@@ -1,0 +1,6 @@
+USER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+mongodb   12345 22.0 15.2 2145928 622544 ?     Ssl  Jun30 450:32 /usr/bin/mongod
+www-data  23456 18.0 12.5 1854272 512356 ?     Ss   Jun30 387:21 nginx: master process
+node      34567 15.0 10.3 1654208 422560 ?     Ssl  Jun30 321:18 node /app/server.js
+root      45678  5.0  4.2  425172 172856 ?     Ss   Jun30 104:23 /usr/sbin/sshd
+redis     56789  4.5  3.8  350128 155648 ?     Ssl  Jun30  98:12 /usr/bin/redis-server
