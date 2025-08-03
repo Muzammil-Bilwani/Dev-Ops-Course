@@ -225,4 +225,171 @@ Value: yourname.github.io
 [ Website Loads! ]
 ```
 
-Happy exploring the internet world! 🌐✨
+Lets wrap it up with a summary:
+
+## 🌐 Web Concepts Explained Simply
+
+---
+
+#### 🔧 DNS (Domain Name System)
+
+DNS is like the internet's phonebook — it translates website names (like google.com) into IP addresses so browsers can find them.
+
+#### 📍 A Record
+
+It connects your domain name to an IPv4 address, so users are sent to the right server when they visit your site.
+
+#### 📍 AAAA Record
+
+Similar to the A record, but for IPv6 addresses instead of IPv4.
+
+#### 🔁 CNAME Record
+
+A nickname for your domain. It maps one domain to another (like www.example.com to example.com).
+
+#### 📬 MX Record (Mail Exchange)
+
+It tells email systems where to deliver emails for your domain — like your domain’s email post office.
+
+#### 📝 TXT Record
+
+Used to store text info for your domain — like verifying your site with Google or setting up email security.
+
+#### 🌐 Name Server
+
+Name servers are like traffic directors for your domain, guiding users to the right DNS records.
+
+---
+
+#### 🔌 Ports
+
+Ports are like doorways on a server that help manage different kinds of traffic (e.g., web, email, file sharing).
+
+#### 🔒 SSL (Secure Sockets Layer)
+
+A security layer that encrypts data between browser and server — shown with a 🔒 lock in the address bar.
+
+#### 🌍 HTTPS (HyperText Transfer Protocol Secure)
+
+A secure version of HTTP. It uses SSL/TLS to protect the data transferred between browser and server.
+
+#### 🔐 SSH (Secure Shell)
+
+Used by developers to safely connect and control servers remotely using encrypted access.
+
+---
+
+#### ❗ HTTP Codes (Errors)
+
+These are numbers (like 404 or 500) that tell you what’s happening on a website — success, redirection, or errors.
+
+#### 🔁 CORS (Cross-Origin Resource Sharing)
+
+Rules that decide if one website can request data from another — helpful for security and APIs.
+
+---
+
+#### 🍪 Cookie Storage
+
+Stores small data like login info in your browser — sent with every request to the server.
+
+#### 🧠 Session Storage
+
+Stores temporary data in the browser just while the page is open — gone when you close the tab.
+
+#### 🗃️ Local Storage
+
+Keeps data saved in the browser even after you close it — useful for things like themes or user settings.
+
+#### 🧹 Cache Prune
+
+Means clearing out old or unused stored data so your browser can load fresh versions of websites.
+
+---
+
+#### 📦 CDN (Content Delivery Network)
+
+A network of servers around the world that deliver your website content faster by loading it from nearby servers.
+
+## ❓ Params (Parameters)
+
+Used in URLs to send extra information to the server — like `?user=123`.
+
+---
+
+#### ☁️ Hosting
+
+Hosting is where your website's files live so people can visit it anytime from anywhere.
+
+### 🌐 HTTP Status Codes Cheat Sheet
+
+---
+
+## ✅ 1xx — Informational
+
+| Code | Meaning             |
+| ---- | ------------------- |
+| 100  | Continue            |
+| 101  | Switching Protocols |
+| 102  | Processing (WebDAV) |
+
+---
+
+## 🟢 2xx — Success
+
+| Code | Meaning         |
+| ---- | --------------- |
+| 200  | OK              |
+| 201  | Created         |
+| 202  | Accepted        |
+| 204  | No Content      |
+| 206  | Partial Content |
+
+---
+
+## 🟡 3xx — Redirection
+
+| Code | Meaning                    |
+| ---- | -------------------------- |
+| 301  | Moved Permanently          |
+| 302  | Found (Temporary Redirect) |
+| 304  | Not Modified               |
+| 307  | Temporary Redirect         |
+| 308  | Permanent Redirect         |
+
+---
+
+## 🔴 4xx — Client Errors
+
+| Code | Meaning                |
+| ---- | ---------------------- |
+| 400  | Bad Request            |
+| 401  | Unauthorized           |
+| 403  | Forbidden              |
+| 404  | Not Found              |
+| 405  | Method Not Allowed     |
+| 409  | Conflict               |
+| 410  | Gone                   |
+| 415  | Unsupported Media Type |
+| 429  | Too Many Requests      |
+
+---
+
+## 🔥 5xx — Server Errors
+
+| Code | Meaning               |
+| ---- | --------------------- |
+| 500  | Internal Server Error |
+| 501  | Not Implemented       |
+| 502  | Bad Gateway           |
+| 503  | Service Unavailable   |
+| 504  | Gateway Timeout       |
+
+---
+
+**Tip:**
+
+- `2xx` means everything is fine.
+- `4xx` means _you_ (the client) did something wrong.
+- `5xx` means _they_ (the server) did something wrong.
+- `3xx` means you need to go somewhere else.
