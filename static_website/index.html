@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Travel Month & Place Suggestor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased">
+    <div class="max-w-5xl mx-auto p-6">
+      <header class="mb-6">
+        <h1 class="text-3xl font-extrabold">Travel Month & Place Suggestor</h1>
+        <p class="text-slate-600 mt-1">
+          Enter a month or a country, optionally exclude some countries and set
+          a budget range. Suggestions will update live.
+        </p>
+      </header>
+
+      <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <section
+          class="col-span-1 lg:col-span-2 bg-white p-6 rounded-2xl shadow"
+        >
+          <h2 class="font-semibold mb-3">Search</h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-slate-600"
+                >Search by month</label
+              >
+              <select
+                id="monthSelect"
+                class="mt-1 w-full rounded-md border p-2"
+              >
+                <option value="">-- select month --</option>
+              </select>
+              <small class="text-xs text-slate-500"
+                >Pick a month to find recommended countries.</small
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-600"
+                >Or search by country name</label
+              >
+              <input
+                id="countryInput"
+                type="text"
+                placeholder="e.g. France"
+                class="mt-1 w-full rounded-md border p-2"
+              />
+              <small class="text-xs text-slate-500"
+                >Type (partial is fine). If left empty, month filter is
+                used.</small
+              >
+            </div>
+
+            <div>
+              <label class="block text-sm text-slate-600"
+                >Exclude countries (comma-separated)</label
+              >
+              <input
+                id="excludeInput"
+                type="text"
+                placeholder="e.g. USA, Brazil"
+                class="mt-1 w-full rounded-md border p-2"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm text-slate-600"
+                  >Min budget (USD)</label
+                >
+                <input
+                  id="minBudget"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 500"
+                  class="mt-1 w-full rounded-md border p-2"
+                />
+              </div>
+              <div>
+                <label class="block text-sm text-slate-600"
+                  >Max budget (USD)</label
+                >
+                <input
+                  id="maxBudget"
+                  type="number"
+                  min="0"
+                  placeholder="e.g. 3000"
+                  class="mt-1 w-full rounded-md border p-2"
+                />
+              </div>
+            </div>
+
+            <div class="flex gap-3">
+              <button
+                id="searchBtn"
+                class="px-4 py-2 bg-sky-600 text-white rounded-lg"
+              >
+                Search
+              </button>
+              <button id="clearBtn" class="px-4 py-2 border rounded-lg">
+                Clear
+              </button>
+              <button
+                id="randomBtn"
+                class="ml-auto px-4 py-2 bg-emerald-500 text-white rounded-lg"
+              >
+                Surprise me
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="bg-white p-6 rounded-2xl shadow">
+          <h3 class="font-semibold mb-3">Filters summary</h3>
+          <div id="summary" class="text-sm text-slate-700 space-y-2">
+            <div>Month: <span id="summaryMonth">—</span></div>
+            <div>Country search: <span id="summaryCountry">—</span></div>
+            <div>Excluded: <span id="summaryExcluded">—</span></div>
+            <div>Budget: <span id="summaryBudget">—</span></div>
+          </div>
+
+          <div class="mt-6">
+            <h4 class="font-medium">Top suggestion</h4>
+            <div
+              id="topSuggestion"
+              class="mt-3 p-3 rounded-lg bg-slate-50 text-sm"
+            >
+              No suggestion yet.
+            </div>
+          </div>
+        </aside>
+
+        <section class="col-span-3 bg-white p-6 rounded-2xl shadow">
+          <h2 class="font-semibold mb-3">Results</h2>
+          <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      // Sample dataset. For production replace with API or a larger dataset.
+      const data = [
+        // Existing 15
+        {
+          name: "Japan",
+          emoji: "🇯🇵",
+          bestMonths: [3, 4, 11],
+          minBudget: 70,
+          maxBudget: 250,
+          notes: "Cherry blossom & autumn colors.",
+        },
+        {
+          name: "Thailand",
+          emoji: "🇹🇭",
+          bestMonths: [11, 12, 1, 2],
+          minBudget: 30,
+          maxBudget: 120,
+          notes: "Dry season beaches.",
+        },
+        {
+          name: "France",
+          emoji: "🇫🇷",
+          bestMonths: [5, 6, 9],
+          minBudget: 80,
+          maxBudget: 300,
+          notes: "Spring/early autumn pleasant.",
+        },
+        {
+          name: "Italy",
+          emoji: "🇮🇹",
+          bestMonths: [5, 6, 9, 10],
+          minBudget: 75,
+          maxBudget: 280,
+          notes: "Avoid peak August.",
+        },
+        {
+          name: "Australia",
+          emoji: "🇦🇺",
+          bestMonths: [9, 10, 11, 12],
+          minBudget: 90,
+          maxBudget: 320,
+          notes: "Spring/Summer in south.",
+        },
+        {
+          name: "New Zealand",
+          emoji: "🇳🇿",
+          bestMonths: [12, 1, 2, 3],
+          minBudget: 100,
+          maxBudget: 350,
+          notes: "Summer Dec-Feb.",
+        },
+        {
+          name: "USA",
+          emoji: "🇺🇸",
+          bestMonths: [5, 6, 9, 10],
+          minBudget: 70,
+          maxBudget: 400,
+          notes: "Varied by region.",
+        },
+        {
+          name: "Canada",
+          emoji: "🇨🇦",
+          bestMonths: [6, 7, 8, 9],
+          minBudget: 70,
+          maxBudget: 300,
+          notes: "Summer best.",
+        },
+        {
+          name: "Egypt",
+          emoji: "🇪🇬",
+          bestMonths: [10, 11, 2, 3],
+          minBudget: 40,
+          maxBudget: 150,
+          notes: "Cooler months better.",
+        },
+        {
+          name: "UAE",
+          emoji: "🇦🇪",
+          bestMonths: [11, 12, 1, 2],
+          minBudget: 60,
+          maxBudget: 250,
+          notes: "Mild winter.",
+        },
+        {
+          name: "Brazil",
+          emoji: "🇧🇷",
+          bestMonths: [5, 6, 7, 8],
+          minBudget: 50,
+          maxBudget: 220,
+          notes: "Dry season.",
+        },
+        {
+          name: "Spain",
+          emoji: "🇪🇸",
+          bestMonths: [5, 6, 9, 10],
+          minBudget: 60,
+          maxBudget: 250,
+          notes: "Spring/autumn great.",
+        },
+        {
+          name: "Germany",
+          emoji: "🇩🇪",
+          bestMonths: [5, 6, 9],
+          minBudget: 65,
+          maxBudget: 260,
+          notes: "Shoulder seasons.",
+        },
+        {
+          name: "Turkey",
+          emoji: "🇹🇷",
+          bestMonths: [4, 5, 9, 10],
+          minBudget: 50,
+          maxBudget: 200,
+          notes: "Spring/autumn touring.",
+        },
+        {
+          name: "Indonesia",
+          emoji: "🇮🇩",
+          bestMonths: [5, 6, 7, 8],
+          minBudget: 30,
+          maxBudget: 150,
+          notes: "Dry season, low cost.",
+        },
+
+        // Additional 35 (with Pakistan inserted near India)
+        {
+          name: "Vietnam",
+          emoji: "🇻🇳",
+          bestMonths: [9, 10, 11],
+          minBudget: 30,
+          maxBudget: 100,
+          notes: "Affordable & scenic.",
+        },
+        {
+          name: "Laos",
+          emoji: "🇱🇦",
+          bestMonths: [11, 12, 1, 2],
+          minBudget: 25,
+          maxBudget: 80,
+          notes: "Cheapest country to travel.",
+        },
+        {
+          name: "Cambodia",
+          emoji: "🇰🇭",
+          bestMonths: [11, 12, 1, 2],
+          minBudget: 30,
+          maxBudget: 90,
+          notes: "Angkor temples & low cost.",
+        },
+        {
+          name: "India",
+          emoji: "🇮🇳",
+          bestMonths: [10, 11, 2, 3],
+          minBudget: 25,
+          maxBudget: 120,
+          notes: "Diverse & budget options.",
+        },
+        {
+          name: "Pakistan",
+          emoji: "🇵🇰",
+          bestMonths: [4, 5, 9, 10],
+          minBudget: 25,
+          maxBudget: 90,
+          notes: "Himalayan treks & cultural heritage, very budget-friendly.",
+        },
+        {
+          name: "Nepal",
+          emoji: "🇳🇵",
+          bestMonths: [10, 11, 3, 4],
+          minBudget: 30,
+          maxBudget: 90,
+          notes: "Trekking paradise.",
+        },
+        {
+          name: "Malaysia",
+          emoji: "🇲🇾",
+          bestMonths: [5, 6, 9, 10],
+          minBudget: 30,
+          maxBudget: 100,
+          notes: "Tropical & affordable.",
+        },
+        {
+          name: "Philippines",
+          emoji: "🇵🇭",
+          bestMonths: [12, 1, 2, 3],
+          minBudget: 35,
+          maxBudget: 120,
+          notes: "Islands & low cost.",
+        },
+        {
+          name: "China",
+          emoji: "🇨🇳",
+          bestMonths: [4, 5, 9, 10],
+          minBudget: 45,
+          maxBudget: 120,
+          notes: "Spring/fall ideal.",
+        },
+        {
+          name: "South Korea",
+          emoji: "🇰🇷",
+          bestMonths: [4, 5, 9, 10],
+          minBudget: 50,
+          maxBudget: 150,
+          notes: "Cherry blossoms & autumn.",
+        },
+        {
+          name: "Singapore",
+          emoji: "🇸🇬",
+          bestMonths: [2, 7, 8],
+          minBudget: 50,
+          maxBudget: 180,
+          notes: "Urban city-state.",
+        },
+        {
+          name: "Sri Lanka",
+          emoji: "🇱🇰",
+          bestMonths: [1, 2, 3],
+          minBudget: 25,
+          maxBudget: 90,
+          notes: "Beautiful beaches & tea.",
+        },
+        {
+          name: "Greece",
+          emoji: "🇬🇷",
+          bestMonths: [5, 6, 9],
+          minBudget: 50,
+          maxBudget: 200,
+          notes: "Islands & culture.",
+        },
+        {
+          name: "Portugal",
+          emoji: "🇵🇹",
+          bestMonths: [5, 6, 9, 10],
+          minBudget: 45,
+          maxBudget: 150,
+          notes: "Affordable Europe stop.",
+        },
+        {
+          name: "Croatia",
+          emoji: "🇭🇷",
+          bestMonths: [5, 6, 9],
+          minBudget: 40,
+          maxBudget: 180,
+          notes: "Coast & history.",
+        },
+        {
+          name: "Hungary",
+          emoji: "🇭🇺",
+          bestMonths: [5, 6, 9],
+          minBudget: 35,
+          maxBudget: 130,
+          notes: "Budapest & value.",
+        },
+        {
+          name: "Poland",
+          emoji: "🇵🇱",
+          bestMonths: [5, 6, 9],
+          minBudget: 35,
+          maxBudget: 130,
+          notes: "Cities & culture.",
+        },
+        {
+          name: "Czech Republic",
+          emoji: "🇨🇿",
+          bestMonths: [5, 6, 9],
+          minBudget: 35,
+          maxBudget: 140,
+          notes: "Prague & charm.",
+        },
+        {
+          name: "Austria",
+          emoji: "🇦🇹",
+          bestMonths: [5, 6, 9],
+          minBudget: 45,
+          maxBudget: 160,
+          notes: "Alps & classical vibes.",
+        },
+        {
+          name: "Switzerland",
+          emoji: "🇨🇭",
+          bestMonths: [6, 7, 8],
+          minBudget: 80,
+          maxBudget: 300,
+          notes: "Scenic but pricey.",
+        },
+        {
+          name: "Norway",
+          emoji: "🇳🇴",
+          bestMonths: [6, 7, 8],
+          minBudget: 90,
+          maxBudget: 320,
+          notes: "Midnight sun & fjords.",
+        },
+        {
+          name: "South Africa",
+          emoji: "🇿🇦",
+          bestMonths: [9, 10, 11],
+          minBudget: 50,
+          maxBudget: 180,
+          notes: "Safaris & value.",
+        },
+        {
+          name: "Kenya",
+          emoji: "🇰🇪",
+          bestMonths: [6, 7, 8],
+          minBudget: 50,
+          maxBudget: 180,
+          notes: "Safari season.",
+        },
+        {
+          name: "Morocco",
+          emoji: "🇲🇦",
+          bestMonths: [4, 5, 9, 10],
+          minBudget: 40,
+          maxBudget: 150,
+          notes: "Culture & affordability.",
+        },
+        {
+          name: "Mexico",
+          emoji: "🇲🇽",
+          bestMonths: [11, 12, 2, 3],
+          minBudget: 45,
+          maxBudget: 150,
+          notes: "Beaches & culture.",
+        },
+        {
+          name: "Peru",
+          emoji: "🇵🇪",
+          bestMonths: [5, 6, 9],
+          minBudget: 40,
+          maxBudget: 140,
+          notes: "Machu Picchu & Andes.",
+        },
+        {
+          name: "Argentina",
+          emoji: "🇦🇷",
+          bestMonths: [9, 10, 11],
+          minBudget: 45,
+          maxBudget: 160,
+          notes: "Southern Hemisphere spring.",
+        },
+        {
+          name: "Chile",
+          emoji: "🇨🇱",
+          bestMonths: [10, 11, 12],
+          minBudget: 50,
+          maxBudget: 170,
+          notes: "Patagonia season.",
+        },
+        {
+          name: "Colombia",
+          emoji: "🇨🇴",
+          bestMonths: [12, 1, 2],
+          minBudget: 40,
+          maxBudget: 140,
+          notes: "Caribbean coast & culture.",
+        },
+        {
+          name: "Ecuador",
+          emoji: "🇪🇨",
+          bestMonths: [6, 7, 8],
+          minBudget: 40,
+          maxBudget: 140,
+          notes: "Galápagos & Andes.",
+        },
+        {
+          name: "Bolivia",
+          emoji: "🇧🇴",
+          bestMonths: [5, 6, 9],
+          minBudget: 35,
+          maxBudget: 120,
+          notes: "Altiplano & Andes.",
+        },
+      ];
+
+      const monthSelect = document.getElementById("monthSelect");
+      const countryInput = document.getElementById("countryInput");
+      const excludeInput = document.getElementById("excludeInput");
+      const minBudget = document.getElementById("minBudget");
+      const maxBudget = document.getElementById("maxBudget");
+      const searchBtn = document.getElementById("searchBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const randomBtn = document.getElementById("randomBtn");
+      const resultsEl = document.getElementById("results");
+      const summaryMonth = document.getElementById("summaryMonth");
+      const summaryCountry = document.getElementById("summaryCountry");
+      const summaryExcluded = document.getElementById("summaryExcluded");
+      const summaryBudget = document.getElementById("summaryBudget");
+      const topSuggestion = document.getElementById("topSuggestion");
+
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      // populate month select
+      months.forEach((m, i) => {
+        const opt = document.createElement("option");
+        opt.value = i + 1;
+        opt.textContent = m;
+        monthSelect.appendChild(opt);
+      });
+
+      function parseExclusions(text) {
+        if (!text) return [];
+        return text
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
+          .map((s) => s.toLowerCase());
+      }
+
+      function updateSummary(filters) {
+        summaryMonth.textContent = filters.month
+          ? months[filters.month - 1]
+          : "—";
+        summaryCountry.textContent = filters.country || "—";
+        summaryExcluded.textContent =
+          filters.excluded && filters.excluded.length
+            ? filters.excluded.join(", ")
+            : "—";
+        const hasMin =
+          filters.minBudget !== null && filters.minBudget !== undefined;
+        const hasMax =
+          filters.maxBudget !== null && filters.maxBudget !== undefined;
+        summaryBudget.textContent =
+          hasMin || hasMax
+            ? `${hasMin ? filters.minBudget : "—"} to ${
+                hasMax ? filters.maxBudget : "—"
+              } USD/day`
+            : "—";
+      }
+
+      function applyFilters() {
+        const month = monthSelect.value ? Number(monthSelect.value) : null;
+        const countryQuery = countryInput.value.trim().toLowerCase();
+        const excluded = parseExclusions(excludeInput.value);
+        const minB = minBudget.value !== "" ? Number(minBudget.value) : null;
+        const maxB = maxBudget.value !== "" ? Number(maxBudget.value) : null;
+
+        // Auto-correct inverted ranges (e.g., min > max)
+        let rangeMin = minB;
+        let rangeMax = maxB;
+        if (
+          rangeMin !== null &&
+          rangeMax !== null &&
+          Number.isFinite(rangeMin) &&
+          Number.isFinite(rangeMax) &&
+          rangeMin > rangeMax
+        ) {
+          const tmp = rangeMin;
+          rangeMin = rangeMax;
+          rangeMax = tmp;
+        }
+
+        const filters = {
+          month,
+          country: countryQuery || null,
+          excluded,
+          minBudget: rangeMin,
+          maxBudget: rangeMax,
+        };
+        updateSummary(filters);
+
+        let candidates = data.slice();
+
+        // apply country search first (if provided)
+        if (filters.country) {
+          candidates = candidates.filter((c) =>
+            c.name.toLowerCase().includes(filters.country),
+          );
+        } else if (filters.month) {
+          candidates = candidates.filter((c) =>
+            c.bestMonths.includes(filters.month),
+          );
+        }
+
+        // apply exclusions
+        if (filters.excluded && filters.excluded.length) {
+          candidates = candidates.filter(
+            (c) => !filters.excluded.includes(c.name.toLowerCase()),
+          );
+        }
+
+        // apply budget filter
+        // If both min and max are set, require country's full range to lie within user range
+        if (filters.minBudget !== null && filters.maxBudget !== null) {
+          candidates = candidates.filter(
+            (c) =>
+              c.minBudget >= filters.minBudget &&
+              c.maxBudget <= filters.maxBudget,
+          );
+        } else {
+          // If only one bound is set, use inclusive comparison against that bound
+          if (filters.minBudget !== null) {
+            candidates = candidates.filter(
+              (c) => c.maxBudget >= filters.minBudget,
+            );
+          }
+          if (filters.maxBudget !== null) {
+            candidates = candidates.filter(
+              (c) => c.minBudget <= filters.maxBudget,
+            );
+          }
+        }
+
+        // sort by closeness: if month provided, prefer countries where month is in bestMonths
+        if (filters.month) {
+          candidates.sort((a, b) => {
+            const aScore = a.bestMonths.includes(filters.month) ? 0 : 1;
+            const bScore = b.bestMonths.includes(filters.month) ? 0 : 1;
+            return aScore - bScore;
+          });
+        }
+
+        renderResults(candidates, filters);
+      }
+
+      function renderResults(list, filters) {
+        resultsEl.innerHTML = "";
+        if (!list.length) {
+          topSuggestion.textContent =
+            "No matches found — try removing filters or changing month/budget.";
+          resultsEl.innerHTML =
+            '<div class="p-4 text-sm text-slate-600">No suggestions found.</div>';
+          return;
+        }
+
+        // top suggestion
+        const top = list[0];
+        topSuggestion.innerHTML = `<div class=\"flex items-start gap-3\"><div class=\"text-2xl\">${top.emoji}</div><div><strong>${top.name}</strong><div class=\"text-xs text-slate-500 mt-1\">${top.notes}</div></div></div>`;
+
+        list.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "p-4 rounded-lg border";
+          card.innerHTML = `
+          <div class=\"flex items-start justify-between gap-3\"> 
+            <div class=\"flex items-center gap-3\"> 
+              <div class=\"text-3xl\">${item.emoji}</div>
+              <div>
+                <div class=\"font-semibold text-lg\">${item.name}</div>
+                <div class=\"text-xs text-slate-500\">Best months: ${item.bestMonths
+                  .map((m) => months[m - 1])
+                  .join(", ")}</div>
+              </div>
+            </div>
+            <div class=\"text-right\"> 
+              <div class=\"text-sm font-medium\">Budget: ${item.minBudget} - ${
+            item.maxBudget
+          } USD/day</div>
+              <div class=\"text-xs text-slate-500 mt-1\">${item.notes}</div>
+            </div>
+          </div>
+        `;
+          resultsEl.appendChild(card);
+        });
+      }
+
+      // Event bindings
+      searchBtn.addEventListener("click", applyFilters);
+      clearBtn.addEventListener("click", () => {
+        monthSelect.value = "";
+        countryInput.value = "";
+        excludeInput.value = "";
+        minBudget.value = "";
+        maxBudget.value = "";
+        updateSummary({});
+        resultsEl.innerHTML = "";
+        topSuggestion.textContent = "No suggestion yet.";
+      });
+
+      randomBtn.addEventListener("click", () => {
+        const r = data[Math.floor(Math.random() * data.length)];
+        monthSelect.value = "";
+        countryInput.value = r.name;
+        excludeInput.value = "";
+        minBudget.value = "";
+        maxBudget.value = "";
+        applyFilters();
+      });
+
+      // live search on Enter in country input
+      countryInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") applyFilters();
+      });
+
+      // Lightweight debounce for live updates
+      let debounceTimer;
+      const debounceApply = () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(applyFilters, 200);
+      };
+
+      // Live filtering to match "update live" UX
+      monthSelect.addEventListener("change", applyFilters);
+      minBudget.addEventListener("input", debounceApply);
+      maxBudget.addEventListener("input", debounceApply);
+      excludeInput.addEventListener("input", debounceApply);
+      countryInput.addEventListener("input", debounceApply);
+
+      // initial state
+      updateSummary({});
+    </script>
+  </body>
+</html>
