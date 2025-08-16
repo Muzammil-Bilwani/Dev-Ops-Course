@@ -1,24 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Travel Month & Place Suggestor</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary SEO -->
+    <title>Time To Travel To | Best Destinations by Month & Season</title>
+    <meta
+      name="description"
+      content="Discover the best places to visit around the world by month and season. Find your perfect travel destination in January, summer, winter, or any time of year with TimeToTravelTo."
+    />
+    <meta
+      name="keywords"
+      content="travel destinations, best time to travel, where to travel, best places to visit, travel by month, travel calendar, vacation planner, global destinations, seasonal travel"
+    />
+
+    <!-- Open Graph for social sharing -->
+    <meta
+      property="og:title"
+      content="Time To Travel To | Best Destinations by Month & Season"
+    />
+    <meta
+      property="og:description"
+      content="Plan your trips smarter. Find the best destinations to visit worldwide at the right time of the year."
+    />
+    <meta property="og:url" content="http://timetotravelto.online/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://timetotravelto.online/logo.png" />
+    <!-- Replace with actual image -->
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Time To Travel To | Best Destinations by Month & Season"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore the world month by month – find out where to travel in January, summer, or winter."
+    />
+    <meta
+      name="twitter:image"
+      content="http://timetotravelto.online/logo.png"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="http://timetotravelto.online/" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="./favicon.ico" type="image/x-icon" />
+    <script>
+      // Tailwind CDN config: enable dark mode via class
+      window.tailwind = window.tailwind || {};
+      window.tailwind.config = { darkMode: "class" };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="bg-slate-50 text-slate-800 antialiased">
-    <div class="max-w-5xl mx-auto p-6">
-      <header class="mb-6">
-        <h1 class="text-3xl font-extrabold">Travel Month & Place Suggestor</h1>
-        <p class="text-slate-600 mt-1">
-          Enter a month or a country, optionally exclude some countries and set
-          a budget range. Suggestions will update live.
-        </p>
+  <body
+    class="bg-slate-50 text-slate-800 antialiased dark:bg-slate-900 dark:text-slate-100 transition-colors"
+  >
+    <div class="max-w-5xl mx-auto p-4 sm:p-6">
+      <div class="flex items-center justify-end mb-3">
+        <button
+          id="themeToggle"
+          class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+        >
+          <span>🌓</span>
+          <span class="hidden sm:inline">Toggle Theme</span>
+        </button>
+      </div>
+      <!-- Hero -->
+      <header class="mb-6 relative overflow-hidden rounded-2xl">
+        <div
+          class="absolute inset-0 bg-gradient-to-r from-sky-500 via-indigo-500 to-emerald-500 opacity-20 blur-2xl"
+        ></div>
+        <div
+          class="relative rounded-2xl border bg-white/70 backdrop-blur dark:bg-slate-800/60 p-6"
+        >
+          <div
+            class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-2 text-center sm:text-left"
+          >
+            <img
+              src="./logo-basic.png"
+              alt="Time To Travel To"
+              class="h-20 sm:h-24 md:h-40"
+            />
+            <div>
+              <h1 class="text-2xl md:text-3xl font-extrabold">
+                Travel Month & Place Suggestor
+              </h1>
+              <p class="text-slate-600 dark:text-slate-300 mt-2">
+                Enter a month or a country, optionally exclude some countries
+                and set a budget range. Suggestions update live as you type.
+              </p>
+            </div>
+          </div>
+        </div>
       </header>
 
-      <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <main class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <section
-          class="col-span-1 lg:col-span-2 bg-white p-6 rounded-2xl shadow"
+          class="col-span-1 lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow border dark:border-slate-700"
         >
           <h2 class="font-semibold mb-3">Search</h2>
 
@@ -29,7 +111,7 @@
               >
               <select
                 id="monthSelect"
-                class="mt-1 w-full rounded-md border p-2"
+                class="mt-1 w-full rounded-md border p-2 bg-white dark:bg-slate-900 dark:border-slate-700"
               >
                 <option value="">-- select month --</option>
               </select>
@@ -42,12 +124,18 @@
               <label class="block text-sm text-slate-600"
                 >Or search by country name</label
               >
-              <input
-                id="countryInput"
-                type="text"
-                placeholder="e.g. France"
-                class="mt-1 w-full rounded-md border p-2"
-              />
+              <div class="relative">
+                <span
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  >🔎</span
+                >
+                <input
+                  id="countryInput"
+                  type="text"
+                  placeholder="e.g. France"
+                  class="pl-9 mt-1 w-full rounded-md border p-2 bg-white dark:bg-slate-900 dark:border-slate-700"
+                />
+              </div>
               <small class="text-xs text-slate-500"
                 >Type (partial is fine). If left empty, month filter is
                 used.</small
@@ -58,54 +146,75 @@
               <label class="block text-sm text-slate-600"
                 >Exclude countries (comma-separated)</label
               >
-              <input
-                id="excludeInput"
-                type="text"
-                placeholder="e.g. USA, Brazil"
-                class="mt-1 w-full rounded-md border p-2"
-              />
+              <div class="relative">
+                <span
+                  class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  >🚫</span
+                >
+                <input
+                  id="excludeInput"
+                  type="text"
+                  placeholder="e.g. USA, Brazil"
+                  class="pl-9 mt-1 w-full rounded-md border p-2 bg-white dark:bg-slate-900 dark:border-slate-700"
+                />
+              </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-sm text-slate-600"
                   >Min budget (USD)</label
                 >
-                <input
-                  id="minBudget"
-                  type="number"
-                  min="0"
-                  placeholder="e.g. 500"
-                  class="mt-1 w-full rounded-md border p-2"
-                />
+                <div class="relative">
+                  <span
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >$</span
+                  >
+                  <input
+                    id="minBudget"
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 500"
+                    class="pl-7 mt-1 w-full rounded-md border p-2 bg-white dark:bg-slate-900 dark:border-slate-700"
+                  />
+                </div>
               </div>
               <div>
                 <label class="block text-sm text-slate-600"
                   >Max budget (USD)</label
                 >
-                <input
-                  id="maxBudget"
-                  type="number"
-                  min="0"
-                  placeholder="e.g. 3000"
-                  class="mt-1 w-full rounded-md border p-2"
-                />
+                <div class="relative">
+                  <span
+                    class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                    >$</span
+                  >
+                  <input
+                    id="maxBudget"
+                    type="number"
+                    min="0"
+                    placeholder="e.g. 3000"
+                    class="pl-7 mt-1 w-full rounded-md border p-2 bg-white dark:bg-slate-900 dark:border-slate-700"
+                  />
+                </div>
               </div>
             </div>
 
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3">
               <button
                 id="searchBtn"
-                class="px-4 py-2 bg-sky-600 text-white rounded-lg"
+                class="w-full sm:w-auto px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-lg shadow-sm transition"
               >
                 Search
               </button>
-              <button id="clearBtn" class="px-4 py-2 border rounded-lg">
+              <button
+                id="clearBtn"
+                class="w-full sm:w-auto px-4 py-2 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition"
+              >
                 Clear
               </button>
               <button
                 id="randomBtn"
-                class="ml-auto px-4 py-2 bg-emerald-500 text-white rounded-lg"
+                class="w-full sm:w-auto sm:ml-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg shadow-sm transition"
               >
                 Surprise me
               </button>
@@ -113,7 +222,9 @@
           </div>
         </section>
 
-        <aside class="bg-white p-6 rounded-2xl shadow">
+        <aside
+          class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow border dark:border-slate-700"
+        >
           <h3 class="font-semibold mb-3">Filters summary</h3>
           <div id="summary" class="text-sm text-slate-700 space-y-2">
             <div>Month: <span id="summaryMonth">—</span></div>
@@ -126,16 +237,41 @@
             <h4 class="font-medium">Top suggestion</h4>
             <div
               id="topSuggestion"
-              class="mt-3 p-3 rounded-lg bg-slate-50 text-sm"
+              class="mt-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-sm border dark:border-slate-600"
             >
               No suggestion yet.
             </div>
           </div>
         </aside>
 
-        <section class="col-span-3 bg-white p-6 rounded-2xl shadow">
-          <h2 class="font-semibold mb-3">Results</h2>
-          <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <section
+          class="col-span-3 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow border dark:border-slate-700"
+        >
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between mb-3"
+          >
+            <h2 class="font-semibold">
+              Results
+              <span id="resultsCount" class="text-slate-500 text-sm">0</span>
+            </h2>
+            <label
+              class="text-sm text-slate-600 dark:text-slate-300 flex items-center gap-2"
+            >
+              Sort by
+              <select
+                id="sortSelect"
+                class="rounded-md border p-2 text-sm bg-white dark:bg-slate-900 dark:border-slate-700"
+              >
+                <option value="relevance">Relevance</option>
+                <option value="minAsc">Budget (min ↑)</option>
+                <option value="minDesc">Budget (min ↓)</option>
+              </select>
+            </label>
+          </div>
+          <div
+            id="results"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          ></div>
         </section>
       </main>
     </div>
@@ -525,6 +661,8 @@
       const clearBtn = document.getElementById("clearBtn");
       const randomBtn = document.getElementById("randomBtn");
       const resultsEl = document.getElementById("results");
+      const resultsCount = document.getElementById("resultsCount");
+      const sortSelect = document.getElementById("sortSelect");
       const summaryMonth = document.getElementById("summaryMonth");
       const summaryCountry = document.getElementById("summaryCountry");
       const summaryExcluded = document.getElementById("summaryExcluded");
@@ -657,13 +795,21 @@
           }
         }
 
-        // sort by closeness: if month provided, prefer countries where month is in bestMonths
-        if (filters.month) {
-          candidates.sort((a, b) => {
-            const aScore = a.bestMonths.includes(filters.month) ? 0 : 1;
-            const bScore = b.bestMonths.includes(filters.month) ? 0 : 1;
-            return aScore - bScore;
-          });
+        // sorting
+        const sortBy = sortSelect ? sortSelect.value : "relevance";
+        if (sortBy === "relevance") {
+          // prefer countries where month is in bestMonths (if month provided)
+          if (filters.month) {
+            candidates.sort((a, b) => {
+              const aScore = a.bestMonths.includes(filters.month) ? 0 : 1;
+              const bScore = b.bestMonths.includes(filters.month) ? 0 : 1;
+              return aScore - bScore;
+            });
+          }
+        } else if (sortBy === "minAsc") {
+          candidates.sort((a, b) => a.minBudget - b.minBudget);
+        } else if (sortBy === "minDesc") {
+          candidates.sort((a, b) => b.minBudget - a.minBudget);
         }
 
         renderResults(candidates, filters);
@@ -671,6 +817,7 @@
 
       function renderResults(list, filters) {
         resultsEl.innerHTML = "";
+        resultsCount.textContent = list.length;
         if (!list.length) {
           topSuggestion.textContent =
             "No matches found — try removing filters or changing month/budget.";
@@ -681,27 +828,42 @@
 
         // top suggestion
         const top = list[0];
-        topSuggestion.innerHTML = `<div class=\"flex items-start gap-3\"><div class=\"text-2xl\">${top.emoji}</div><div><strong>${top.name}</strong><div class=\"text-xs text-slate-500 mt-1\">${top.notes}</div></div></div>`;
+        topSuggestion.innerHTML = `<div class=\"flex flex-col sm:flex-row items-start gap-3\">
+    <div class=\"text-2xl\">${top.emoji}</div>
+    <div>
+      <div class=\"flex items-center gap-2\">
+        <strong>${top.name}</strong>
+        <span class=\"text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-300/20 dark:text-amber-200 border border-amber-200 dark:border-amber-300/30\">Top Pick</span>
+      </div>
+      <div class=\"text-xs text-slate-500 dark:text-slate-300 mt-1\">Budget: ${top.minBudget}-${top.maxBudget} USD/day</div>
+      <div class=\"text-xs text-slate-500 dark:text-slate-300 mt-1\">${top.notes}</div>
+    </div>
+  </div>`;
 
         list.forEach((item) => {
           const card = document.createElement("div");
-          card.className = "p-4 rounded-lg border";
+          card.className =
+            "p-4 rounded-lg border dark:border-slate-700 hover:shadow-md hover:-translate-y-0.5 transition bg-white dark:bg-slate-800";
+          const monthsChips = item.bestMonths
+            .map(
+              (m) =>
+                `<span class=\"px-2 py-0.5 text-[11px] rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300\">${
+                  months[m - 1]
+                }</span>`,
+            )
+            .join(" ");
           card.innerHTML = `
-          <div class=\"flex items-start justify-between gap-3\"> 
+          <div class=\"flex flex-col sm:flex-row items-start justify-between gap-3\"> 
             <div class=\"flex items-center gap-3\"> 
               <div class=\"text-3xl\">${item.emoji}</div>
               <div>
                 <div class=\"font-semibold text-lg\">${item.name}</div>
-                <div class=\"text-xs text-slate-500\">Best months: ${item.bestMonths
-                  .map((m) => months[m - 1])
-                  .join(", ")}</div>
+                <div class=\"flex flex-wrap gap-1 mt-1\">${monthsChips}</div>
               </div>
             </div>
-            <div class=\"text-right\"> 
-              <div class=\"text-sm font-medium\">Budget: ${item.minBudget} - ${
-            item.maxBudget
-          } USD/day</div>
-              <div class=\"text-xs text-slate-500 mt-1\">${item.notes}</div>
+            <div class=\"sm:text-right text-left w-full sm:w-auto\"> 
+              <div class=\"inline-flex items-center gap-1 text-sm font-medium px-2 py-1 rounded bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-300/30\">💰 ${item.minBudget} - ${item.maxBudget} USD/day</div>
+              <div class=\"text-xs text-slate-500 dark:text-slate-300 mt-2 max-w-xs\">${item.notes}</div>
             </div>
           </div>
         `;
@@ -750,6 +912,27 @@
       maxBudget.addEventListener("input", debounceApply);
       excludeInput.addEventListener("input", debounceApply);
       countryInput.addEventListener("input", debounceApply);
+      sortSelect.addEventListener("change", applyFilters);
+
+      // Theme toggle (persisted)
+      const applyTheme = (mode) => {
+        const root = document.documentElement;
+        if (mode === "dark") {
+          root.classList.add("dark");
+        } else {
+          root.classList.remove("dark");
+        }
+      };
+      const savedTheme = localStorage.getItem("theme") || "light";
+      applyTheme(savedTheme);
+      document.getElementById("themeToggle").addEventListener("click", () => {
+        const current = document.documentElement.classList.contains("dark")
+          ? "dark"
+          : "light";
+        const next = current === "dark" ? "light" : "dark";
+        localStorage.setItem("theme", next);
+        applyTheme(next);
+      });
 
       // initial state
       updateSummary({});
