@@ -18,25 +18,25 @@ This guide explains the **main stages of a CI/CD pipeline** with a simple diagra
 
 ```mermaid
 graph TD
-    A[Code Commit to Git Repository] --> B(Webhook Trigger);
-    B --> C{CI/CD Tool<br>(e.g., Jenkins, GitLab CI)};
-    C --> D[**BUILD STAGE**];
-    D --> E(1. Compile code);
-    E --> F(2. Run static analysis);
-    F --> G(3. Create Docker image);
-    G --> H(4. Push image to container registry);
-    D --> I[**TEST STAGE**];
-    I --> J(1. Deploy to Test Environment);
-    J --> K(2. Run Unit Tests);
-    K --> L(3. Run Integration Tests);
-    L --> M(4. Run End-to-End Tests);
-    M --> N[**DEPLOY STAGE**];
-    N --> O(1. Deploy to Staging Environment);
-    O --> P{Manual or Automated<br>Approval};
-    P --> Q(2. Deploy to Production Environment);
-    Q --> R[**MONITOR STAGE**];
-    R --> S(1. Monitor application performance);
-    S --> T(2. Collect logs and metrics);
+    A["Code Commit to Git Repository"] --> B("Webhook Trigger");
+    B --> C{"CI/CD Tool<br>(e.g., Jenkins, GitLab CI)"};
+    C --> D["**BUILD STAGE**"];
+    D --> E("1. Compile code");
+    E --> F("2. Run static analysis");
+    F --> G("3. Create Docker image");
+    G --> H("4. Push image to container registry");
+    D --> I["**TEST STAGE**"];
+    I --> J("1. Deploy to Test Environment");
+    J --> K("2. Run Unit Tests");
+    K --> L("3. Run Integration Tests");
+    L --> M("4. Run End-to-End Tests");
+    M --> N["**DEPLOY STAGE**"];
+    N --> O("1. Deploy to Staging Environment");
+    O --> P{"Manual or Automated<br>Approval"};
+    P --> Q("2. Deploy to Production Environment");
+    Q --> R["**MONITOR STAGE**"];
+    R --> S("1. Monitor application performance");
+    S --> T("2. Collect logs and metrics");
     T --> A;
 ```
 
