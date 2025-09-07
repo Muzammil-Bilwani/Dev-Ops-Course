@@ -8,6 +8,9 @@ on: # Triggers
 jobs:
   ci: # Single job named 'ci'
     runs-on: ubuntu-latest # GitHub-hosted Ubuntu environment
+    defaults:
+      run:
+        working-directory: ./dynamic_app_via_ec2 # Set working directory for all steps
     steps:
       - uses: actions/checkout@v4 # 1. Fetch repository code
 
@@ -16,12 +19,13 @@ jobs:
         with:
           node-version: "20" #    Desired Node.js version
           cache: "npm" #    Enable npm dependency caching
+          cache-dependency-path: "dynamic_app_via_ec2/package-lock.json" # Specify lock file path
 
       - name: Install deps # 3. Clean, reproducible install
-        run: cd ../dynamic_app_via_ec2 && npm install #    Uses package-lock for consistency
+        run: npm ci #    Uses package-lock for consistency
 
       - name: Lint # 4. Static code analysis (if script exists)
-        run: cd ../dynamic_app_via_ec2 && npm run lint #    --if-present avoids failure if missing
+        run: npm run lint --if-present #    --if-present avoids failure if missing
 
       - name: Test # 5. Execute test suite
-        run: cd ../dynamic_app_via_ec2 && npm run test #    CI flag ensures non-interactive output
+        run: npm test #    Run test suite with Jest
