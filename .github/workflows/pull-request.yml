@@ -1,0 +1,27 @@
+name: Node CI # Node.js continuous integration workflow
+
+on: # Triggers
+  pull_request: # Run for every PR targeting the repo
+  push: # Also run on pushes
+    branches: [main] # Restrict pushes to main branch
+
+jobs:
+  ci: # Single job named 'ci'
+    runs-on: ubuntu-latest # GitHub-hosted Ubuntu environment
+    steps:
+      - uses: actions/checkout@v4 # 1. Fetch repository code
+
+      - name: Setup Node # 2. Install & configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" #    Desired Node.js version
+          cache: "npm" #    Enable npm dependency caching
+
+      - name: Install deps # 3. Clean, reproducible install
+        run: cd ../dynamic_app_via_ec2 && npm install #    Uses package-lock for consistency
+
+      - name: Lint # 4. Static code analysis (if script exists)
+        run: cd ../dynamic_app_via_ec2 && npm run lint #    --if-present avoids failure if missing
+
+      - name: Test # 5. Execute test suite
+        run: cd ../dynamic_app_via_ec2 && npm run test #    CI flag ensures non-interactive output

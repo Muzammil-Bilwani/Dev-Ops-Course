@@ -1,0 +1,33 @@
+{
+  "name": "timetotravelto",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "build": "echo \"no build\"",
+    "test": "echo \"Running tests...\"",
+    "lint": "echo \"Linting...\""
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "preset": "default",
+    "extensionsToTreatAsEsm": [
+      ".js"
+    ],
+    "globals": {
+      "NODE_OPTIONS": "--experimental-vm-modules"
+    },
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "*.js",
+      "!node_modules/**",
+      "!coverage/**"
+    ]
+  }
+}
