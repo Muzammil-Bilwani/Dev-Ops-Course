@@ -1,0 +1,34 @@
+name: Node CI # Node.js continuous integration workflow
+
+on: # Triggers
+  pull_request: # Run for every PR targeting the repo
+  push: # Also run on pushes
+    branches: [main] # Restrict pushes to main branch
+
+jobs:
+  ci: # Single job named 'ci'
+    runs-on: ubuntu-latest # GitHub-hosted Ubuntu environment
+    defaults:
+      run:
+        working-directory: ./dynamic_app_via_ec2 # Set working directory for all steps
+    steps:
+      - uses: actions/checkout@v4 # 1. Fetch repository code
+
+      - name: Setup Node # 2. Install & configure Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" #    Desired Node.js version
+          cache: "npm" #    Enable npm dependency caching
+          cache-dependency-path: "dynamic_app_via_ec2/package-lock.json" # Specify lock file path
+
+      - name: Install deps # 3. Clean, reproducible install
+        run: npm ci #    Uses package-lock for consistency
+
+      - name: Build app # Compile / bundle the project (if script exists)
+        run: npm run build --if-present # Skip gracefully when no build script
+
+      - name: Upload build # Persist build output as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist # Logical artifact name
+          path: dist/ # Directory or file path to upload

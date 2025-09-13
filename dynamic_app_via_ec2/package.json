@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "build": "echo \"no build\"",
+    "build": "touch dist/build-placeholder.js",
     "test": "echo \"Running tests...\"",
     "lint": "echo \"Linting...\""
   },
