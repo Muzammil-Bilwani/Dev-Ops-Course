@@ -6,7 +6,7 @@ on: # Triggers
     branches: [main] # Restrict pushes to main branch
 
 jobs:
-  ci: # Single job named 'ci'
+  frontend: # Single job named 'ci'
     runs-on: ubuntu-latest # GitHub-hosted Ubuntu environment
     defaults:
       run:

@@ -1,9 +1,7 @@
 name: Node CI # Node.js continuous integration workflow
 
 on: # Triggers
-  pull_request: # Run for every PR targeting the repo
-  push: # Also run on pushes
-    branches: [main] # Restrict pushes to main branch
+  workflow_dispatch: # Manual trigger via GitHub UI
 
 jobs:
   ci: # Single job named 'ci'

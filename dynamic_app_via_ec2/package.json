@@ -3,7 +3,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "build": "touch dist/build-placeholder.js",
+    "build": "mkdir dist && touch dist/build-placeholder.js",
     "test": "echo \"Running tests...\"",
     "lint": "echo \"Linting...\""
   },
