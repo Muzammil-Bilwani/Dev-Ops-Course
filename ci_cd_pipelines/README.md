@@ -501,8 +501,8 @@ Your team maps Git branches to deployment environments.
 | Job           | Runner             | When                          | Purpose                                   |
 | ------------- | ------------------ | ----------------------------- | ----------------------------------------- |
 | `ci`          | GitHub Ubuntu host | PRs, pushes to `dev` / `main` | Install, lint, test, create artifact      |
-| `deploy_qa`   | self-hosted        | Push to `dev`                 | Simulate QA deploy (use artifact)         |
-| `deploy_prod` | self-hosted        | Push to `main`                | Simulate Production deploy (use artifact) |
+| `deploy_qa`   | GitHub Ubuntu host | Push to `dev`                 | Simulate QA deploy (use artifact)         |
+| `deploy_prod` | GitHub Ubuntu host | Push to `main`                | Simulate Production deploy (use artifact) |
 
 ### 💡 Extra Challenges
 
