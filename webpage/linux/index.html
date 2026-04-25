@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux for DevOps — Course Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--green); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--green); }
+  .progress-seg:hover { background: var(--cyan); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(57,211,83,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.1s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.2s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.3s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+  .module:nth-child(8) { animation-delay: 0.4s; }
+  .module:nth-child(9) { animation-delay: 0.45s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  /* Explanation section */
+  .explain-block {
+    margin-top: 20px;
+  }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  /* Terminal / code block */
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  /* Key points */
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+
+  .key-point .kp-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .key-point .kp-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* Tag pills */
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  /* Quiz styles */
+  .quiz-q {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .quiz-q .q-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .quiz-q .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+
+  .quiz-q .option .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Fill-in */
+  .fill-in {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+
+  .fill-in input {
+    background: #010409;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .fill-in input:focus { border-color: var(--green); }
+
+  .fill-in .fi-check {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  /* Assignment */
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before {
+    content: '→';
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">$ sudo apt install devops-knowledge</div>
+  <h1>Linux for <span>DevOps</span><br>Instructor Guide</h1>
+  <p class="subtitle">Step-by-step explanations with real terminal examples for every module</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Introduction to Linux & Why It Matters in DevOps</div>
+        <div class="module-desc">Setting the stage — what Linux is and where students will encounter it</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Start by asking: <em>"When you visit Netflix, GitHub, or Google — what OS do you think is running those servers?"</em> The answer is almost always Linux. Explain that over <strong>96% of web servers</strong> run Linux. DevOps is about automating those servers, so Linux is non-negotiable.</p>
+        <p class="explain-text">Use the analogy: <em>"Windows is like an automatic car. Linux is a manual — harder to learn, but gives you full control over every gear."</em></p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — why-linux.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Where will students use Linux in DevOps?</span></div>
+          <div><span class="comment"># ✅ Docker containers → run on Linux</span></div>
+          <div><span class="comment"># ✅ AWS/GCP/Azure VMs → Linux by default</span></div>
+          <div><span class="comment"># ✅ CI/CD pipelines (GitHub Actions, Jenkins)</span></div>
+          <div><span class="comment"># ✅ Kubernetes nodes → Linux</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">uname -a</span></div>
+          <div><span class="output">Linux devbox 5.15.0 #1 SMP x86_64 GNU/Linux</span></div>
+          <br>
+          <div><span class="comment"># This single line tells you kernel, hostname, architecture</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🐧</div><div class="kp-title">Free & Open Source</div><div class="kp-desc">No licensing costs. Companies save millions deploying Linux at scale.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">Lightweight</div><div class="kp-desc">Can run on minimal hardware — perfect for containers and cloud VMs.</div></div>
+        <div class="key-point"><div class="kp-icon">🔧</div><div class="kp-title">Customizable</div><div class="kp-desc">Every part of the OS can be tweaked, scripted, or automated.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Secure by design</div><div class="kp-desc">Permissions, users, and groups are first-class citizens.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Terminal Navigation & File Management</div>
+        <div class="module-desc">Moving around the filesystem and managing files from the command line</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Compare the terminal to a <strong>GPS for your computer</strong>. <code>pwd</code> is "where am I?", <code>ls</code> is "what's around me?", and <code>cd</code> is "go there". Give students a real folder structure to navigate.</p>
+        <p class="explain-text">Live demo: Create a fake project structure on screen and let students replicate it. Nothing teaches <code>mkdir</code> and <code>cp</code> faster than actually using them.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — navigation demo</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">pwd</span> &nbsp;<span class="comment"># Print current directory</span></div>
+          <div><span class="output">/home/student</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">ls -la</span> &nbsp;<span class="comment"># List all files with details</span></div>
+          <div><span class="output">drwxr-xr-x  3 student student 4096 Apr 25 10:00 projects</span></div>
+          <div><span class="output">-rw-r--r--  1 student student  220 Apr 25 09:00 .bashrc</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">mkdir -p projects/webapp/config</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cd projects/webapp</span></div>
+          <div><span class="prompt">~/projects/webapp $ </span><span class="cmd">touch index.html app.js</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">cp index.html index.html.bak</span> &nbsp;<span class="comment"># Backup before editing!</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">mv index.html.bak archive/</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">rm -rf archive/</span> &nbsp;<span class="comment"># ⚠️ No recycle bin!</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">pwd</span>
+        <span class="tag green">ls -la</span>
+        <span class="tag green">cd ..</span>
+        <span class="tag green">mkdir -p</span>
+        <span class="tag green">cp / mv / rm</span>
+        <span class="tag orange">⚠️ rm -rf is permanent</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">File Permissions, Users, Groups & SSH Keys</div>
+        <div class="module-desc">Linux security model — who can read, write, and execute what</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain permissions</h3>
+        <p class="explain-text">Use the <strong>apartment analogy</strong>: A file is an apartment. The <strong>owner</strong> has a key. The <strong>group</strong> is like the floor — neighbors with shared access. <strong>Others</strong> are strangers. Permissions (rwx) decide what each can do.</p>
+        <p class="explain-text">Teach <code>chmod</code> with the numeric system. It clicks instantly once students see <code>7 = 4+2+1 = read+write+execute</code>.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — permissions</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Read a permission string: -rwxr-xr--</span></div>
+          <div><span class="comment"># Position: [type][owner][group][others]</span></div>
+          <div><span class="comment"># r=4, w=2, x=1 → 7=rwx, 5=r-x, 4=r--</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">ls -l script.sh</span></div>
+          <div><span class="output">-rw-r--r-- 1 student devs 512 Apr 25 script.sh</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">chmod 755 script.sh</span> &nbsp;<span class="comment"># owner=rwx, group=r-x, others=r-x</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ls -l script.sh</span></div>
+          <div><span class="output">-rwxr-xr-x 1 student devs 512 Apr 25 script.sh</span></div>
+          <br>
+          <div><span class="comment"># SSH Key Setup</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ssh-keygen -t ed25519 -C "student@devops"</span></div>
+          <div><span class="output">Generating public/private ed25519 key pair.</span></div>
+          <div><span class="output">Enter file: ~/.ssh/id_ed25519</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">ssh-copy-id student@server.example.com</span></div>
+          <div><span class="output">Number of key(s) added: 1 ✓</span></div>
+          <br>
+          <div><span class="comment"># Now login without password:</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ssh student@server.example.com</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔑</div><div class="kp-title">chmod 600 private keys</div><div class="kp-desc">SSH private keys must be readable only by owner. SSH will refuse to work otherwise.</div></div>
+        <div class="key-point"><div class="kp-icon">👥</div><div class="kp-title">useradd / usermod</div><div class="kp-desc">Create users and add them to groups like <code>sudo</code> or <code>docker</code>.</div></div>
+        <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">sudo vs su</div><div class="kp-desc"><code>sudo</code> = one command as root. <code>su</code> = switch user entirely. Prefer sudo.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Package Management & System Updates</div>
+        <div class="module-desc">apt (Ubuntu/Debian) and yum/dnf (RHEL/CentOS) — installing and updating software</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Compare <code>apt</code> to the <strong>App Store</strong> — but for the terminal, and way faster. Ask students: "Imagine installing Photoshop just by typing one command." That's what package managers do.</p>
+        <p class="explain-text">Emphasize that in DevOps, servers must be kept updated for security. Outdated packages are a top cause of breaches. <code>apt upgrade</code> is like pressing "Update All" on your phone.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — package management</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># === Ubuntu / Debian (apt) ===</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt update</span> &nbsp;<span class="comment"># Refresh package list</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt upgrade -y</span> &nbsp;<span class="comment"># Upgrade all packages</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt install nginx git curl -y</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt remove nginx</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">apt search python3</span> &nbsp;<span class="comment"># Find packages</span></div>
+          <br>
+          <div><span class="comment"># === RHEL / CentOS (yum/dnf) ===</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo yum update -y</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo dnf install nginx -y</span> &nbsp;<span class="comment"># dnf = modern yum</span></div>
+          <br>
+          <div><span class="comment"># Check if a service is running after install</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo systemctl status nginx</span></div>
+          <div><span class="output">● nginx.service - A high performance web server</span></div>
+          <div><span class="output">   Active: <span class="highlight">active (running)</span> since Fri 2025-04-25</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">apt update</span>
+        <span class="tag blue">apt upgrade</span>
+        <span class="tag blue">apt install</span>
+        <span class="tag purple">yum / dnf</span>
+        <span class="tag green">systemctl</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Writing Bash Scripts for Automation</div>
+        <div class="module-desc">From one-liners to full automation scripts with variables, loops, and conditionals</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Tell students: <em>"Every time you do something more than twice in the terminal, write a script."</em> Scripts are just saved commands. Start with a simple "Hello, World" script, then build up to variables, if-else, and loops.</p>
+        <p class="explain-text">The <strong>shebang line</strong> <code>#!/bin/bash</code> is magic — explain it tells the OS which interpreter to use. Without it, the script might not run.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — first_script.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">#!/bin/bash</span> &nbsp;<span class="comment"># Always start with this!</span></div>
+          <br>
+          <div><span class="comment"># Variables</span></div>
+          <div><span class="cmd">NAME="DevOps Student"</span></div>
+          <div><span class="cmd">DATE=$(date +%Y-%m-%d)</span> &nbsp;<span class="comment"># Command substitution</span></div>
+          <div><span class="cmd">echo "Hello $NAME — today is $DATE"</span></div>
+          <br>
+          <div><span class="comment"># If-else</span></div>
+          <div><span class="cmd">DISK=$(df / | awk 'NR==2{print $5}' | tr -d '%')</span></div>
+          <div><span class="cmd">if [ "$DISK" -gt 80 ]; then</span></div>
+          <div>&nbsp;&nbsp;<span class="error-color">echo "⚠️  Disk usage is ${DISK}% — WARNING!"</span></div>
+          <div><span class="cmd">else</span></div>
+          <div>&nbsp;&nbsp;<span class="output">echo "✅ Disk usage is ${DISK}% — All good"</span></div>
+          <div><span class="cmd">fi</span></div>
+          <br>
+          <div><span class="comment"># Loop through files</span></div>
+          <div><span class="cmd">for FILE in /var/log/*.log; do</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">echo "Found log: $FILE"</span></div>
+          <div><span class="cmd">done</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📝</div><div class="kp-title">Always use quotes</div><div class="kp-desc">Use <code>"$VAR"</code> not <code>$VAR</code> to avoid word-splitting bugs with spaces.</div></div>
+        <div class="key-point"><div class="kp-icon">🧪</div><div class="kp-title">Test with set -x</div><div class="kp-desc">Add <code>set -x</code> at the top to print each command as it runs — great for debugging.</div></div>
+        <div class="key-point"><div class="kp-icon">🚨</div><div class="kp-title">Exit on error</div><div class="kp-desc">Add <code>set -e</code> to stop the script immediately if any command fails.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI to Write & Debug Bash Scripts</div>
+        <div class="module-desc">Leveraging AI tools as a DevOps pair programmer</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Teach students that AI is a <strong>force multiplier, not a replacement</strong>. The goal is to know enough Linux to verify and modify what AI generates. Bad prompt = bad script. Good prompt = great starting point.</p>
+        <p class="explain-text">Show a before/after: a vague prompt gives a generic script, a detailed prompt gives a production-ready one. Teach students to always <strong>read, test, and understand</strong> AI output before running it on a server.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — AI prompting examples</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># ❌ Weak prompt → weak script</span></div>
+          <div><span class="comment">"Write a bash script to monitor disk"</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong prompt → production-ready script</span></div>
+          <div><span class="comment">"Write a bash script that:</span></div>
+          <div><span class="comment"> - Checks disk usage on / every 5 minutes</span></div>
+          <div><span class="comment"> - Alerts if usage exceeds 85%</span></div>
+          <div><span class="comment"> - Logs to /var/log/disk-monitor.log with timestamps</span></div>
+          <div><span class="comment"> - Sends email using sendmail if available</span></div>
+          <div><span class="comment"> - Handles errors and uses set -e, set -u"</span></div>
+          <br>
+          <div><span class="comment"># Debug tip: Paste error into AI with context</span></div>
+          <div><span class="error-color">./monitor.sh: line 12: [: too many arguments</span></div>
+          <div><span class="comment"># Ask: "What does this bash error mean and how do I fix it?"</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">ChatGPT</span>
+        <span class="tag purple">Claude</span>
+        <span class="tag purple">GitHub Copilot</span>
+        <span class="tag orange">Always review AI output</span>
+        <span class="tag green">Understand before running</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Disk Usage Monitor with Alerts</div>
+        <div class="module-desc">Real-world bash script that monitors disk, logs results, and sends alerts</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">This is where everything comes together. Walk through the script line by line before asking students to build it. Emphasize: this is the kind of script that runs on real production servers at companies like Amazon and Netflix.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — disk_monitor.sh (complete project)</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">#!/bin/bash</span></div>
+          <div><span class="cmd">set -euo pipefail</span> &nbsp;<span class="comment"># Strict mode</span></div>
+          <br>
+          <div><span class="comment"># ── Configuration ──────────────────────</span></div>
+          <div><span class="cmd">THRESHOLD=85</span></div>
+          <div><span class="cmd">LOG_FILE="/var/log/disk_monitor.log"</span></div>
+          <div><span class="cmd">ALERT_EMAIL="admin@company.com"</span></div>
+          <div><span class="cmd">TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')</span></div>
+          <br>
+          <div><span class="comment"># ── Functions ───────────────────────────</span></div>
+          <div><span class="cmd">log() { echo "[$TIMESTAMP] $*" | tee -a "$LOG_FILE"; }</span></div>
+          <br>
+          <div><span class="cmd">check_disk() {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">local USAGE</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">USAGE=$(df / | awk 'NR==2 {print $5}' | tr -d '%')</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">log "Disk usage: ${USAGE}%"</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">if [[ "$USAGE" -ge "$THRESHOLD" ]]; then</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="error-color">log "🚨 ALERT: Disk at ${USAGE}% — threshold is ${THRESHOLD}%"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">echo "Disk alert on $(hostname)" | mail -s "Disk Alert" "$ALERT_EMAIL" 2>/dev/null || true</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">else</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="output">log "✅ OK — ${USAGE}% used"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">fi</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="comment"># ── Main ────────────────────────────────</span></div>
+          <div><span class="cmd">log "=== Disk Monitor Started ==="</span></div>
+          <div><span class="cmd">check_disk</span></div>
+          <br>
+          <div><span class="comment"># Schedule with cron: */5 * * * * /usr/local/bin/disk_monitor.sh</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📅</div><div class="kp-title">Add to cron</div><div class="kp-desc">Run <code>crontab -e</code> and schedule this script every 5 minutes automatically.</div></div>
+        <div class="key-point"><div class="kp-icon">📂</div><div class="kp-title">Log rotation</div><div class="kp-desc">Mention <code>logrotate</code> — logs need to be rotated or they fill the disk you're monitoring!</div></div>
+        <div class="key-point"><div class="kp-icon">🧩</div><div class="kp-title">Extend it</div><div class="kp-desc">Challenge: add monitoring for CPU, memory, or check multiple mount points.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Linux Commands & Permissions</div>
+        <div class="module-desc">10 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Sample quiz questions (interactive)</h3>
+      </div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. Which command shows the current working directory?</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> ls</div>
+        <div class="option" onclick="answer('q1','b')"><div class="opt-letter">B</div> cd</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q1','c')"><div class="opt-letter">C</div> pwd</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> echo</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. What does <code>chmod 644 file.txt</code> mean?</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> Everyone can read and write</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> Owner: rw-, Group: r--, Others: r--</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Owner: rwx, Group: r-x, Others: r--</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Read-only for everyone</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. Which command installs a package on Ubuntu?</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> yum install nginx</div>
+        <div class="option" onclick="answer('q3','b')"><div class="opt-letter">B</div> brew install nginx</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q3','c')"><div class="opt-letter">C</div> sudo apt install nginx</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> sudo get nginx</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. What does <code>set -e</code> do in a bash script?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q4','a')"><div class="opt-letter">A</div> Exit immediately if any command fails</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> Enable debugging output</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> Set an environment variable</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> Suppress all errors</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Which SSH key type is recommended for new setups?</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> RSA 1024-bit</div>
+        <div class="option" onclick="answer('q5','b')"><div class="opt-letter">B</div> DSA</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q5','c')"><div class="opt-letter">C</div> ed25519</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> ECDSA 256-bit</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: What command makes <code>script.sh</code> executable by the owner only?</div>
+          <input type="text" id="fi1" placeholder="type your answer here..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['chmod 700 script.sh','chmod u+x script.sh'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: Write the cron expression to run a script every day at 2:30 AM.</div>
+          <input type="text" id="fi2" placeholder="type your cron expression..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['30 2 * * *'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Backup Script with Logging</div>
+        <div class="module-desc">Write a bash script that backs up a folder and logs all results</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame this as a <strong>real job task</strong>: "Your manager asks you to set up an automated nightly backup for the <code>/var/www/html</code> folder. It must log success or failure. You have 24 hours." This mirrors what junior DevOps engineers actually do in their first week.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Accept a source folder as a script argument (e.g., <code>./backup.sh /var/www/html</code>)</li>
+          <li>Create a timestamped <code>.tar.gz</code> backup in <code>/backups/</code> directory</li>
+          <li>Log success or failure with timestamps to <code>/var/log/backup.log</code></li>
+          <li>Handle edge cases: source not found, backup dir doesn't exist, disk full</li>
+          <li>Use functions, variables, and proper error handling (<code>set -e</code>)</li>
+          <li>Bonus: Delete backups older than 7 days automatically</li>
+          <li>Bonus: Send an email alert on failure</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — expected output when grading</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">./backup.sh /var/www/html</span></div>
+          <div><span class="output">[2025-04-25 02:30:01] Backup started for: /var/www/html</span></div>
+          <div><span class="output">[2025-04-25 02:30:03] ✅ Backup created: /backups/html_2025-04-25_02-30-01.tar.gz</span></div>
+          <div><span class="output">[2025-04-25 02:30:03] Size: 24M</span></div>
+          <div><span class="output">[2025-04-25 02:30:03] Cleaning up backups older than 7 days...</span></div>
+          <div><span class="output">[2025-04-25 02:30:03] ✅ Backup completed successfully</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">cat /var/log/backup.log</span></div>
+          <div><span class="output">[2025-04-25 02:30:01] Backup started for: /var/www/html</span></div>
+          <div><span class="output">[2025-04-25 02:30:03] ✅ Backup created: html_2025-04-25_02-30-01.tar.gz</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Script runs: 30pts. Logging works: 25pts. Error handling: 25pts. Code quality: 20pts.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Hardcoded paths, no quotes around variables, missing shebang, no error checking.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Extend challenge</div><div class="kp-desc">Add the cron job that runs this script automatically at 2 AM every night.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct', 'wrong');
+    });
+    const opts = q.querySelectorAll('.option');
+    const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) {
+        opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      }
+      if (letters[i] === correct && chosen !== correct) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect
+      ? '✅ Correct!'
+      : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+
+  // Open first module by default
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>
