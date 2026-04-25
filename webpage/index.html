@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Foundations — BanoQabil | Learn Linux, Git, Docker, AWS & More</title>
+
+<!-- Primary SEO -->
+<meta name="description" content="Free DevOps Foundations course by Muzammil Bilwani. Learn Linux, Git, Docker, AWS, Kubernetes, CI/CD, Terraform, and more with hands-on terminal examples.">
+<meta name="keywords" content="DevOps course, Linux for DevOps, Git tutorial, Docker tutorial, AWS basics, Kubernetes, CI/CD pipelines, Terraform, BanoQabil, Muzammil Bilwani, free DevOps course Urdu, Pakistan DevOps">
+<meta name="author" content="Muzammil Bilwani">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://muzammilbilwani.com/devops-foundations">
+
+<!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="DevOps Foundations — Free Course by Muzammil Bilwani">
+<meta property="og:description" content="Hands-on DevOps course covering Linux, Git, Docker, AWS, Kubernetes, CI/CD, Terraform and more. Built for BanoQabil students.">
+<meta property="og:url" content="https://muzammilbilwani.com/devops-foundations">
+<meta property="og:site_name" content="De   vOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevOps Foundations — Free Course by Muzammil Bilwani">
+<meta name="twitter:description" content="Hands-on DevOps course covering Linux, Git, Docker, AWS, Kubernetes, CI/CD and more.">
+<meta name="twitter:creator" content="@muzammilbilwani">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "DevOps Foundations",
+  "description": "Hands-on DevOps course covering Linux, Git, Docker, AWS, Kubernetes, CI/CD, Terraform, Monitoring, Networking, and DevSecOps.",
+  "provider": {
+    "@type": "Organization",
+    "name": "BanoQabil",
+    "url": "https://banoqabil.pk"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Muzammil Bilwani",
+    "url": "https://muzammilbilwani.com"
+  },
+  "educationalLevel": "Beginner to Intermediate",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "hasCourseInstance": [
+    { "@type": "CourseInstance", "name": "Linux for DevOps" },
+    { "@type": "CourseInstance", "name": "Git & Version Control" },
+    { "@type": "CourseInstance", "name": "Docker & Containers" },
+    { "@type": "CourseInstance", "name": "AWS Cloud Essentials" },
+    { "@type": "CourseInstance", "name": "CI/CD Pipelines" },
+    { "@type": "CourseInstance", "name": "Kubernetes" },
+    { "@type": "CourseInstance", "name": "Infrastructure as Code" },
+    { "@type": "CourseInstance", "name": "Monitoring & Observability" },
+    { "@type": "CourseInstance", "name": "Networking for DevOps" },
+    { "@type": "CourseInstance", "name": "DevSecOps Basics" }
+  ]
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--green); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+    max-width: 580px;
+    line-height: 1.6;
+  }
+
+  .stats {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat { display: flex; flex-direction: column; gap: 2px; }
+
+  .stat-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .stat-label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-section {
+    max-width: 1100px;
+    margin: 32px auto 0;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .progress-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green), #58a6ff);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 40px auto 0;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: border-color 0.25s, transform 0.2s, box-shadow 0.25s;
+    animation: fadeIn 0.5s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--card-color, var(--green)), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .topic-card:hover {
+    border-color: var(--card-color, var(--green));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .topic-card:hover::before { opacity: 1; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .topic-card:nth-child(1)  { animation-delay: 0.05s; }
+  .topic-card:nth-child(2)  { animation-delay: 0.10s; }
+  .topic-card:nth-child(3)  { animation-delay: 0.15s; }
+  .topic-card:nth-child(4)  { animation-delay: 0.20s; }
+  .topic-card:nth-child(5)  { animation-delay: 0.25s; }
+  .topic-card:nth-child(6)  { animation-delay: 0.30s; }
+  .topic-card:nth-child(7)  { animation-delay: 0.35s; }
+  .topic-card:nth-child(8)  { animation-delay: 0.40s; }
+  .topic-card:nth-child(9)  { animation-delay: 0.45s; }
+  .topic-card:nth-child(10) { animation-delay: 0.50s; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .card-icon { font-size: 2rem; line-height: 1; }
+
+  .card-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .card-status.available {
+    color: var(--green);
+    border-color: rgba(57,211,83,0.3);
+    background: rgba(57,211,83,0.08);
+  }
+
+  .card-status.coming-soon {
+    color: var(--muted);
+    border-color: var(--border);
+    background: transparent;
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .card-desc {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.55;
+    font-weight: 400;
+    margin-bottom: 14px;
+  }
+
+  .card-terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    margin-bottom: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .card-terminal .p { color: var(--green); }
+  .card-terminal .c { color: var(--text); }
+
+  .card-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .card-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    background: var(--surface2);
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-modules {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .card-arrow {
+    font-size: 0.85rem;
+    color: var(--muted);
+    transition: transform 0.2s, color 0.2s;
+  }
+
+  .topic-card:hover .card-arrow {
+    transform: translateX(4px);
+    color: var(--card-color, var(--green));
+  }
+
+  .topic-card.disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 24px 40px;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+
+  .footer-dot { color: var(--border); }
+
+  .footer-text a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-text a:hover { color: var(--green); }
+
+  @media (max-width: 700px) {
+    header, .progress-section, main { padding-left: 20px; padding-right: 20px; }
+    .topics-grid { grid-template-columns: 1fr; }
+    .stats { gap: 20px; }
+    footer { padding: 24px 20px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .footer-dot { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">$ git clone devops-foundations && cd career</div>
+  <h1>DevOps <span>Foundations</span></h1>
+  <p class="subtitle">Hands-on modules covering every tool a modern DevOps engineer needs — from Linux basics to cloud deployments.</p>
+  <div class="stats">
+    <div class="stat"><span class="stat-val">10</span><span class="stat-label">Topics</span></div>
+    <div class="stat"><span class="stat-val">60+</span><span class="stat-label">Modules</span></div>
+    <div class="stat"><span class="stat-val">∞</span><span class="stat-label">Terminal hours</span></div>
+  </div>
+</header>
+
+<div class="progress-section">
+  <div class="progress-header">
+    <span class="progress-label">Course Progress</span>
+    <span class="progress-count" id="progressCount">0 / 10 topics</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<main>
+  <div class="section-title">// All Topics</div>
+
+  <div class="topics-grid">
+
+    <!-- 01 Linux -->
+    <a class="topic-card" href="linux/index.html" style="--card-color: #39d353">
+      <div class="card-top">
+        <span class="card-icon">🐧</span>
+        <span class="card-status available">Available</span>
+      </div>
+      <div class="card-num">01 / Linux</div>
+      <div class="card-title">Linux for DevOps</div>
+      <div class="card-desc">Terminal navigation, file permissions, users, package management, and bash scripting from scratch.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">uname -a && whoami</span><br>
+        <span>Linux devbox 5.15.0 x86_64</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">bash</span>
+        <span class="card-tag">chmod</span>
+        <span class="card-tag">cron</span>
+        <span class="card-tag">ssh</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">9 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 02 Git -->
+    <a class="topic-card" href="https://gitgoahead.muzammilbilwani.com/" target="_blank" rel="noopener" style="--card-color: #f78166">
+      <div class="card-top">
+        <span class="card-icon">🌿</span>
+        <span class="card-status available">Available</span>
+      </div>
+      <div class="card-num">02 / Git</div>
+      <div class="card-title">Git & Version Control</div>
+      <div class="card-desc">Commits, branches, merges, rebases, pull requests, and collaborative workflows on GitHub.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">git log --oneline --graph</span><br>
+        <span>* a3f1c2 feat: add CI pipeline</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">branches</span>
+        <span class="card-tag">rebase</span>
+        <span class="card-tag">PRs</span>
+        <span class="card-tag">hooks</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">8 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 03 Docker -->
+    <a class="topic-card disabled" href="docker/index.html" style="--card-color: #58a6ff">
+      <div class="card-top">
+        <span class="card-icon">🐳</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">03 / Docker</div>
+      <div class="card-title">Docker & Containers</div>
+      <div class="card-desc">Build, ship, and run containers. Dockerfiles, images, volumes, networks, and Docker Compose.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">docker run -p 80:80 nginx</span><br>
+        <span>Status: Downloaded newer image</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Dockerfile</span>
+        <span class="card-tag">compose</span>
+        <span class="card-tag">volumes</span>
+        <span class="card-tag">registry</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">10 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 04 AWS -->
+    <a class="topic-card disabled" href="aws/index.html" style="--card-color: #e3b341">
+      <div class="card-top">
+        <span class="card-icon">☁️</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">04 / AWS</div>
+      <div class="card-title">AWS Cloud Essentials</div>
+      <div class="card-desc">EC2, S3, IAM, VPC, RDS, and core AWS services every DevOps engineer must know.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">aws ec2 describe-instances</span><br>
+        <span>InstanceId: i-0abc123...</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">EC2</span>
+        <span class="card-tag">S3</span>
+        <span class="card-tag">IAM</span>
+        <span class="card-tag">VPC</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">12 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 05 CI/CD -->
+    <a class="topic-card disabled" href="cicd/index.html" style="--card-color: #bc8cff">
+      <div class="card-top">
+        <span class="card-icon">⚙️</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">05 / CI/CD</div>
+      <div class="card-title">CI/CD Pipelines</div>
+      <div class="card-desc">Automate build, test, and deploy with GitHub Actions, Jenkins, and GitLab CI.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">gh run watch 12345</span><br>
+        <span style="color:#39d353">✓ deploy completed in 2m30s</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Actions</span>
+        <span class="card-tag">Jenkins</span>
+        <span class="card-tag">YAML</span>
+        <span class="card-tag">artifacts</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">8 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 06 Kubernetes -->
+    <a class="topic-card disabled" href="kubernetes/index.html" style="--card-color: #58a6ff">
+      <div class="card-top">
+        <span class="card-icon">☸️</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">06 / Kubernetes</div>
+      <div class="card-title">Kubernetes (K8s)</div>
+      <div class="card-desc">Orchestrate containers at scale. Pods, services, deployments, ingress, and Helm charts.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">kubectl get pods -A</span><br>
+        <span>kube-system   coredns   Running</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">pods</span>
+        <span class="card-tag">services</span>
+        <span class="card-tag">Helm</span>
+        <span class="card-tag">ingress</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">10 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 07 Terraform -->
+    <a class="topic-card disabled" href="terraform/index.html" style="--card-color: #bc8cff">
+      <div class="card-top">
+        <span class="card-icon">🏗️</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">07 / Terraform</div>
+      <div class="card-title">Infrastructure as Code</div>
+      <div class="card-desc">Provision and manage cloud infrastructure with Terraform. HCL, state, modules, and workspaces.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">terraform apply -auto-approve</span><br>
+        <span style="color:#39d353">Apply complete! 3 added.</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">HCL</span>
+        <span class="card-tag">state</span>
+        <span class="card-tag">modules</span>
+        <span class="card-tag">plan</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">7 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 08 Monitoring -->
+    <a class="topic-card disabled" href="monitoring/index.html" style="--card-color: #f78166">
+      <div class="card-top">
+        <span class="card-icon">📊</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">08 / Monitoring</div>
+      <div class="card-title">Monitoring & Observability</div>
+      <div class="card-desc">Prometheus, Grafana, alerting, log aggregation with ELK stack, and on-call practices.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">curl localhost:9090/metrics</span><br>
+        <span>http_requests_total 1024</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">Prometheus</span>
+        <span class="card-tag">Grafana</span>
+        <span class="card-tag">ELK</span>
+        <span class="card-tag">alerts</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">6 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 09 Networking -->
+    <a class="topic-card disabled" href="networking/index.html" style="--card-color: #e3b341">
+      <div class="card-top">
+        <span class="card-icon">🌐</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">09 / Networking</div>
+      <div class="card-title">Networking for DevOps</div>
+      <div class="card-desc">TCP/IP, DNS, HTTP, load balancers, firewalls, VPNs, and how traffic flows through your infrastructure.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">dig +short google.com</span><br>
+        <span>142.250.185.46</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">DNS</span>
+        <span class="card-tag">HTTP</span>
+        <span class="card-tag">iptables</span>
+        <span class="card-tag">VPN</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">7 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- 10 Security -->
+    <a class="topic-card disabled" href="security/index.html" style="--card-color: #f78166">
+      <div class="card-top">
+        <span class="card-icon">🔒</span>
+        <span class="card-status coming-soon">Coming Soon</span>
+      </div>
+      <div class="card-num">10 / Security</div>
+      <div class="card-title">DevSecOps Basics</div>
+      <div class="card-desc">Secrets management, vulnerability scanning, SAST/DAST, container security, and compliance.</div>
+      <div class="card-terminal">
+        <span class="p">$ </span><span class="c">trivy image nginx:latest</span><br>
+        <span style="color:#e3b341">MEDIUM: 3 vulnerabilities</span>
+      </div>
+      <div class="card-tags">
+        <span class="card-tag">secrets</span>
+        <span class="card-tag">scanning</span>
+        <span class="card-tag">SAST</span>
+        <span class="card-tag">Vault</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-modules">6 modules</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-text">Built for <a href="https://banoqabil.pk/courses/devops-foundations?id=694fd45609bbc24151521d32" target="_blank" rel="noopener">BanoQabil DevOps Foundations</a></span>
+    <span class="footer-dot">·</span>
+    <span class="footer-text">Created by <a href="https://muzammilbilwani.com" target="_blank" rel="noopener">Muzammil Bilwani</a></span>
+  </div>
+</footer>
+
+<script>
+  const topicKeys = ['linux','git','docker','aws','cicd','kubernetes','terraform','monitoring','networking','security'];
+
+  function getVisited() {
+    try { return JSON.parse(localStorage.getItem('dof_visited') || '[]'); } catch { return []; }
+  }
+
+  function updateProgress() {
+    const visited = getVisited();
+    const count = visited.length;
+    document.getElementById('progressCount').textContent = `${count} / ${topicKeys.length} topics`;
+    document.getElementById('progressFill').style.width = `${(count / topicKeys.length) * 100}%`;
+  }
+
+  document.querySelectorAll('.topic-card:not(.disabled)').forEach(card => {
+    card.addEventListener('click', () => {
+      const href = card.getAttribute('href');
+      const key = href.split('/')[0];
+      const visited = getVisited();
+      if (!visited.includes(key)) {
+        visited.push(key);
+        localStorage.setItem('dof_visited', JSON.stringify(visited));
+      }
+    });
+  });
+
+  updateProgress();
+</script>
+</body>
+</html>
