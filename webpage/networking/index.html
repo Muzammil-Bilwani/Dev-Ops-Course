@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DNS, CDN & HTTPS for DevOps — Route 53, CloudFront, TLS Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn networking for DevOps: DNS records (A, CNAME, MX, TXT, NS), Route 53, custom domains on AWS, CloudFront CDN, HTTP vs HTTPS, SSL/TLS with ACM and Let's Encrypt, performance tuning, and Cloudflare basics. Hands-on examples with 30+ practice questions.">
+<meta name="keywords" content="dns for devops, route 53 tutorial, cloudfront cdn tutorial, ssl tls beginner, lets encrypt certbot, https for devops, dns records explained, A record CNAME MX TXT, banoqabil, devops foundations, cloudflare configuration, custom domain aws">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="DNS, CDN & HTTPS for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master DNS, CDN, and HTTPS — the network plumbing every DevOps engineer must understand to ship production sites.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DNS, CDN & HTTPS for DevOps — Course">
+<meta name="twitter:description" content="Hands-on networking: DNS records, Route 53, CloudFront, TLS, performance tuning.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "DNS, CDN & HTTPS for DevOps — Foundations",
+  "description": "A practical, beginner-friendly networking course for aspiring DevOps engineers. Covers DNS fundamentals (A, AAAA, CNAME, MX, TXT, NS records), AWS Route 53 hosted zones, connecting custom domains to AWS services, CDN concepts, AWS CloudFront and Cloudflare, HTTP vs HTTPS, SSL/TLS certificates with ACM and Let's Encrypt, performance tuning (cache hit ratio, compression), AI-assisted DNS and TLS debugging, a Route 53 + CloudFront résumé project, and a Cloudflare configuration assignment.",
+  "provider": { "@type": "EducationalOrganization", "name": "BanoQabil" },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "How DNS resolves a domain to an IP",
+    "AWS Route 53 hosted zones and record sets",
+    "DNS record types (A, AAAA, CNAME, MX, TXT, NS)",
+    "Connecting custom domains to AWS services",
+    "CDN concepts and CloudFront basics",
+    "SSL/TLS certificates via ACM and Let's Encrypt",
+    "HTTP/HTTPS, HTTP/2, and modern web performance",
+    "Cache headers and CDN tuning",
+    "AI-assisted DNS and TLS debugging with dig + curl",
+    "Cloudflare basics — caching, HTTPS, redirects"
+  ],
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT8H" }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --green: #39d353; --cyan: #58a6ff; --orange: #f78166; --yellow: #e3b341; --purple: #bc8cff;
+    --text: #e6edf3; --muted: #8b949e; --prompt: #39d353; --topic: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(227,179,65,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1)  { animation-delay: 0.04s; }
+  .module:nth-child(2)  { animation-delay: 0.08s; }
+  .module:nth-child(3)  { animation-delay: 0.12s; }
+  .module:nth-child(4)  { animation-delay: 0.16s; }
+  .module:nth-child(5)  { animation-delay: 0.20s; }
+  .module:nth-child(6)  { animation-delay: 0.24s; }
+  .module:nth-child(7)  { animation-delay: 0.28s; }
+  .module:nth-child(8)  { animation-delay: 0.32s; }
+  .module:nth-child(9)  { animation-delay: 0.36s; }
+  .module:nth-child(10) { animation-delay: 0.40s; }
+  .module:nth-child(11) { animation-delay: 0.44s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(227,179,65,0.1); border: 1px solid rgba(227,179,65,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ dig +short banoqabil.pk</div>
+  <h1>DNS, CDN &amp; <span>HTTPS</span><br>Instructor Guide</h1>
+  <p class="subtitle">From "I bought a domain" to "https://yourname.com is fast everywhere" — the network plumbing every DevOps engineer must understand.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">How DNS Works — From "Click" to "200 OK" in 80 Milliseconds</div>
+        <div class="module-desc">Resolver → root → TLD → authoritative — the journey every URL takes before a single byte of HTML moves</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">When you type <code>https://banoqabil.pk</code> in a browser, your computer doesn't know where that is. <strong>DNS (Domain Name System)</strong> is the phone book that translates a name into an IP address. The lookup hops through 4 levels — your <em>resolver</em>, the <em>root</em>, the <em>TLD</em> (<code>.pk</code>), and finally an <em>authoritative</em> server — but is heavily cached so most queries return in milliseconds.</p>
+        <p class="explain-text">DevOps engineers don't usually run their own DNS — they <strong>configure records</strong> at a managed provider (Route 53, Cloudflare, Google Cloud DNS). The skill is reading <code>dig</code> output and knowing which record type does what.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">dig +trace — see the journey</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Trace the lookup, hop by hop</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig +trace banoqabil.pk</span></div>
+          <div><span class="output">. 86400  IN  NS  a.root-servers.net.            ← root nameservers</span></div>
+          <div><span class="output">. 86400  IN  NS  b.root-servers.net.</span></div>
+          <div><span class="output">pk. 172800  IN  NS  ns1.pk.</span> &nbsp;<span class="comment">← root tells us where .pk lives</span></div>
+          <div><span class="output">banoqabil.pk. 3600  IN  NS  ns1.banoqabil.pk.</span> &nbsp;<span class="comment">← TLD points to the domain's NS</span></div>
+          <div><span class="output">banoqabil.pk. 300   IN  A   <span class="info">192.0.2.42</span></span> &nbsp;<span class="comment">← authoritative answer</span></div>
+          <br>
+          <div><span class="comment"># Quick lookup (cached, sub-second)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig +short banoqabil.pk</span></div>
+          <div><span class="output">192.0.2.42</span></div>
+          <br>
+          <div><span class="comment"># Reverse — IP to name (PTR record)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig -x 8.8.8.8 +short</span></div>
+          <div><span class="output">dns.google.</span></div>
+          <br>
+          <div><span class="comment"># Use a specific resolver (skips your local cache)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig @1.1.1.1 banoqabil.pk</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">4-level hierarchy</div><div class="kp-desc">Resolver → root → TLD → authoritative. Each step is cached.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">Massively cached</div><div class="kp-desc">95% of lookups never leave your ISP. TTL controls cache lifetime.</div></div>
+        <div class="key-point"><div class="kp-icon">🔧</div><div class="kp-title">dig is your friend</div><div class="kp-desc"><code>dig name</code>, <code>dig -x IP</code>, <code>dig +trace</code>, <code>dig @resolver</code>.</div></div>
+        <div class="key-point"><div class="kp-icon">🌍</div><div class="kp-title">UDP port 53</div><div class="kp-desc">Most queries are UDP for speed. Falls back to TCP for large responses + DNSSEC.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">In one sentence per role, explain: resolver, root server, TLD server, authoritative server. Which one returns the actual IP?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Resolver</strong> — the recursive lookup service your machine talks to (e.g. 1.1.1.1, 8.8.8.8, your ISP). It does the full hop chain on your behalf and caches results.<br>
+                <strong>Root server</strong> — knows which nameservers handle each TLD (<code>.pk</code>, <code>.com</code>, <code>.io</code>). 13 logical root servers globally.<br>
+                <strong>TLD server</strong> — for a TLD like <code>.pk</code>, knows which nameservers run each domain under it.<br>
+                <strong>Authoritative server</strong> — the actual owner of <code>banoqabil.pk</code>'s records. <strong>This one returns the IP.</strong> It's the source of truth; everyone else is caching.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A site you just changed the IP for is still showing the old IP for some users. What is "TTL" and how does it explain this?</div>
+            <div class="pq-hint">💡 TTL = how long resolvers may cache a record.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Use <code>dig</code> to find: (a) the NS records for <code>github.com</code>, (b) the IPv6 (AAAA) record for <code>cloudflare.com</code>, (c) the MX record for <code>gmail.com</code>. Write the three commands.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Choosing & Managing a Domain in Route 53</div>
+        <div class="module-desc">Where your DNS lives matters — registrar, hosted zone, and the difference between them</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Two separate things often confused: <strong>domain registrar</strong> (where you <em>buy</em> the domain — Namecheap, Google Domains, Route 53) and <strong>DNS hosting</strong> (where the records actually live — Route 53, Cloudflare, the registrar). You can buy a domain at Namecheap and host the DNS at Route 53 — common pattern.</p>
+        <p class="explain-text">In Route 53, a <strong>hosted zone</strong> is a container for all records for one domain. AWS gives you 4 nameservers — you tell your registrar to use those, and Route 53 becomes authoritative. After that, you can connect any AWS service (S3, CloudFront, Beanstalk, ALB) to a custom domain.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">route53 — hosted zone setup</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Create a hosted zone for your domain</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws route53 create-hosted-zone \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--caller-reference $(date +%s)</span></div>
+          <div><span class="output">"Id": "/hostedzone/Z1A2B3C4",</span></div>
+          <div><span class="output">"DelegationSet": { "NameServers": [</span></div>
+          <div><span class="output">  "ns-123.awsdns-12.com",</span></div>
+          <div><span class="output">  "ns-456.awsdns-34.net",</span></div>
+          <div><span class="output">  "ns-789.awsdns-56.org",</span></div>
+          <div><span class="output">  "ns-012.awsdns-78.co.uk"</span></div>
+          <div><span class="output">]}</span></div>
+          <br>
+          <div><span class="comment"># 2. At your REGISTRAR (Namecheap, GoDaddy, etc.):</span></div>
+          <div><span class="comment">#    Set the nameservers to those 4 AWS NS values.</span></div>
+          <div><span class="comment">#    Propagation: 2–48 hours, usually under 1 hour.</span></div>
+          <br>
+          <div><span class="comment"># 3. Verify the delegation worked</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig NS muzammilbilwani.com +short</span></div>
+          <div><span class="output">ns-123.awsdns-12.com.</span></div>
+          <div><span class="output">ns-456.awsdns-34.net.</span></div>
+          <div><span class="output">ns-789.awsdns-56.org.</span></div>
+          <div><span class="output">ns-012.awsdns-78.co.uk.</span> &nbsp;<span class="comment"># ✓ Route 53 is authoritative</span></div>
+          <br>
+          <div><span class="comment"># 4. List records in the zone</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws route53 list-resource-record-sets --hosted-zone-id Z1A2B3C4</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag yellow">hosted zone</span>
+        <span class="tag yellow">delegation</span>
+        <span class="tag green">registrar</span>
+        <span class="tag blue">NS records</span>
+        <span class="tag orange">SOA</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain in one sentence each: domain registrar, DNS hosting, hosted zone. Where do all three meet?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">You bought <code>example.com</code> at Namecheap and want DNS in Route 53. What exactly do you change at Namecheap, and why is the change required?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                At Namecheap → <strong>set the nameservers</strong> to the 4 NS records Route 53 gave you when you created the hosted zone (e.g. <code>ns-123.awsdns-12.com</code>, etc.).<br><br>
+                <strong>Why:</strong> the global DNS hierarchy needs to know <em>who is authoritative</em> for your domain. Until you change the NS at the registrar, the <code>.com</code> TLD points to Namecheap's nameservers, so any record you create in Route 53 is invisible to the world. After the change (which propagates in 1–48 hours), the <code>.com</code> TLD points queries to Route 53.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate says "Route 53 is expensive — let's use the free DNS at our registrar." What's a real reason you might still pay $0.50/month for Route 53?</div>
+            <div class="pq-hint">💡 Alias records, health checks, geolocation routing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">DNS Record Types — A, AAAA, CNAME, MX, TXT, NS</div>
+        <div class="module-desc">The seven record types that solve 95% of real DNS problems</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Each record type answers one question. Memorise the cheat sheet, and 95% of "why isn't email working" / "why does my site not load" is solvable in 5 minutes.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">record-types.txt</div></div>
+        <div class="terminal-body">
+          <div><span class="output">A      → name → IPv4 address</span></div>
+          <div><span class="output">         example.com  A  192.0.2.42</span></div>
+          <br>
+          <div><span class="output">AAAA   → name → IPv6 address</span></div>
+          <div><span class="output">         example.com  AAAA  2606:4700:4700::1111</span></div>
+          <br>
+          <div><span class="output">CNAME  → name → another name (alias)</span></div>
+          <div><span class="output">         www.example.com  CNAME  example.com</span></div>
+          <div><span class="error-color">         ⚠️  Cannot exist on the apex (example.com itself)</span></div>
+          <br>
+          <div><span class="output">MX     → mail server for the domain</span></div>
+          <div><span class="output">         example.com  MX  10 aspmx.l.google.com</span></div>
+          <br>
+          <div><span class="output">TXT    → arbitrary text — verification, SPF, DMARC, DKIM</span></div>
+          <div><span class="output">         example.com  TXT  "v=spf1 include:_spf.google.com ~all"</span></div>
+          <br>
+          <div><span class="output">NS     → which nameservers are authoritative</span></div>
+          <div><span class="output">         example.com  NS  ns-123.awsdns-12.com</span></div>
+          <br>
+          <div><span class="output">SOA    → zone metadata (auto-generated, rarely touched)</span></div>
+          <br>
+          <div><span class="output">ALIAS  → AWS-only "fake CNAME" that works on apex (Route 53 magic)</span></div>
+          <div><span class="output">         example.com  A (alias)  → d1234.cloudfront.net</span></div>
+          <br>
+          <div><span class="comment"># A real workflow — verify Google Workspace email</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">dig MX example.com +short</span></div>
+          <div><span class="output">1 aspmx.l.google.com.</span></div>
+          <div><span class="output">5 alt1.aspmx.l.google.com.</span></div>
+          <div><span class="output">10 alt3.aspmx.l.google.com.</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">dig TXT example.com +short</span></div>
+          <div><span class="output">"v=spf1 include:_spf.google.com ~all"</span></div>
+          <div><span class="output">"google-site-verification=abcd1234..."</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🅰️</div><div class="kp-title">A vs CNAME</div><div class="kp-desc">A = direct IP. CNAME = points to another name. CNAME never on apex.</div></div>
+        <div class="key-point"><div class="kp-icon">📧</div><div class="kp-title">MX with priority</div><div class="kp-desc">Lower number = higher priority. Multiple MX = email failover.</div></div>
+        <div class="key-point"><div class="kp-icon">📜</div><div class="kp-title">TXT for verification</div><div class="kp-desc">Google, AWS, Slack all use TXT to prove you own the domain.</div></div>
+        <div class="key-point"><div class="kp-icon">🪄</div><div class="kp-title">Route 53 ALIAS</div><div class="kp-desc">Apex pointing at CloudFront / ALB / S3 — only works in Route 53.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick the right record for: (a) <code>blog.example.com</code> → <code>example.com</code>, (b) Gmail incoming mail, (c) Google Site verification, (d) <code>example.com</code> → CloudFront URL.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                (a) <strong>CNAME</strong> — alias one name to another, perfect for subdomains.<br>
+                (b) <strong>MX</strong> — points to <code>aspmx.l.google.com</code> with priority 1, plus alternates.<br>
+                (c) <strong>TXT</strong> — Google's verification string lives in a TXT record on the apex.<br>
+                (d) <strong>ALIAS A</strong> — apex (<code>example.com</code>) cannot use CNAME. Route 53's ALIAS A record solves this — DNS resolvers see an A record, but it's resolved dynamically against CloudFront. Outside Route 53, the alternative is "ANAME" or flattened-CNAME from Cloudflare.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate sets <code>example.com  CNAME  www.example.com</code>. Why is this invalid?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Set up SPF, DKIM, and DMARC for a domain sending email via Google Workspace. Which record type for each, and what's the goal of each?</div>
+            <div class="pq-hint">💡 SPF and DMARC are TXT. DKIM is also TXT but on a selector subdomain.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A subdomain returns <code>NXDOMAIN</code> in <code>dig</code>. List three places to check before assuming the record is missing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Connecting Custom Domains to AWS Services</div>
+        <div class="module-desc">S3, CloudFront, Beanstalk, ALB, API Gateway — each has a slightly different "alias" story</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Every AWS service that serves traffic gets a default ugly URL (<code>d1234.cloudfront.net</code>, <code>app-prod.eu-west-1.elasticbeanstalk.com</code>). Pointing a custom domain at it is two steps: <strong>(1)</strong> get a TLS cert that covers your domain, <strong>(2)</strong> create an ALIAS A record in Route 53 pointing at the AWS service's hosted-zone target.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">custom-domain — alias targets</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># CloudFront → muzammilbilwani.com</span></div>
+          <div><span class="cmd">muzammilbilwani.com    A (alias)    d1234.cloudfront.net.</span></div>
+          <div><span class="comment">                                 hosted zone: Z2FDTNDATAQYW2 (CloudFront)</span></div>
+          <br>
+          <div><span class="comment"># S3 static-website endpoint (no CloudFront — rare)</span></div>
+          <div><span class="cmd">www.example.com        A (alias)    s3-website-eu-west-1.amazonaws.com.</span></div>
+          <br>
+          <div><span class="comment"># Elastic Beanstalk → api.example.com</span></div>
+          <div><span class="cmd">api.example.com        A (alias)    myapp-prod.eu-west-1.elasticbeanstalk.com.</span></div>
+          <br>
+          <div><span class="comment"># ALB / NLB</span></div>
+          <div><span class="cmd">app.example.com        A (alias)    my-alb-123.eu-west-1.elb.amazonaws.com.</span></div>
+          <br>
+          <div><span class="comment"># API Gateway custom domain</span></div>
+          <div><span class="cmd">api.example.com        A (alias)    d-abc123.execute-api.eu-west-1.amazonaws.com.</span></div>
+          <br>
+          <div><span class="comment"># Create the alias record via CLI</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws route53 change-resource-record-sets \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--hosted-zone-id Z1A2B3C4 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--change-batch '{ "Changes": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Action": "UPSERT",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"ResourceRecordSet": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Name": "muzammilbilwani.com",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Type": "A",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"AliasTarget": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"HostedZoneId": "Z2FDTNDATAQYW2",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"DNSName": "d1234.cloudfront.net",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"EvaluateTargetHealth": false</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}}}]}'</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "ALIAS A" preferred over a regular A record (with hard-coded IP) for AWS service endpoints?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                AWS service endpoints (CloudFront, ALB, Beanstalk) sit behind <strong>changing IP addresses</strong> — AWS rotates them, scales them up/down, and takes individual IPs out of rotation for health reasons. Hard-coding an IP into an A record means your domain breaks every time AWS rotates.<br><br>
+                <strong>ALIAS A</strong> is Route 53's solution: looks like an A record to the world, but Route 53 dynamically resolves it to AWS's current IPs. Bonus: ALIAS records are free to query (unlike CNAME) and work on the apex.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">You point <code>api.example.com</code> at an ALB. <code>dig</code> resolves correctly but <code>curl</code> returns "SSL: certificate verification failed". What's the most likely cause?</div>
+            <div class="pq-hint">💡 The ALB has its own cert — does it cover this hostname?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare: pointing at CloudFront via ALIAS A vs CNAME. Which is faster for resolvers, and why?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">CDNs — CloudFront, Cloudflare, and Why They Make Sites 10× Faster</div>
+        <div class="module-desc">Edge caching turns "100ms from the origin" into "10ms from a server 50km away"</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">A <strong>CDN (Content Delivery Network)</strong> caches your content at hundreds of <strong>edge locations</strong> around the world. When a user in Karachi requests <code>style.css</code>, the closest edge serves it from cache — never touching your origin S3 bucket in Frankfurt. Result: 10–50× faster page loads, lower bandwidth bills, DDoS protection.</p>
+        <p class="explain-text">CloudFront and Cloudflare are the two giants. <strong>CloudFront</strong> integrates tightly with AWS (S3, ALB, Lambda@Edge). <strong>Cloudflare</strong> is registrar-agnostic, free tier is generous, and it adds DDoS + WAF in front of any backend. For BanoQabil-region students, both have edges in Karachi, Lahore, and Mumbai.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">cdn — concept + headers</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Without CDN: every request hits the origin in eu-west-1</span></div>
+          <div><span class="output">Karachi user → 250ms RTT → Frankfurt origin → render</span></div>
+          <div><span class="output">First byte: ~280ms · 2.4 MB total: ~3.5s</span></div>
+          <br>
+          <div><span class="comment"># With CDN: 99% hits the local edge</span></div>
+          <div><span class="output">Karachi user → 8ms RTT → Mumbai edge (cached) → response</span></div>
+          <div><span class="output">First byte: ~12ms · 2.4 MB total: ~700ms</span> &nbsp;<span class="info">5× faster</span></div>
+          <br>
+          <div><span class="comment"># Inspect cache status via response headers</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://muzammilbilwani.com/styles.css | grep -i cache</span></div>
+          <div><span class="output">cache-control: public, max-age=31536000, immutable</span></div>
+          <div><span class="output">x-cache: <span class="info">Hit from cloudfront</span></span></div>
+          <div><span class="output">age: 86412</span> &nbsp;<span class="comment"># in cache for ~1 day</span></div>
+          <br>
+          <div><span class="comment"># vs a miss</span></div>
+          <div><span class="output">x-cache: <span class="error-color">Miss from cloudfront</span></span></div>
+          <br>
+          <div><span class="comment"># Force-bypass cache (test origin)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI -H "Cache-Control: no-cache" https://muzammilbilwani.com</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">Edge caching</div><div class="kp-desc">99% of static assets served from a server &lt; 50km away.</div></div>
+        <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">DDoS shield</div><div class="kp-desc">Edge absorbs floods. Origin never sees the abuse traffic.</div></div>
+        <div class="key-point"><div class="kp-icon">💰</div><div class="kp-title">Cheaper egress</div><div class="kp-desc">CDN bandwidth is much cheaper than origin egress (S3 → internet).</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Cache invalidation</div><div class="kp-desc">After deploy, invalidate <code>/index.html</code> only — not <code>/*</code>.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your portfolio loads in 3.2s without CDN, 0.7s with CloudFront. Sketch where the extra 2.5s went.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Which response header tells you whether a CDN served the request from cache or fetched from origin?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A user reports "I changed a typo in index.html and pushed but the site still shows the old version 5 minutes later." Three places where stale content might live.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                1. <strong>CloudFront edge cache.</strong> The CDN is doing its job — caching the old <code>index.html</code> for whatever <code>Cache-Control: max-age</code> said. Fix: <code>aws cloudfront create-invalidation --paths /index.html</code>.<br>
+                2. <strong>Browser cache.</strong> Even after CDN purge, the user's browser may have cached <code>index.html</code> locally. Test in incognito or hard-refresh (Cmd+Shift+R).<br>
+                3. <strong>S3 itself</strong> hasn't propagated, or you forgot to <code>aws s3 sync</code>. Always verify <code>aws s3 ls</code> + check the actual object's <code>LastModified</code>.<br><br>
+                Pro tip: set short cache (60s) on <code>index.html</code> and long cache (1y, immutable) on hashed assets like <code>main.abc123.js</code>. Best of both worlds.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare CloudFront and Cloudflare in 3 axes: cost, ease of setup, integration with AWS. Which would you pick for a static portfolio?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">SSL/TLS — HTTPS, Certificates, ACM, Let's Encrypt</div>
+        <div class="module-desc">The padlock icon, but really. How TLS handshakes work and why your cert can be free.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>HTTPS</strong> is just HTTP wrapped in <strong>TLS</strong>. When a browser connects to <code>https://example.com</code>, the server sends a <strong>certificate</strong> proving "I am example.com" — signed by a Certificate Authority the browser trusts. They negotiate a session key and encrypt all traffic.</p>
+        <p class="explain-text">In 2026, certificates are <strong>free and automated</strong>. AWS users get <strong>ACM</strong> (free, auto-renews, integrates with CloudFront/ALB/API Gateway). Everyone else uses <strong>Let's Encrypt</strong> via Certbot — free, 90-day certs, auto-renewal. There is essentially no reason to pay for a regular DV certificate today.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">tls — issue + verify</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># OPTION A: AWS — ACM (free, auto-renew)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws acm request-certificate \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--domain-name muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--subject-alternative-names www.muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--validation-method DNS \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--region us-east-1</span> &nbsp;<span class="comment"># MUST be us-east-1 for CloudFront</span></div>
+          <div><span class="comment"># Add the validation CNAME to Route 53 → cert is issued in ~1 minute</span></div>
+          <br>
+          <div><span class="comment"># OPTION B: Anywhere else — Let's Encrypt via Certbot</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt install certbot python3-certbot-nginx</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo certbot --nginx -d muzammilbilwani.com -d www.muzammilbilwani.com</span></div>
+          <div><span class="output">Successfully received certificate.</span></div>
+          <div><span class="output">Certificate is saved at: /etc/letsencrypt/live/muzammilbilwani.com/fullchain.pem</span></div>
+          <div><span class="output">Cron set up to renew at 00:30 daily</span></div>
+          <br>
+          <div><span class="comment"># Verify a cert and see who issued it</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">echo | openssl s_client -connect muzammilbilwani.com:443 -servername muzammilbilwani.com 2&gt;/dev/null \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">| openssl x509 -noout -subject -issuer -dates</span></div>
+          <div><span class="output">subject= CN=muzammilbilwani.com</span></div>
+          <div><span class="output">issuer= C=US, O=Let's Encrypt, CN=R3</span></div>
+          <div><span class="output">notBefore=Apr  1 12:00:00 2026 GMT</span></div>
+          <div><span class="output">notAfter=Jun 30 12:00:00 2026 GMT</span></div>
+          <br>
+          <div><span class="comment"># Quick health check (curl shows TLS info)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -vI https://muzammilbilwani.com 2&gt;&amp;1 | grep -E 'TLS|SSL|HTTP/'</span></div>
+          <div><span class="output">* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256</span></div>
+          <div><span class="output">HTTP/2 200</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">ACM</span>
+        <span class="tag green">Let's Encrypt</span>
+        <span class="tag blue">Certbot</span>
+        <span class="tag blue">DNS validation</span>
+        <span class="tag yellow">TLS 1.3</span>
+        <span class="tag orange">90-day cert</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does ACM require certificates for CloudFront to live in <code>us-east-1</code>, even when the rest of your stack is in <code>eu-west-1</code>?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                CloudFront is a <strong>global service</strong> with no concept of region for itself, but the certificate-validation backend lives historically in <code>us-east-1</code>. CloudFront only reads ACM certificates from <code>us-east-1</code>. Your S3 bucket / ALB / origin can live anywhere — the cert is the only resource pinned to <code>us-east-1</code>.<br><br>
+                For ALBs in <code>eu-west-1</code>, you request a <em>separate</em> ACM cert in <code>eu-west-1</code> — those work fine for ALB usage. The <code>us-east-1</code> rule is CloudFront-specific.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Let's Encrypt certs expire after 90 days. Why so short, and how does Certbot prevent your site from going down?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A user gets "NET::ERR_CERT_COMMON_NAME_INVALID" hitting <code>https://api.example.com</code>. Where do you start debugging?</div>
+            <div class="pq-hint">💡 Use openssl s_client to inspect the actual cert — does its CN/SAN list include <code>api.example.com</code>?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Should you still buy "EV (Extended Validation)" certificates from a paid CA? Why or why not for most modern sites?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Performance & CDN Tuning — Cache Headers, Compression, HTTP/2</div>
+        <div class="module-desc">A 90% cache-hit ratio is achievable. Here's the headers that get you there.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Performance comes down to two ratios: <strong>cache-hit ratio</strong> (% of requests served from edge, not origin) and <strong>compression ratio</strong> (gzip/brotli). The first is governed by <code>Cache-Control</code> headers; the second by enabling compression at the CDN.</p>
+        <p class="explain-text">The "long-cache for hashed assets, short-cache for index" pattern is the canonical setup. Your bundler (Vite, Webpack) outputs <code>main.abc123.js</code> with a content hash in the filename — set <code>Cache-Control: public, max-age=31536000, immutable</code> and never invalidate. The single <code>index.html</code> gets <code>max-age=60</code> + invalidate after every deploy.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">cache-headers — the canonical pattern</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># When syncing to S3</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 sync ./dist s3://muzammil-portfolio \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--exclude "index.html" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=31536000,immutable"</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 cp ./dist/index.html s3://muzammil-portfolio/index.html \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=60"</span></div>
+          <br>
+          <div><span class="comment"># Verify in production</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://muzammilbilwani.com/main.abc123.js | grep -i cache</span></div>
+          <div><span class="output">cache-control: public, max-age=31536000, immutable</span></div>
+          <div><span class="output">x-cache: Hit from cloudfront</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://muzammilbilwani.com/index.html | grep -i cache</span></div>
+          <div><span class="output">cache-control: public, max-age=60</span></div>
+          <br>
+          <div><span class="comment"># Check compression</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI -H 'Accept-Encoding: br, gzip' https://muzammilbilwani.com/main.abc123.js \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">| grep -i -E 'content-encoding|content-length'</span></div>
+          <div><span class="output">content-encoding: <span class="info">br</span></span></div>
+          <div><span class="output">content-length: 24310</span> &nbsp;<span class="comment"># vs uncompressed 142 KB → 6× smaller</span></div>
+          <br>
+          <div><span class="comment"># HTTP/2 multiplexing — single connection, parallel requests</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://muzammilbilwani.com | head -1</span></div>
+          <div><span class="output">HTTP/2 200</span> &nbsp;<span class="comment"># CloudFront speaks HTTP/2 by default</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is <code>Cache-Control: public, max-age=31536000, immutable</code> safe for <code>main.abc123.js</code> but disastrous for <code>index.html</code>?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Brotli compresses 15–20% better than gzip on JS/CSS. Why hasn't gzip been retired? When is each used?</div>
+            <div class="pq-hint">💡 Browser support + CPU cost.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate asks "why are we still using HTTP/2 when HTTP/3 (QUIC) exists?" Give a 2-sentence answer covering the upgrade path and what HTTP/3 fixes.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your CDN reports a 60% cache-hit ratio. Suggest three changes that could push it past 90%.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                1. <strong>Set proper <code>Cache-Control</code> headers</strong> at the origin. Many CDN misses are because the origin returns no cache directive — CDN defaults to short or no caching.<br>
+                2. <strong>Hash your asset filenames</strong> (Webpack/Vite/Astro do this automatically). With content-hash in the name, you can confidently set <code>max-age=31536000, immutable</code>.<br>
+                3. <strong>Reduce cache fragmentation.</strong> Each unique URL is its own cache entry. Watch out for <em>cache-busting query strings</em> like <code>?v=12345</code> that change on every deploy and bypass the cache. Use hashed filenames instead. Also strip irrelevant query params at the CDN.<br><br>
+                Bonus: enable <em>stale-while-revalidate</em> so users get cached responses instantly while CDN refreshes in the background.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 - AI -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI to Debug DNS, TLS, and CDN Issues</div>
+        <div class="module-desc"><code>dig</code>, <code>curl -v</code>, and <code>openssl s_client</code> output is dense — AI translates it perfectly</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Networking errors come with terse, jargon-rich output: <em>"NXDOMAIN"</em>, <em>"SSL_ERROR_BAD_CERT_DOMAIN"</em>, <em>"SERVFAIL"</em>. AI is excellent at translating these into "what's broken and where". Always paste the <strong>full</strong> error + the command that produced it — no PII, but the protocol-level data is fine.</p>
+        <p class="explain-text">Trap: AI will sometimes hallucinate AWS-specific defaults (e.g. claim ACM certs work outside <code>us-east-1</code> for CloudFront). Verify against the actual AWS docs for any region/cross-service claim.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">AI prompts for networking</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight"># ✅ Strong DNS prompt</span></div>
+          <div><span class="comment">"Here is the dig output for api.example.com:</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">  ;; ANSWER SECTION:</span></div>
+          <div><span class="comment">  api.example.com.  300  IN  CNAME  d-abc123.execute-api.eu-west-1.amazonaws.com.</span></div>
+          <div><span class="comment">  d-abc123.execute-api.eu-west-1.amazonaws.com.  60  IN  A  52.95.16.42</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">When I curl https://api.example.com I get</span></div>
+          <div><span class="comment"> 'curl: (60) SSL: no alternative certificate subject name matches'.</span></div>
+          <div><span class="comment">DNS works (resolves to API Gateway), but TLS fails. What's the most likely cause</span></div>
+          <div><span class="comment"> and how do I confirm it with openssl s_client?"</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong CDN prompt</span></div>
+          <div><span class="comment">"My CloudFront distribution shows x-cache: Miss for 80% of requests.</span></div>
+          <div><span class="comment">My origin is S3, files are static, no query strings.</span></div>
+          <div><span class="comment">List the top 5 reasons cache hit ratio is this low,</span></div>
+          <div><span class="comment"> in order of likelihood, with how to check each."</span></div>
+          <br>
+          <div><span class="comment"># Quick verify the AI's claim</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">echo | openssl s_client -connect api.example.com:443 -servername api.example.com 2&gt;/dev/null \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">| openssl x509 -noout -text \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">| grep -A1 "Subject Alternative Name"</span></div>
+          <div><span class="output">X509v3 Subject Alternative Name:</span></div>
+          <div><span class="output">  DNS:*.execute-api.eu-west-1.amazonaws.com</span></div>
+          <div><span class="output">  ↑ doesn't include api.example.com → AI was right, need an API GW custom domain</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take "DNS isn't working" and turn it into a 5-line prompt that gives AI enough info to actually help.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI claims "you can request an ACM cert in any region for CloudFront." How would you fact-check before believing it?</div>
+            <div class="pq-hint">💡 The AWS docs for CloudFront / ACM region requirements.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is pasting a real <code>dig</code> output to AI generally safe, but pasting a real <code>kubectl get secrets</code> output dangerous?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - PROJECT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Static Résumé on Custom Domain via Route 53 + CloudFront</div>
+        <div class="module-desc">By the end of this module, every student has <code>https://&lt;name&gt;.com</code> serving their CV, $1/month total</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">This is the "first deploy that recruiters actually see." Walk through it on screen. The artefact: a real domain like <code>https://muzammilbilwani.com</code> serving a static CV / portfolio, $1–2/month, A+ on SSL Labs, sub-second load anywhere.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">resume-deploy.sh — full pipeline</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd"># 1. Buy domain (any registrar) and point NS at Route 53</span></div>
+          <div><span class="cmd">aws route53 create-hosted-zone --name muzammilbilwani.com --caller-reference $(date +%s)</span></div>
+          <div><span class="cmd"># Copy the 4 NS records → set them at your registrar</span></div>
+          <br>
+          <div><span class="cmd"># 2. Request a free wildcard cert in us-east-1 for CloudFront</span></div>
+          <div><span class="cmd">aws acm request-certificate \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--domain-name muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--subject-alternative-names www.muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--validation-method DNS --region us-east-1</span></div>
+          <div><span class="cmd"># Add the validation CNAME to Route 53 → cert issued in ~1 minute</span></div>
+          <br>
+          <div><span class="cmd"># 3. Create S3 bucket (private, OAC will give CloudFront read access)</span></div>
+          <div><span class="cmd">aws s3 mb s3://muzammil-portfolio --region eu-west-1</span></div>
+          <div><span class="cmd">aws s3api put-public-access-block --bucket muzammil-portfolio \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true</span></div>
+          <br>
+          <div><span class="cmd"># 4. Upload the site with the right cache headers</span></div>
+          <div><span class="cmd">aws s3 sync ./dist s3://muzammil-portfolio --delete \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--exclude "index.html" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=31536000,immutable"</span></div>
+          <div><span class="cmd">aws s3 cp ./dist/index.html s3://muzammil-portfolio/index.html \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=60"</span></div>
+          <br>
+          <div><span class="cmd"># 5. Create CloudFront distribution (point at S3 with OAC, attach the ACM cert)</span></div>
+          <div><span class="cmd">aws cloudfront create-distribution --distribution-config file://cf-config.json</span></div>
+          <br>
+          <div><span class="cmd"># 6. Point the apex + www at CloudFront via Route 53 ALIAS A</span></div>
+          <div><span class="cmd">aws route53 change-resource-record-sets --hosted-zone-id Z1A2B3C4 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--change-batch file://route53-alias.json</span></div>
+          <br>
+          <div><span class="cmd"># 7. Verify</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://muzammilbilwani.com | head -3</span></div>
+          <div><span class="output">HTTP/2 200</span></div>
+          <div><span class="output">x-cache: Hit from cloudfront</span></div>
+          <div><span class="output">cache-control: public, max-age=60</span></div>
+          <br>
+          <div><span class="cmd"># 8. Re-run the SSL Labs test → target an A+ score</span></div>
+          <div><span class="cmd">open "https://www.ssllabs.com/ssltest/analyze.html?d=muzammilbilwani.com"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">💸</div><div class="kp-title">~$1/month</div><div class="kp-desc">Domain ($10/yr) + Route 53 ($0.50/mo) + CloudFront free tier + S3 cents.</div></div>
+        <div class="key-point"><div class="kp-icon">🌍</div><div class="kp-title">Global &lt; 1s</div><div class="kp-desc">Cached at 400+ edge POPs. Users in Karachi, Toronto, Tokyo all see &lt; 1s.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">A+ on SSL Labs</div><div class="kp-desc">Free ACM cert + CloudFront defaults = A+ score with no tuning.</div></div>
+        <div class="key-point"><div class="kp-icon">📝</div><div class="kp-title">Recruiter-ready</div><div class="kp-desc">"Hosted my CV at https://my-name.com" sells.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 - QUIZ -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: DNS Records, CDN Concepts, SSL/TLS</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. Which record points a name to an IPv4 address?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q1','a')"><div class="opt-letter">A</div> A</div>
+        <div class="option" onclick="answer('q1','b')"><div class="opt-letter">B</div> AAAA</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> CNAME</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> MX</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. Why can't a CNAME live on the apex (<code>example.com</code>)?</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> CNAMEs are deprecated</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> The apex needs other records (NS, SOA) and CNAMEs can't co-exist with them</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> They take too long to resolve</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> They're insecure</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. ACM certificates for CloudFront must be requested in which region?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q3','a')"><div class="opt-letter">A</div> us-east-1</div>
+        <div class="option" onclick="answer('q3','b')"><div class="opt-letter">B</div> Same region as the S3 origin</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Any region</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> me-central-1</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. The header that tells you whether CloudFront served from cache:</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> cache-control</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> server-timing</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q4','c')"><div class="opt-letter">C</div> x-cache</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> via</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Let's Encrypt certificates are valid for:</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> 30 days</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> 90 days</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> 1 year</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> 5 years</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: <code>dig</code> command for the MX records of <code>banoqabil.pk</code>, short form.</div>
+          <input type="text" id="fi1" placeholder="dig ..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['dig MX banoqabil.pk +short','dig +short MX banoqabil.pk','dig banoqabil.pk MX +short'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: Certbot command to issue a cert for <code>example.com</code> auto-configuring nginx.</div>
+          <input type="text" id="fi2" placeholder="sudo certbot ..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['sudo certbot --nginx -d example.com','certbot --nginx -d example.com'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 - ASSIGNMENT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Configure Cloudflare for a Live Site</div>
+        <div class="module-desc">Caching, HTTPS, redirects, page rules — and verify with command-line tooling</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as a real client task: <em>"Move my site to Cloudflare. I want HTTPS everywhere, cache static assets aggressively, redirect www → apex, and block traffic from one country. By Friday."</em> This forces students through Cloudflare's full DNS / SSL / Page Rules workflow with a verifiable end state.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Pick any domain you control (or buy one for $1 at Namecheap/Cloudflare)</li>
+          <li>Add the domain to a free Cloudflare account; switch the registrar's nameservers to Cloudflare's</li>
+          <li>Verify <code>dig NS yourdomain.com +short</code> shows two <code>*.ns.cloudflare.com</code> nameservers</li>
+          <li>Set up an A or CNAME record pointing at <em>any</em> origin (an S3 static site, a Vercel deploy, a free EC2)</li>
+          <li>Force "Always Use HTTPS" — verify <code>curl -sI http://yourdomain.com</code> returns a 301 to <code>https://</code></li>
+          <li>Set the SSL/TLS mode to <strong>Full (Strict)</strong> — your origin must have a valid cert</li>
+          <li>Add a redirect rule: <code>www.yourdomain.com</code> → <code>yourdomain.com</code> (or vice versa)</li>
+          <li>Configure caching: HTML <code>max-age=60</code>, static assets <code>max-age=1y</code>, verify with <code>curl -sI</code> + <code>cf-cache-status</code> header</li>
+          <li>Add a Page Rule that bypasses cache for <code>/admin/*</code></li>
+          <li>Run an SSL Labs test — must score A or higher. Screenshot it.</li>
+          <li>Bonus: Enable Brotli + HTTP/3 → verify with <code>curl --http3 -sI</code></li>
+          <li>Bonus: Add a firewall rule blocking traffic from one country and demonstrate it</li>
+          <li>Submit a 1-page README documenting each setting + screenshots of the verification commands</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected acceptance test</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI http://yourdomain.com | head -2</span></div>
+          <div><span class="output">HTTP/1.1 301 Moved Permanently</span></div>
+          <div><span class="output">location: https://yourdomain.com/</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://yourdomain.com/styles.css | grep -iE 'cache|cf-'</span></div>
+          <div><span class="output">cache-control: public, max-age=31536000, immutable</span></div>
+          <div><span class="output">cf-cache-status: HIT</span></div>
+          <div><span class="output">cf-ray: 8f1a2b3c4d-MRS</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sI https://www.yourdomain.com | head -2</span></div>
+          <div><span class="output">HTTP/2 301</span></div>
+          <div><span class="output">location: https://yourdomain.com/</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">dig NS yourdomain.com +short</span></div>
+          <div><span class="output">arnold.ns.cloudflare.com.</span></div>
+          <div><span class="output">cori.ns.cloudflare.com.</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">NS delegated: 15. HTTPS forced: 15. Cache HIT verified: 20. Redirect works: 15. SSL Labs A+: 15. Page rule + bonuses: 20.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">SSL/TLS mode = "Flexible" (insecure!), forgot to wait for NS propagation, page rule order wrong, no validation screenshots.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Add a Cloudflare Worker that injects a custom header on every response.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

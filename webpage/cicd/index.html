@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CI/CD Pipelines for DevOps — GitHub Actions Beginner to Practical Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn CI/CD for DevOps from scratch: pipeline stages, blue-green vs canary vs rolling deployments, GitHub Actions YAML, matrix builds, secrets and environments, OIDC federation with AWS, and AI-assisted workflow debugging. Hands-on examples and 30+ practice questions.">
+<meta name="keywords" content="ci/cd for devops, github actions tutorial, github actions yaml, OIDC AWS auth, matrix builds, deployment strategies, blue green canary rolling, ci cd pipeline beginner, banoqabil, devops foundations, github actions secrets, reusable workflows">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="CI/CD Pipelines for DevOps — GitHub Actions Beginner to Practical Course">
+<meta property="og:description" content="Master CI/CD for DevOps with GitHub Actions, OIDC federation to AWS, matrix builds, and a full test→build→deploy pipeline. Built for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CI/CD Pipelines for DevOps — GitHub Actions Course">
+<meta name="twitter:description" content="Hands-on CI/CD course: pipelines, GitHub Actions, OIDC auth, matrix builds, deployment strategies.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "CI/CD Pipelines for DevOps — Foundations",
+  "description": "A practical, beginner-friendly CI/CD course for aspiring DevOps engineers. Covers CI/CD fundamentals, pipeline stages, deployment strategies (blue-green, canary, rolling), GitHub Actions in depth (workflows, jobs, matrix builds, secrets, environments, reusable workflows), OIDC federation for AWS without long-lived keys, AI-assisted workflow authoring, and a graded test+build+deploy assignment.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "CI/CD fundamentals and pipeline stages",
+    "Blue-green, canary, and rolling deployment strategies",
+    "GitHub Actions workflow YAML",
+    "Matrix builds across versions and OSes",
+    "Secrets, environments, and reusable workflows",
+    "OIDC federation for AWS auth without long-lived keys",
+    "Building and pushing Docker images from CI",
+    "Deploying to AWS from GitHub Actions",
+    "AI-assisted workflow authoring and debugging"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT8H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #bc8cff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--topic); }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--topic); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(188,140,255,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1)  { animation-delay: 0.05s; }
+  .module:nth-child(2)  { animation-delay: 0.10s; }
+  .module:nth-child(3)  { animation-delay: 0.15s; }
+  .module:nth-child(4)  { animation-delay: 0.20s; }
+  .module:nth-child(5)  { animation-delay: 0.25s; }
+  .module:nth-child(6)  { animation-delay: 0.30s; }
+  .module:nth-child(7)  { animation-delay: 0.35s; }
+  .module:nth-child(8)  { animation-delay: 0.40s; }
+  .module:nth-child(9)  { animation-delay: 0.45s; }
+  .module:nth-child(10) { animation-delay: 0.50s; }
+  .module:nth-child(11) { animation-delay: 0.55s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--topic);
+    background: rgba(188,140,255,0.1);
+    border: 1px solid rgba(188,140,255,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+
+  .quiz-q .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+
+  .quiz-q .option .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .fill-in {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+
+  .fill-in input {
+    background: #010409;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .fill-in input:focus { border-color: var(--green); }
+
+  .fill-in .fi-check {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before {
+    content: '→';
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+
+  /* Practice Questions */
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(57,211,83,0.04);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--green);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(57,211,83,0.12);
+  }
+
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(188,140,255,0.06);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--purple);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before {
+    content: '▸ ';
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--purple);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(188,140,255,0.08);
+    color: var(--purple);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ git push origin main # then watch the magic</div>
+  <h1>CI/CD <span>Pipelines</span><br>Instructor Guide</h1>
+  <p class="subtitle">Automate test, build, and deploy with GitHub Actions — from first workflow to OIDC-secured AWS deploys</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Why CI/CD Matters in DevOps</div>
+        <div class="module-desc">From "deploy on Friday and pray" to "ship 30 times a day with confidence"</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Ask the room: <em>"Imagine you copy-paste a deploy on Friday at 5pm. Something breaks. It's now 7pm and you don't remember which file you edited. What happens next?"</em> That's the world without CI/CD. <strong>CI</strong> = Continuous Integration: every push runs the tests automatically. <strong>CD</strong> = Continuous Delivery / Deployment: every green build can be pushed to production with one click — or zero, if you trust your tests.</p>
+        <p class="explain-text">The numbers from <em>Accelerate</em> (the seminal DevOps research book): elite teams deploy <strong>973× more frequently</strong> than low performers, with <strong>3× lower failure rates</strong>. CI/CD is how that math works.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — the lifecycle</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Day 1: Manual deploys (the bad path)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ssh prod "cd /app && git pull && pm2 restart all"</span> &nbsp;<span class="error-color"># 😱</span></div>
+          <br>
+          <div><span class="comment"># Day 30: With CI/CD</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">git push origin main</span></div>
+          <div><span class="output">→ tests run on every push (CI)</span></div>
+          <div><span class="output">→ image built + pushed to ECR</span></div>
+          <div><span class="output">→ staging auto-deployed</span></div>
+          <div><span class="output">→ production deploy: one click on GitHub (CD)</span></div>
+          <div><span class="output">→ rollback in &lt; 30 seconds if something breaks</span></div>
+          <br>
+          <div><span class="comment"># Same engineer, same code — different outcomes</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚀</div><div class="kp-title">Ship faster</div><div class="kp-desc">From weekly to multiple-times-daily deploys.</div></div>
+        <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">Catch bugs early</div><div class="kp-desc">Tests run on every commit, not just before release.</div></div>
+        <div class="key-point"><div class="kp-icon">↩️</div><div class="kp-title">Easy rollback</div><div class="kp-desc">Every deploy is a tagged artifact — revert with one click.</div></div>
+        <div class="key-point"><div class="kp-icon">📜</div><div class="kp-title">Auditable</div><div class="kp-desc">Every deploy logged: who, when, what commit, with what tests passing.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">In one sentence each, define CI, CD (Continuous Delivery), and CD (Continuous Deployment). Where do they differ?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>CI (Continuous Integration):</strong> every push to the repo automatically builds the code and runs the test suite. Goal — never let main rot.<br><br>
+                <strong>CD (Continuous Delivery):</strong> every green build is automatically packaged into a deployable artifact (Docker image, JAR, etc.) and pushed to a staging environment. <strong>A human still clicks "deploy to production."</strong><br><br>
+                <strong>CD (Continuous Deployment):</strong> same as above, but production deploys are automatic too — no human in the loop. Requires very strong test coverage and observability. Most teams stop at Continuous Delivery.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">List three concrete things that go wrong with the "ssh + git pull + restart" deploy pattern that CI/CD prevents.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A startup wants to "do CI/CD" but has no automated tests. Why is that the wrong order? What's the first investment they should make instead?</div>
+            <div class="pq-hint">💡 CI without tests is just a glorified npm install.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Pipeline Stages — Build, Test, Deploy</div>
+        <div class="module-desc">The anatomy of every CI/CD pipeline, regardless of which tool runs it</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Every CI/CD pipeline is a directed sequence of <strong>stages</strong>. Earlier stages are cheap and fast (linting); later stages are slow and expensive (deploying to production). Fail-fast: don't waste 20 minutes building a Docker image when <code>npm run lint</code> would have caught the bug in 5 seconds.</p>
+        <p class="explain-text">The canonical sequence: <strong>checkout → install deps → lint → test → build → scan → publish artifact → deploy</strong>. Some pipelines add quality gates between stages — for example, "block production deploy unless code coverage ≥ 80%."</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/ci.yml — minimal stages</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">name: CI</span></div>
+          <div><span class="cmd">on: [push, pull_request]</span></div>
+          <br>
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">test:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/setup-node@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { node-version: 20, cache: npm }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm run lint</span> &nbsp;<span class="comment"># fast — fail early</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm test -- --coverage</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm run build</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/upload-artifact@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { name: dist, path: dist/ }</span></div>
+          <br>
+          <div><span class="comment"># Visualization in the GitHub UI:</span></div>
+          <div><span class="output"><span class="info">●</span> checkout       (1s)</span></div>
+          <div><span class="output"><span class="info">●</span> setup-node     (3s)</span></div>
+          <div><span class="output"><span class="info">●</span> npm ci         (12s)</span></div>
+          <div><span class="output"><span class="info">●</span> lint           (4s)</span></div>
+          <div><span class="output"><span class="info">●</span> test           (28s)</span></div>
+          <div><span class="output"><span class="info">●</span> build          (18s)</span></div>
+          <div><span class="output"><span class="info">●</span> upload-artifact (2s)</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">checkout</span>
+        <span class="tag green">setup-node</span>
+        <span class="tag blue">npm ci</span>
+        <span class="tag yellow">lint</span>
+        <span class="tag yellow">test</span>
+        <span class="tag purple">build</span>
+        <span class="tag orange">deploy</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does <code>npm ci</code> appear in CI pipelines instead of <code>npm install</code>? What's the difference?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>npm install</code> resolves dependencies from <code>package.json</code> — and <em>updates</em> <code>package-lock.json</code> if it can. <code>npm ci</code> ("clean install") refuses to touch the lock file: it does an exact, reproducible install based on <code>package-lock.json</code> alone. If the lock file is out of sync, <code>ci</code> fails the build.<br><br>
+                <strong>Why CI prefers <code>ci</code>:</strong> reproducibility — every build gets the exact same dependency tree. <code>install</code> can silently upgrade a transitive dep and ship a different bundle than yesterday.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Order these stages from cheap+fast to slow+expensive: <code>npm test</code>, <code>npm run lint</code>, <code>docker build</code>, <code>terraform plan</code>, <code>aws ecs update-service</code>. Why does this order matter?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A pipeline runs lint, test, and build in sequence (one job). Each takes 30s. Convert it to parallel jobs to halve total time. Sketch the YAML structure.</div>
+            <div class="pq-hint">💡 Multiple jobs at the top level run in parallel by default.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a "code-coverage gate" to the pipeline: fail the build if coverage drops below 80%. Where in the pipeline does it go, and what's one tool that enforces it?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Deployment Strategies — Blue-Green, Canary, Rolling</div>
+        <div class="module-desc">How to deploy without downtime — and roll back in seconds when things break</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">There are three big strategies that show up in every interview. Use the <strong>traffic light analogy</strong>: imagine a busy intersection with old + new traffic patterns.</p>
+        <p class="explain-text"><strong>Rolling:</strong> replace one server at a time. Default for ECS, Kubernetes, Beanstalk. Cheap. Slow rollback. <br><strong>Blue-Green:</strong> spin up a full second environment ("green"), test it, then switch the load balancer over. Instant rollback. Doubles infra cost during deploy. <br><strong>Canary:</strong> route 1% → 10% → 50% → 100% of traffic to the new version, watching error rates. Best for risky changes. Most complex.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">strategy comparison</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># ── ROLLING ────────────────────────────────────</span></div>
+          <div><span class="output">[v1][v1][v1][v1]   →   [v2][v1][v1][v1]   →   [v2][v2][v1][v1]   →   [v2][v2][v2][v2]</span></div>
+          <div><span class="comment"># Pros: cheap, default in K8s/ECS    Cons: slow rollback, mixed versions during deploy</span></div>
+          <br>
+          <div><span class="comment"># ── BLUE-GREEN ─────────────────────────────────</span></div>
+          <div><span class="output">BLUE  [v1][v1][v1][v1]  ← 100% traffic</span></div>
+          <div><span class="output">GREEN [v2][v2][v2][v2]  ← warmed up, smoke-tested</span></div>
+          <div><span class="output">                ↓ flip load balancer</span></div>
+          <div><span class="output">BLUE  [v1][v1][v1][v1]  ← still hot, instant rollback</span></div>
+          <div><span class="output">GREEN [v2][v2][v2][v2]  ← 100% traffic</span></div>
+          <div><span class="comment"># Pros: instant rollback, no mixed versions    Cons: 2× infra cost during cutover</span></div>
+          <br>
+          <div><span class="comment"># ── CANARY ─────────────────────────────────────</span></div>
+          <div><span class="output">v1 ████████████████████ 99%</span></div>
+          <div><span class="output">v2 ▓                     1%   ← watch error rate, latency</span></div>
+          <div><span class="output">v2 ▓▓▓▓                 10%   ← 5min later, looks good</span></div>
+          <div><span class="output">v2 ▓▓▓▓▓▓▓▓▓▓           50%</span></div>
+          <div><span class="output">v2 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ 100%  ← v1 retired</span></div>
+          <div><span class="comment"># Pros: lowest blast radius    Cons: complex traffic shaping, longer deploy</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🟢</div><div class="kp-title">Rolling = default</div><div class="kp-desc">Free, supported everywhere. Use unless you have a reason not to.</div></div>
+        <div class="key-point"><div class="kp-icon">🔵</div><div class="kp-title">Blue-green = critical apps</div><div class="kp-desc">When seconds of downtime cost more than 2× infra for an hour.</div></div>
+        <div class="key-point"><div class="kp-icon">🐤</div><div class="kp-title">Canary = risky changes</div><div class="kp-desc">Major refactors, schema migrations, ML model rollouts.</div></div>
+        <div class="key-point"><div class="kp-icon">🩺</div><div class="kp-title">Health checks are non-optional</div><div class="kp-desc">Without a healthcheck, a "successful deploy" can serve 500s for an hour.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A bank's payment service can't tolerate any in-flight version mixing during deploys. Which strategy fits, and why are rolling deploys problematic here?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your team wants canary deploys on AWS. Beyond the application code, what infrastructure piece <em>must</em> exist to shape traffic 1% → 10% → 50% → 100%?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                A <strong>traffic-shaping load balancer or service mesh</strong>. On AWS, the common options are:<br><br>
+                1. <strong>ALB weighted target groups</strong> (CodeDeploy can drive this).<br>
+                2. <strong>App Mesh / Istio / Linkerd</strong> for fine-grained percentage routing.<br>
+                3. <strong>API Gateway canary releases</strong> for serverless/REST APIs.<br><br>
+                Without one of these, you can only do "all-or-nothing" deploys. The percentage-based shifting is the load balancer's job, not the application's.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "instant rollback" the killer feature of blue-green? Sketch what rolling-deploy rollback looks like in comparison.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A canary at 5% reports 2× the error rate of v1. List three things you check before deciding to abort vs. continue.</div>
+            <div class="pq-hint">💡 Sample size, error type, latency.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">GitHub Actions Basics — Workflows, Jobs, Steps & Triggers</div>
+        <div class="module-desc">The mental model: workflow → jobs → steps. Triggered by push, PR, cron, or manual dispatch.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">A <strong>workflow</strong> is one YAML file in <code>.github/workflows/</code>. It contains one or more <strong>jobs</strong>. Each job runs on a fresh <strong>runner</strong> (a clean VM). Jobs run <em>in parallel by default</em>; use <code>needs:</code> to make one wait for another. Inside a job, <strong>steps</strong> run sequentially.</p>
+        <p class="explain-text">The <strong>trigger</strong> is the <code>on:</code> key. Common options: <code>push</code>, <code>pull_request</code>, <code>schedule</code> (cron), <code>workflow_dispatch</code> (manual button), <code>release</code>. You can also filter by branch (<code>branches: [main]</code>) or path (<code>paths: ['src/**']</code>).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/ci.yml</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">name: CI</span></div>
+          <br>
+          <div><span class="cmd">on:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">push:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">branches: [main, develop]</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">pull_request:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">paths: ['src/**', 'package*.json']</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">schedule:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- cron: '0 2 * * *'</span> &nbsp;<span class="comment"># nightly 2am UTC</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">workflow_dispatch:</span> &nbsp;<span class="comment"># manual "Run workflow" button</span></div>
+          <br>
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">lint:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci && npm run lint</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">test:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci && npm test</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">build:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: [lint, test]</span> &nbsp;<span class="comment"># waits for both</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci && npm run build</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">workflow</span>
+        <span class="tag purple">job</span>
+        <span class="tag purple">step</span>
+        <span class="tag green">on: push</span>
+        <span class="tag green">on: pull_request</span>
+        <span class="tag yellow">schedule</span>
+        <span class="tag blue">workflow_dispatch</span>
+        <span class="tag orange">needs:</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Two jobs are defined at the top level with no <code>needs:</code> between them. Do they run in parallel or sequentially? On the same runner or different runners?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Parallel, on different runners.</strong> Each job spawns its own fresh ubuntu-latest VM (or whatever the <code>runs-on</code> says). They share <em>no filesystem state</em> by default — a file written in job A is invisible to job B unless you upload it as an artifact.<br><br>
+                If you need a strict order, add <code>needs: [job-a]</code> to the dependent job. If you need to share files, use <code>actions/upload-artifact</code> + <code>actions/download-artifact</code>.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the <code>on:</code> block for a workflow that runs on every push to <code>main</code>, every pull request targeting <code>main</code>, and at 3am UTC daily.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add path filtering so the workflow only runs when files under <code>src/</code> or <code>package*.json</code> change. Why does this matter for monorepos?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate uses <code>uses: actions/checkout@main</code>. You convince them to switch to <code>@v4</code>. What's the security risk of pinning to a moving branch?</div>
+            <div class="pq-hint">💡 Supply-chain attack — if the action's repo is compromised, you'll silently pull the malicious code.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Matrix Builds — Test Across Versions, OSes, & Browsers</div>
+        <div class="module-desc">One YAML block, dozens of parallel test runs</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Matrix builds are how you say <em>"run this job for every combination of these inputs"</em>. Most common: testing a Node.js library against Node 18, 20, and 22 simultaneously. Or a Python tool on Ubuntu, macOS, and Windows. GitHub spins up a runner per combination — all in parallel.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/test.yml — matrix</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">test:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ${{ matrix.os }}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">strategy:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">fail-fast: false</span> &nbsp;<span class="comment"># let all combos finish even if one fails</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">matrix:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">os: [ubuntu-latest, macos-latest, windows-latest]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">node: [18, 20, 22]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">exclude:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- { os: windows-latest, node: 18 }</span> &nbsp;<span class="comment"># skip combos</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/setup-node@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { node-version: ${{ matrix.node }} }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci && npm test</span></div>
+          <br>
+          <div><span class="comment"># Result: 8 parallel runs (3 OS × 3 node, minus 1 excluded)</span></div>
+          <div><span class="output">✓ test (ubuntu-latest, 18)    ✓ test (macos-latest, 18)</span></div>
+          <div><span class="output">✓ test (ubuntu-latest, 20)    ✓ test (macos-latest, 20)    ✓ test (windows-latest, 20)</span></div>
+          <div><span class="output">✓ test (ubuntu-latest, 22)    ✓ test (macos-latest, 22)    ✓ test (windows-latest, 22)</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">All in parallel</div><div class="kp-desc">8 combos = 8 runners. Total time ≈ slowest single run.</div></div>
+        <div class="key-point"><div class="kp-icon">🚫</div><div class="kp-title">exclude / include</div><div class="kp-desc">Skip impossible combos or add specific extras to the matrix.</div></div>
+        <div class="key-point"><div class="kp-icon">⏸️</div><div class="kp-title">fail-fast: false</div><div class="kp-desc">Let all combos finish — gives you the full picture, not just the first failure.</div></div>
+        <div class="key-point"><div class="kp-icon">💸</div><div class="kp-title">Mind the minutes</div><div class="kp-desc">macOS runners cost 10× Linux. Don't matrix everything — be intentional.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a matrix that tests against Python 3.10, 3.11, and 3.12 on Ubuntu only. Include the <code>matrix.python</code> reference in <code>actions/setup-python@v5</code>.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A 3×3×2 matrix runs 18 jobs but you only need 6 specific combinations. Which is more idiomatic — using <code>exclude</code> heavily, or rewriting with <code>include</code>?</div>
+            <div class="pq-hint">💡 Read the GitHub docs for <code>include</code> — it lets you specify exact combos.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is <code>fail-fast: false</code> usually the right choice for a matrix that tests cross-OS compatibility?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                With <code>fail-fast: true</code> (the default), the first failing combination cancels all the others. You then know <em>that one</em> failed, but not whether the others would have passed or failed too.<br><br>
+                For cross-OS / cross-version compatibility tests, you want the <em>full picture</em>: "Windows + Node 22 fails, but everything else passes" tells you it's a Windows-specific issue. Setting <code>fail-fast: false</code> lets every combo run to completion so you see all the data at once.<br><br>
+                For deploy pipelines (where you only need <em>one</em> green run), the default <code>fail-fast: true</code> is correct — there's no value in burning compute on combos you'll cancel anyway.
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Secrets, Environments & Reusable Workflows</div>
+        <div class="module-desc">How to keep credentials out of YAML and reuse logic across repos</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>Never paste secrets into YAML.</strong> GitHub provides three layers: <em>repo-level secrets</em>, <em>environment-level secrets</em> (with optional approval gates), and <em>org-level secrets</em> (shared across all repos). Always use <code>${{ secrets.NAME }}</code> in workflows.</p>
+        <p class="explain-text"><strong>Environments</strong> are how you wire approval gates: a job targeting the <code>production</code> environment can require a human reviewer click "approve" before it runs. <strong>Reusable workflows</strong> let you DRY up shared logic — one "deploy.yml" reused by 10 microservices.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">workflow with environments + secrets</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy-staging:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment: staging</span> &nbsp;<span class="comment"># pulls staging-scoped secrets</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: aws s3 sync ./dist s3://staging-bucket/</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">env:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy-prod:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: deploy-staging</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">name: production</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">url: https://app.example.com</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: aws ecs update-service ...</span> &nbsp;<span class="comment"># waits for human approval</span></div>
+        </div>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: A reusable workflow that 10 repos can call</h3>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/reusable-deploy.yml (in shared repo)</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">on:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">workflow_call:</span> &nbsp;<span class="comment"># this is what makes it reusable</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">inputs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">service:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">required: true</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">type: string</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">secrets:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">aws-key: { required: true }</span></div>
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: aws ecs update-service --service ${{ inputs.service }}</span></div>
+          <br>
+          <div><span class="comment"># Caller workflow in a different repo</span></div>
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy-api:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">uses: my-org/shared-workflows/.github/workflows/reusable-deploy.yml@v1</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { service: api }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">secrets: { aws-key: ${{ secrets.AWS_KEY }} }</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">An engineer commits <code>AWS_ACCESS_KEY=AKIA...</code> directly into a workflow YAML and pushes. They realise the mistake 30 seconds later and force-push to remove it. Are they safe? Why or why not?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>No, not safe.</strong> Even after a force-push, the original commit may still exist:<br><br>
+                1. In <strong>GitHub's reflog</strong> for ~30 days.<br>
+                2. In <strong>any clone</strong> any teammate or CI runner pulled before the rewrite.<br>
+                3. In <strong>cached search-engine results</strong> if the repo is public.<br>
+                4. <strong>Bots scrape commits in real time</strong> — automated AWS-key scanners detect leaks within minutes and abuse them.<br><br>
+                <strong>Real fix:</strong> immediately rotate the credential in AWS (delete the IAM access key), generate a new one, store it in GitHub Secrets, and review CloudTrail for any unauthorized usage. Then add the secret-scanning push-protection rule so it can't happen again.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why use a GitHub <em>environment</em> ("production") rather than a regular repo secret for production credentials? What capabilities does an environment unlock?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Sketch a reusable workflow your team would call from 5 different microservice repos. What inputs / secrets would it accept?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A secret printed via <code>echo $MY_SECRET</code> in a step appears as <code>***</code> in the logs. Does that mean it's safe? What if you base64-encoded it first and printed?</div>
+            <div class="pq-hint">💡 GitHub masks the literal string only.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">OIDC Federation — AWS Auth Without Long-Lived Keys</div>
+        <div class="module-desc">The modern, secure way to deploy from GitHub Actions to AWS — no <code>AWS_SECRET_ACCESS_KEY</code> in sight</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">The old way: create an IAM user, generate an access key, paste it into <code>secrets.AWS_SECRET_ACCESS_KEY</code>, hope nobody leaks it. The key never expires, and if it leaks, you have a 12-hour window to notice and rotate before it's abused.</p>
+        <p class="explain-text">The new way: <strong>OpenID Connect federation</strong>. GitHub mints a short-lived JWT for each workflow run; AWS verifies the JWT was signed by GitHub and matches a trusted repo+branch; AWS gives you a 15-minute STS credential. <strong>No long-lived secrets exist anywhere</strong>. This is the AWS-recommended pattern as of 2023+.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">aws — set up the OIDC trust (one time)</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Register GitHub as an OIDC provider in your AWS account</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-open-id-connect-provider \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--url https://token.actions.githubusercontent.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--client-id-list sts.amazonaws.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--thumbprint-list 6938fd4d98bab03faadb97b34396831e3780aea1</span></div>
+          <br>
+          <div><span class="comment"># 2. Create an IAM role that trusts GitHub for a SPECIFIC repo + branch</span></div>
+          <div><span class="cmd">// trust-policy.json</span></div>
+          <div><span class="cmd">{</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Version": "2012-10-17",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Statement": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Effect": "Allow",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Principal": { "Federated": "arn:aws:iam::123:oidc-provider/token.actions.githubusercontent.com" },</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Action": "sts:AssumeRoleWithWebIdentity",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Condition": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"StringEquals": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"token.actions.githubusercontent.com:aud": "sts.amazonaws.com"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">},</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"StringLike": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"token.actions.githubusercontent.com:sub": "repo:my-org/my-app:ref:refs/heads/main"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}]</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-role --role-name gh-deployer \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--assume-role-policy-document file://trust-policy.json</span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/deploy.yml — using OIDC</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">permissions:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">id-token: write</span> &nbsp;<span class="comment"># required to mint the JWT</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">contents: read</span></div>
+          <br>
+          <div><span class="cmd">jobs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <br>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- name: Configure AWS via OIDC</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">uses: aws-actions/configure-aws-credentials@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">role-to-assume: arn:aws:iam::123456789012:role/gh-deployer</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">aws-region: eu-west-1</span></div>
+          <br>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: aws s3 ls</span> &nbsp;<span class="comment"># now authenticated, no AWS_* secrets needed</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">No long-lived keys</div><div class="kp-desc">15-min STS credentials minted per run — nothing to leak.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Repo + branch scoped</div><div class="kp-desc">Trust policy locks the role to one specific repo and branch.</div></div>
+        <div class="key-point"><div class="kp-icon">📜</div><div class="kp-title">Auditable in CloudTrail</div><div class="kp-desc">Every assume-role call logs the GitHub run URL — full traceability.</div></div>
+        <div class="key-point"><div class="kp-icon">🆔</div><div class="kp-title">id-token: write</div><div class="kp-desc">Required permission. Forget it and the auth fails with no helpful error.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A workflow with OIDC fails with "Could not load credentials from any providers." The role ARN is correct. What's the most likely missing line?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                The <code>permissions: id-token: write</code> block at the workflow or job level. Without it, GitHub will not mint the OIDC JWT for the runner, and <code>aws-actions/configure-aws-credentials</code> has no token to exchange.<br><br>
+                Add at the top of the workflow:<br>
+                <code>permissions:<br>
+                &nbsp;&nbsp;id-token: write<br>
+                &nbsp;&nbsp;contents: read</code><br><br>
+                Other common causes: trust policy <code>sub</code> condition doesn't match the repo / branch / environment that's actually running.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare the blast radius of a leaked long-lived AWS access key vs a leaked GitHub OIDC token. Which costs more to rotate, and why?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the StringLike condition that lets the role be assumed only from PRs targeting <code>main</code> in <code>my-org/my-app</code>.</div>
+            <div class="pq-hint">💡 PRs use a different <code>sub</code> claim than branch pushes.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is OIDC federation more secure than even a properly-scoped IAM user with a rotated key? What attack does it prevent that rotation doesn't?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI to Write & Debug Workflows</div>
+        <div class="module-desc">Workflow YAML is the perfect AI task — finicky syntax, well-known patterns, lots of training data</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">YAML indentation is the #1 source of CI failures. AI is great at generating workflow scaffolds and debugging the cryptic errors, but it can also confidently invent action names that don't exist. Verify by clicking the action's GitHub link — if it 404s, the AI hallucinated.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — AI prompt examples</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># ❌ Weak prompt</span></div>
+          <div><span class="comment">"Write a GitHub Actions workflow"</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong prompt</span></div>
+          <div><span class="comment">"Write a GitHub Actions workflow that:</span></div>
+          <div><span class="comment"> - Runs on push to main and on every PR targeting main</span></div>
+          <div><span class="comment"> - Has 3 parallel jobs: lint (eslint), test (jest --coverage), typecheck (tsc --noEmit)</span></div>
+          <div><span class="comment"> - A 4th job that builds a Docker image, depends on all 3 above</span></div>
+          <div><span class="comment"> - Uses OIDC to push the image to ECR (no long-lived AWS keys)</span></div>
+          <div><span class="comment"> - Tags the image with the git SHA</span></div>
+          <div><span class="comment"> - Pin every action to a specific @vN tag (no @main)</span></div>
+          <div><span class="comment">After the YAML, list 3 things that will break this workflow in production."</span></div>
+          <br>
+          <div><span class="comment"># Debug-by-AI: paste the EXACT error</span></div>
+          <div><span class="error-color">Error: Resource not accessible by integration</span></div>
+          <div><span class="comment">→ Prompt: "GitHub Actions error 'Resource not accessible by integration'</span></div>
+          <div><span class="comment"> when calling the GitHub API. What permissions key am I missing in my workflow?"</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">ChatGPT</span>
+        <span class="tag purple">Claude</span>
+        <span class="tag purple">GitHub Copilot</span>
+        <span class="tag orange">Verify action exists</span>
+        <span class="tag orange">Pin versions</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI-generated workflow uses <code>uses: super-actions/awesome-deployer@latest</code>. List two red flags before you merge.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                1. <strong>The action might not exist.</strong> AI sometimes invents plausible action names. Click the link <code>github.com/super-actions/awesome-deployer</code> — if 404, it's a hallucination.<br>
+                2. <strong><code>@latest</code> is not a valid GitHub Actions ref.</strong> Actions are pinned by branch, tag, or SHA — there is no automatic "@latest". Even if it resolved to "default branch", that's a supply-chain risk: anyone who compromises the action's repo gets RCE in your CI.<br><br>
+                <strong>Fix:</strong> verify the action exists, read its README, then pin to a specific version tag (<code>@v3</code>) or — for high-security CI — a full commit SHA (<code>@a1b2c3d...</code>) so even tag retargeting can't compromise you.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take a 10-line workflow with broken indentation that fails with <em>"YAML mapping values not allowed here"</em>. Write the AI prompt that would identify the exact line and fix.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why should you never paste your <code>secrets.AWS_SECRET_ACCESS_KEY</code> into an AI tool, even when asking for help?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - PROJECT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Full CI Pipeline — Test → Build → Deploy to AWS via GHA</div>
+        <div class="module-desc">The capstone — combine everything into one production-grade workflow</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Walk through this on screen, then have students recreate it on their own Node app. The workflow combines: matrix testing, Docker build, OIDC AWS auth, ECR push, ECS deploy, environment-gated production approval. This is what a real team's <code>main.yml</code> looks like.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/main.yml — full pipeline</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">name: Build and Deploy</span></div>
+          <div><span class="cmd">on:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">push: { branches: [main] }</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">pull_request: { branches: [main] }</span></div>
+          <br>
+          <div><span class="cmd">permissions:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">id-token: write</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">contents: read</span></div>
+          <br>
+          <div><span class="cmd">jobs:</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="comment"># ── 1. Test (parallel matrix) ───────────────</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">test:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">strategy:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">matrix: { node: [18, 20, 22] }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/setup-node@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { node-version: ${{ matrix.node }}, cache: npm }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm ci && npm run lint && npm test</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="comment"># ── 2. Build + push image to ECR (only on main) ─</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">build:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: test</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">if: github.ref == 'refs/heads/main'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">outputs: { tag: ${{ steps.meta.outputs.tag }} }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- id: meta</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">run: echo "tag=${GITHUB_SHA::7}" &gt;&gt; $GITHUB_OUTPUT</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: aws-actions/configure-aws-credentials@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">role-to-assume: arn:aws:iam::123:role/gh-deployer</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">aws-region: eu-west-1</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: aws-actions/amazon-ecr-login@v2</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: |</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">docker build -t myapp:${{ steps.meta.outputs.tag }} .</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">docker tag myapp:${{ steps.meta.outputs.tag }} \</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">123.dkr.ecr.eu-west-1.amazonaws.com/myapp:${{ steps.meta.outputs.tag }}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">docker push 123.dkr.ecr.eu-west-1.amazonaws.com/myapp:${{ steps.meta.outputs.tag }}</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="comment"># ── 3. Deploy to production (gated) ──────────</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">deploy:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: build</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment: production</span> &nbsp;<span class="comment"># requires approval</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: aws-actions/configure-aws-credentials@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { role-to-assume: arn:aws:iam::123:role/gh-deployer, aws-region: eu-west-1 }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: aws ecs update-service \</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">--cluster prod --service myapp \</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">--force-new-deployment</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Matrix on test only</div><div class="kp-desc">Build + deploy run once — test runs N× across versions.</div></div>
+        <div class="key-point"><div class="kp-icon">🚦</div><div class="kp-title">if: ref == main</div><div class="kp-desc">PRs run tests but don't deploy. Only main triggers the build/deploy chain.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">OIDC end-to-end</div><div class="kp-desc">Zero long-lived AWS credentials in the workflow.</div></div>
+        <div class="key-point"><div class="kp-icon">🛂</div><div class="kp-title">Production approval</div><div class="kp-desc">environment: production requires a human click before deploy.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 - QUIZ -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: GitHub Actions YAML + Trigger Events</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Sample quiz questions (interactive)</h3>
+      </div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. Two top-level jobs with no <code>needs:</code> — how do they execute?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q1','a')"><div class="opt-letter">A</div> In parallel, on separate runners</div>
+        <div class="option" onclick="answer('q1','b')"><div class="opt-letter">B</div> Sequentially, on the same runner</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Sequentially, on separate runners</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> Order is undefined</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. Which permission is required for OIDC authentication to AWS?</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> contents: write</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> id-token: write</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> packages: write</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> actions: write</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. A canary deployment routes 5% of traffic to v2 and shows 2× error rate. Best first action?</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Push to 100% — bigger sample is better</div>
+        <div class="option" onclick="answer('q3','b')"><div class="opt-letter">B</div> Ignore and continue rollout</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q3','c')"><div class="opt-letter">C</div> Hold the canary, inspect error type and sample size before deciding</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Roll back the entire infrastructure</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. The strategy: rolling, blue-green, canary — which has the lowest deploy-time infra cost?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q4','a')"><div class="opt-letter">A</div> Rolling</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> Blue-green</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> Canary</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> They're identical</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Why <code>npm ci</code> over <code>npm install</code> in CI?</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> It's faster only — no other difference</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> It's reproducible — fails if package-lock is out of sync, never mutates it</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> It installs devDependencies only</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> It runs npm audit automatically</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: Cron expression for "every weekday (Mon–Fri) at 9:00 AM UTC".</div>
+          <input type="text" id="fi1" placeholder="type the cron expression..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['0 9 * * 1-5','0 9 * * MON-FRI'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: The full <code>on:</code> trigger that fires on every push to main and on the manual "Run workflow" button.</div>
+          <input type="text" id="fi2" placeholder="e.g. push:main, workflow_dispatch" />
+          <button class="fi-check" onclick="checkFill('fi2', ['push, workflow_dispatch','workflow_dispatch, push','push and workflow_dispatch'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 - ASSIGNMENT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Add a Test + Build Workflow to an Existing Repo</div>
+        <div class="module-desc">Take any of your earlier projects and bolt on a real CI pipeline</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as a hiring task: <em>"Pick any of your existing GitHub repos. Add a CI workflow that runs lint + test + build on every PR. Add a green check to the README. You have a weekend."</em> This is the single most common DevOps interview prompt for junior roles.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Pick any existing repo (yours or a fork). Must have at least 3 source files and a test command.</li>
+          <li>Create <code>.github/workflows/ci.yml</code> that triggers on push and pull_request to main</li>
+          <li>3 parallel jobs: lint, test, build (use <code>needs:</code> only where required)</li>
+          <li>Use a matrix to test against at least 2 versions of your runtime (Node 18+20, Python 3.11+3.12, etc.)</li>
+          <li>Cache dependencies via <code>actions/setup-node</code> (or equivalent) to keep CI under 2 minutes</li>
+          <li>Pin every action to a specific <code>@vN</code> tag — no <code>@main</code> or <code>@latest</code></li>
+          <li>Add a status badge to your README that links to the workflow runs</li>
+          <li>Bonus: A 4th job that builds (but does not push) a Docker image, only on push to main</li>
+          <li>Bonus: Add Trivy scanning for the Docker image and fail on HIGH/CRITICAL CVEs</li>
+          <li>Bonus: Configure branch protection so PRs cannot merge without all 3 jobs passing</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected README badge</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">[![CI](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/USER/REPO/actions/workflows/ci.yml)</span></div>
+          <br>
+          <div><span class="comment"># In a passing PR:</span></div>
+          <div><span class="output">✓ lint    (8s)</span></div>
+          <div><span class="output">✓ test    (Node 20)  (24s)</span></div>
+          <div><span class="output">✓ test    (Node 22)  (22s)</span></div>
+          <div><span class="output">✓ build   (16s)</span></div>
+          <div><span class="output"><span class="info">All checks have passed</span> — Mergeable</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Workflow runs: 25pts. Matrix correct: 20pts. Caching works: 15pts. Pinned actions: 15pts. Badge in README: 10pts. Code quality: 15pts.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Forgot <code>cache: npm</code>, used <code>@main</code>, jobs run sequentially because of unnecessary <code>needs:</code>, badge URL wrong.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch goal</div><div class="kp-desc">Add OIDC + an environment-gated production deploy step that's actually wired to a real AWS account.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct', 'wrong');
+    });
+    const opts = q.querySelectorAll('.option');
+    const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) {
+        opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      }
+      if (letters[i] === correct && chosen !== correct) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect
+      ? '✅ Correct!'
+      : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

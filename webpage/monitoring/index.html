@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Monitoring & Observability for DevOps — Prometheus, Grafana, Loki Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn monitoring and observability for DevOps from scratch: the three pillars (metrics, logs, traces), Prometheus + PromQL, Grafana dashboards, Loki for logs, alerting via Slack/Discord/email, and the on-call mindset. Hands-on stack with 30+ practice questions.">
+<meta name="keywords" content="monitoring for devops, observability tutorial, prometheus tutorial, grafana dashboards, loki logs, promql beginner, alertmanager, slack alerts, three pillars observability, devops foundations, banoqabil, node-exporter, cloudwatch grafana">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monitoring & Observability for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master observability with Prometheus, Grafana, Loki, and Slack/Discord alerts — the toolkit every DevOps engineer needs on day one.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Monitoring & Observability for DevOps — Course">
+<meta name="twitter:description" content="Hands-on monitoring: Prometheus, Grafana, Loki, alerts, dashboards, and on-call.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Monitoring & Observability for DevOps — Foundations",
+  "description": "A practical, beginner-friendly observability course for aspiring DevOps engineers. Covers why monitoring matters, the three pillars (metrics, logs, traces), Prometheus and PromQL, Grafana dashboards and variables, Loki log aggregation, instrumenting a Node.js app with prom-client, building alerts, sending alerts to Slack/Discord/email via Alertmanager, reading Grafana dashboards for cloud services, AI-assisted PromQL authoring, a complete Prometheus + Grafana + Loki stack project, and a graded CPU-alert assignment.",
+  "provider": { "@type": "EducationalOrganization", "name": "BanoQabil" },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Why monitoring + observability matter",
+    "The three pillars: metrics, logs, traces",
+    "Prometheus architecture and PromQL basics",
+    "Grafana dashboards, panels, and variables",
+    "Loki for log aggregation",
+    "Instrumenting a Node.js app with prom-client",
+    "Alertmanager — Slack, Discord, email routing",
+    "Reading Grafana dashboards for cloud services",
+    "AI-assisted PromQL and dashboard authoring",
+    "Building a full Prometheus + Grafana + Loki stack"
+  ],
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT8H" }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --green: #39d353; --cyan: #58a6ff; --orange: #f78166; --yellow: #e3b341; --purple: #bc8cff;
+    --text: #e6edf3; --muted: #8b949e; --prompt: #39d353; --topic: #f78166;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(247,129,102,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1)  { animation-delay: 0.04s; }
+  .module:nth-child(2)  { animation-delay: 0.08s; }
+  .module:nth-child(3)  { animation-delay: 0.12s; }
+  .module:nth-child(4)  { animation-delay: 0.16s; }
+  .module:nth-child(5)  { animation-delay: 0.20s; }
+  .module:nth-child(6)  { animation-delay: 0.24s; }
+  .module:nth-child(7)  { animation-delay: 0.28s; }
+  .module:nth-child(8)  { animation-delay: 0.32s; }
+  .module:nth-child(9)  { animation-delay: 0.36s; }
+  .module:nth-child(10) { animation-delay: 0.40s; }
+  .module:nth-child(11) { animation-delay: 0.44s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(247,129,102,0.1); border: 1px solid rgba(247,129,102,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ curl localhost:9090/metrics</div>
+  <h1>Monitoring &amp; <span>Observability</span><br>Instructor Guide</h1>
+  <p class="subtitle">Prometheus + Grafana + Loki — the open-source toolkit that runs on every modern DevOps team's wall.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Why Monitoring Matters — and Observability vs Monitoring</div>
+        <div class="module-desc">"You can't fix what you can't see." The 3 questions every DevOps engineer must be able to answer in 30 seconds.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with: <em>"It's 2 AM. Your phone buzzes — production is down. You have 5 minutes to answer three questions: Is it really broken? Where is it broken? What changed?"</em> If your team can't answer those, you don't have monitoring — you have <strong>guessing</strong>.</p>
+        <p class="explain-text"><strong>Monitoring</strong> tells you something is wrong (<em>"CPU is at 95%"</em>). <strong>Observability</strong> lets you ask new questions you didn't think to ask in advance (<em>"Why does CPU spike only when a Karachi user uploads a PDF on Wednesdays?"</em>). The first is dashboards + alerts. The second is high-cardinality metrics + structured logs + traces.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">on-call.sh — the 3 questions</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># 02:14 → PagerDuty: "Site is down"</span></div>
+          <br>
+          <div><span class="comment"># Q1. Is it really broken? (or just one user?)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -s -o /dev/null -w "%{http_code}" https://api.example.com/health</span></div>
+          <div><span class="output">503</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">open https://grafana.example.com/d/overview</span></div>
+          <div><span class="output">Error rate spiked from 0.2% → 28% at 02:11 UTC ✓ confirmed broken</span></div>
+          <br>
+          <div><span class="comment"># Q2. Where is it broken? (which service / region / version?)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">grafana → "errors by service"</span></div>
+          <div><span class="output">checkout-api: <span class="error-color">90% of errors</span> — others healthy</span></div>
+          <div><span class="output">→ all errors from instances tagged version=v2.4.1</span></div>
+          <br>
+          <div><span class="comment"># Q3. What changed? (deploy / config / dependency?)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">git log --since="3 hours ago" --oneline</span></div>
+          <div><span class="output">a3f1c2 deploy v2.4.1 → checkout-api  (02:08 UTC) ← 3 min before alert</span></div>
+          <br>
+          <div><span class="comment"># Decision: rollback to v2.4.0. Postmortem after.</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecs update-service --service checkout-api --task-definition checkout:42</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚨</div><div class="kp-title">Detect</div><div class="kp-desc">Alarms find problems within minutes, not hours.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Diagnose</div><div class="kp-desc">Dashboards + logs scope the blast radius — which service, which version.</div></div>
+        <div class="key-point"><div class="kp-icon">↩️</div><div class="kp-title">Decide</div><div class="kp-desc">Rollback, scale up, or page a specialist. With data, not gut feel.</div></div>
+        <div class="key-point"><div class="kp-icon">📚</div><div class="kp-title">Learn</div><div class="kp-desc">Every incident becomes a postmortem and a new alert / dashboard.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">In one sentence each, define monitoring and observability. Pick the right word for: (a) "alert when DB CPU &gt; 80%", (b) "find out which user's request triggered the 500".</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Monitoring</strong> = predefined dashboards + alerts on known signals. Answers <em>"is the thing I'm watching healthy?"</em><br>
+                <strong>Observability</strong> = ability to explore the unknown — slice metrics by arbitrary labels, search structured logs, follow traces. Answers <em>"why is this user's request slow?"</em><br><br>
+                (a) <strong>Monitoring</strong> — you knew in advance you cared about CPU.<br>
+                (b) <strong>Observability</strong> — you're asking a new question that requires high-cardinality data (user ID, request ID).
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your service has zero monitoring today. Pick the <em>first</em> two things to instrument before adding anything else. Justify in one sentence each.</div>
+            <div class="pq-hint">💡 Think "is it up?" + "is it deploying?"</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate says, "We have alerts when CPU hits 90% — that's enough." Why is alerting on resource utilisation alone often wrong? What's a better signal?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">The Three Pillars — Metrics, Logs, Traces</div>
+        <div class="module-desc">Each answers a different question. Master all three and you can debug anything.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>Metrics</strong> = numbers over time. Cheap to store, fast to aggregate, perfect for dashboards and alerts. Tools: Prometheus, CloudWatch.<br><strong>Logs</strong> = text events with structure (JSON ideally). Expensive to store, perfect for "what happened to <em>this</em> request?" Tools: Loki, ELK, CloudWatch Logs.<br><strong>Traces</strong> = the request journey across services. Answers "why is this slow?" Tools: Tempo, Jaeger, X-Ray, OpenTelemetry.</p>
+        <p class="explain-text">The three are <em>complementary</em>, not competing. A great workflow: <em>"alert fires off a metric → click into the dashboard → drill into logs for that time window → for slow requests, follow the trace"</em>.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">three-pillars.txt</div></div>
+        <div class="terminal-body">
+          <div><span class="output">                 METRICS              LOGS                 TRACES</span></div>
+          <div><span class="output">───────────────  ──────────────────  ─────────────────────  ─────────────────</span></div>
+          <div><span class="output">Shape            number @ time       structured event       request span tree</span></div>
+          <div><span class="output">Question         "what's the rate?"  "what happened?"       "where's the time?"</span></div>
+          <div><span class="output">Cardinality      LOW (limited tags)  HIGH (per-event)       VERY HIGH</span></div>
+          <div><span class="output">Storage cost     cheap               medium                 expensive</span></div>
+          <div><span class="output">Retention        90d–year+           7–30 days              7–14 days</span></div>
+          <div><span class="output">Tools            Prometheus, CW      Loki, ELK, CW Logs     Tempo, Jaeger, X-Ray</span></div>
+          <br>
+          <div><span class="comment"># Same problem, three views</span></div>
+          <div><span class="output">METRIC: http_5xx_total{service="api"}    → 28% at 02:11</span></div>
+          <div><span class="output">LOG:    {ts:..., level:"error", trace_id:"abc", msg:"DB conn refused"}</span></div>
+          <div><span class="output">TRACE:  api-handler 320ms ─ db-query 295ms ✗ ECONNREFUSED</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick the right pillar for: (a) "alert when error rate &gt; 1%", (b) "what was the body of request that crashed at 14:23?", (c) "is the slowness in our service or our DB?", (d) "track requests/sec over the last 30 days".</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>(a) Metrics</strong> — error rate is a number over time, computed via PromQL: <code>rate(http_errors_total[5m]) / rate(http_requests_total[5m])</code>.<br>
+                <strong>(b) Logs</strong> — request body is a one-off event with high cardinality. Search structured logs by trace ID or timestamp.<br>
+                <strong>(c) Traces</strong> — distributed traces show time per span (api 50ms + db 250ms = 300ms). Pin-points the bottleneck.<br>
+                <strong>(d) Metrics</strong> — long-retention numeric series; logs would be too expensive.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why are metrics "low cardinality" while logs are "high cardinality"? Why does that matter for cost?</div>
+            <div class="pq-hint">💡 Each unique label combination is a separate time series in Prometheus.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your team logs every HTTP request to CloudWatch and the bill is exploding. List two changes that cut log volume by &gt; 80% without losing debug ability.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Prometheus & PromQL Basics</div>
+        <div class="module-desc">The de-facto open-source metrics database — pull-based, time-series, queryable</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Prometheus has a deliberately simple architecture: every 15 seconds it <strong>pulls</strong> a <code>/metrics</code> endpoint from each target and stores the numbers. Targets expose metrics in a plain-text format. To monitor a Node.js app, you add the <code>prom-client</code> library; to monitor a Linux box, you run <code>node-exporter</code>.</p>
+        <p class="explain-text"><strong>PromQL</strong> is the query language. Three things to memorise: <code>rate(counter[5m])</code> (per-second rate of a counter), <code>histogram_quantile(0.95, ...)</code> (95th percentile latency), and <code>sum by (label)(...)</code> (group by). With those three, you can build 80% of dashboards.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">prometheus.yml + first queries</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># prometheus.yml — config</span></div>
+          <div><span class="cmd">global:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">scrape_interval: 15s</span></div>
+          <br>
+          <div><span class="cmd">scrape_configs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- job_name: 'node-exporter'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">static_configs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- targets: ['ec2-host:9100']</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">- job_name: 'myapp'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">metrics_path: /metrics</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">static_configs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- targets: ['app1:3000', 'app2:3000']</span></div>
+          <br>
+          <div><span class="comment"># What /metrics actually looks like</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl http://app1:3000/metrics</span></div>
+          <div><span class="output">http_requests_total{method="GET",status="200",route="/items"} 14823</span></div>
+          <div><span class="output">http_requests_total{method="GET",status="500",route="/items"} 41</span></div>
+          <div><span class="output">http_request_duration_seconds_bucket{le="0.05",route="/items"} 8200</span></div>
+          <div><span class="output">http_request_duration_seconds_bucket{le="0.1",route="/items"} 12400</span></div>
+          <div><span class="output">process_resident_memory_bytes 142360576</span></div>
+          <br>
+          <div><span class="comment"># PromQL — the 3 queries you'll write daily</span></div>
+          <br>
+          <div><span class="comment"># 1. Per-second request rate, grouped by status</span></div>
+          <div><span class="cmd">sum by (status) (rate(http_requests_total[5m]))</span></div>
+          <br>
+          <div><span class="comment"># 2. Error rate as a percentage</span></div>
+          <div><span class="cmd">sum(rate(http_requests_total{status=~"5.."}[5m]))</span></div>
+          <div><span class="cmd">  /</span></div>
+          <div><span class="cmd">sum(rate(http_requests_total[5m])) * 100</span></div>
+          <br>
+          <div><span class="comment"># 3. p95 latency by route (the SLO favourite)</span></div>
+          <div><span class="cmd">histogram_quantile(</span></div>
+          <div><span class="cmd">  0.95,</span></div>
+          <div><span class="cmd">  sum by (le, route) (rate(http_request_duration_seconds_bucket[5m]))</span></div>
+          <div><span class="cmd">)</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">scrape</span>
+        <span class="tag green">/metrics</span>
+        <span class="tag blue">node-exporter</span>
+        <span class="tag blue">prom-client</span>
+        <span class="tag yellow">rate()</span>
+        <span class="tag yellow">histogram_quantile()</span>
+        <span class="tag purple">sum by()</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Prometheus is "pull-based" while DataDog is "push-based". Why does Prometheus prefer pull, and what's one scenario where push (via Pushgateway) is needed?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Pull advantages:</strong><br>
+                1. Prometheus controls the schedule — no thundering herds when 1000 instances all push at once.<br>
+                2. Health-check by default — if a target stops responding to <code>/metrics</code>, Prometheus knows immediately (<code>up == 0</code>).<br>
+                3. Easier security — Prometheus reaches into the network; targets don't need outbound credentials.<br><br>
+                <strong>Push needed for short-lived jobs.</strong> A cron job that runs for 30 seconds may finish before Prometheus's next 15-second scrape. The job pushes its final metrics to <strong>Pushgateway</strong>, which then exposes them via pull. Use Pushgateway sparingly — it's an exception, not the default.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a PromQL query for "request error rate per route over the last 5 minutes, as a percentage."</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is using <code>increase(counter[5m])</code> often wrong, and <code>rate(counter[5m])</code> right, when alerting on a per-second threshold?</div>
+            <div class="pq-hint">💡 Units — increase is total, rate is per-second.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your <code>http_request_duration_seconds_bucket</code> has 10 buckets. What's the trade-off if you add 100 more buckets to capture finer percentile detail?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Instrumenting a Node.js App with prom-client</div>
+        <div class="module-desc">From "I have an API" to "/metrics is exposing real RED-method counters" in 20 lines</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Most apps come pre-instrumented for the basics — Express + <code>prom-client</code> gives you HTTP counters and histograms in 20 lines. Focus on the <strong>RED method</strong>: <strong>R</strong>ate, <strong>E</strong>rrors, <strong>D</strong>uration. Every endpoint should expose at least these three.</p>
+        <p class="explain-text">Naming matters. Prometheus convention: <code>&lt;namespace&gt;_&lt;name&gt;_&lt;unit&gt;</code> (snake_case, suffix is the unit). E.g., <code>myapp_http_request_duration_seconds</code>, <em>not</em> <code>requestTimeMs</code>.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">server.ts — RED instrumentation</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">import express from 'express';</span></div>
+          <div><span class="cmd">import { Counter, Histogram, Registry, collectDefaultMetrics } from 'prom-client';</span></div>
+          <br>
+          <div><span class="cmd">const registry = new Registry();</span></div>
+          <div><span class="cmd">collectDefaultMetrics({ register: registry });</span> &nbsp;<span class="comment"># node + GC metrics for free</span></div>
+          <br>
+          <div><span class="cmd">const httpRequests = new Counter({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">name: 'http_requests_total',</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">help: 'Total HTTP requests',</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">labelNames: ['method', 'route', 'status'],</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">registers: [registry],</span></div>
+          <div><span class="cmd">});</span></div>
+          <br>
+          <div><span class="cmd">const httpDuration = new Histogram({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">name: 'http_request_duration_seconds',</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">help: 'Request duration in seconds',</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">labelNames: ['method', 'route', 'status'],</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10],</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">registers: [registry],</span></div>
+          <div><span class="cmd">});</span></div>
+          <br>
+          <div><span class="cmd">const app = express();</span></div>
+          <br>
+          <div><span class="cmd">app.use((req, res, next) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const end = httpDuration.startTimer();</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">res.on('finish', () =&gt; {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">const labels = { method: req.method, route: req.route?.path ?? 'unknown', status: res.statusCode };</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">httpRequests.inc(labels);</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">end(labels);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">});</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">next();</span></div>
+          <div><span class="cmd">});</span></div>
+          <br>
+          <div><span class="cmd">app.get('/metrics', async (_req, res) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">res.set('content-type', registry.contentType);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">res.end(await registry.metrics());</span></div>
+          <div><span class="cmd">});</span></div>
+          <br>
+          <div><span class="comment"># Verify locally</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl localhost:3000/metrics | grep http_requests_total</span></div>
+          <div><span class="output">http_requests_total{method="GET",route="/items",status="200"} 14823</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔢</div><div class="kp-title">Counter</div><div class="kp-desc">Only goes up. Use for "total things that happened" — requests, errors, jobs.</div></div>
+        <div class="key-point"><div class="kp-icon">📈</div><div class="kp-title">Gauge</div><div class="kp-desc">Up or down. Use for "current value" — queue depth, active connections.</div></div>
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Histogram</div><div class="kp-desc">Buckets that record distribution. Use for latency / sizes — supports percentile queries.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">RED method</div><div class="kp-desc">Rate, Errors, Duration. The 3 metrics every HTTP service must expose.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick Counter or Gauge for: (a) "messages processed since boot", (b) "current queue depth", (c) "5xx responses today", (d) "active websocket connections".</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why include <code>route</code> as a label, but not <code>user_id</code>? What's the cardinality consequence?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Each unique label-value combination becomes a separate time series in Prometheus. <code>route</code> has maybe 10–50 distinct values (your endpoints) — manageable. <code>user_id</code> has potentially millions of values — every user creates a new time series, and Prometheus's storage + memory blow up linearly.<br><br>
+                Rule of thumb: <strong>label cardinality should be bounded and small</strong>. Anything user-scoped (user ID, request ID, IP) belongs in logs or traces, not metrics. If you genuinely need per-user metrics, sample / aggregate before exporting (e.g. "top 10 users by request count").
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate names a metric <code>request_time_in_milliseconds</code>. Suggest two improvements following Prometheus naming conventions.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why default histogram buckets <code>[0.005, 0.01, 0.025, ..., 10]</code> are a poor fit for an API where p95 is 20ms? What buckets would you pick instead?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Grafana — Dashboards, Variables, and Cloud Datasources</div>
+        <div class="module-desc">The visual layer over Prometheus, Loki, CloudWatch, and a hundred other backends</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Grafana doesn't store metrics — it queries other systems and visualises the result. You add <strong>data sources</strong> (Prometheus, Loki, CloudWatch, Postgres), build <strong>dashboards</strong> with <strong>panels</strong>, and use <strong>variables</strong> to make a single dashboard work for many environments / services.</p>
+        <p class="explain-text">A good dashboard has <em>fewer</em> panels, not more. Ben Kraft's "<strong>RED dashboard</strong>" for an HTTP service is just three panels (Rate, Errors, Duration). USE for hosts (Utilisation, Saturation, Errors). Master those two layouts and you can read any dashboard in 30 seconds.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">grafana — provisioned dashboard</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># datasources.yaml — auto-provisioned on Grafana start</span></div>
+          <div><span class="cmd">apiVersion: 1</span></div>
+          <div><span class="cmd">datasources:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: Prometheus</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">type: prometheus</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">url: http://prometheus:9090</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">isDefault: true</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: Loki</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">type: loki</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">url: http://loki:3100</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: CloudWatch</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">type: cloudwatch</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">jsonData: { defaultRegion: eu-west-1 }</span></div>
+          <br>
+          <div><span class="comment"># RED dashboard — 3 panels for an HTTP service</span></div>
+          <br>
+          <div><span class="output">┌─────────────────────────────────────────────────────────────────┐</span></div>
+          <div><span class="output">│ Rate                Errors              Duration p95           │</span></div>
+          <div><span class="output">│  ▁▂▃▆▇▆▅▄         ▁▁▁▁▁▁▂▁          ▂▂▂▃▃▂▂▂                │</span></div>
+          <div><span class="output">│  142 req/s         0.3% errors        38ms                     │</span></div>
+          <div><span class="output">└─────────────────────────────────────────────────────────────────┘</span></div>
+          <br>
+          <div><span class="comment"># Variable: $service — one dashboard, all services</span></div>
+          <div><span class="cmd">label_values(http_requests_total, service)</span></div>
+          <br>
+          <div><span class="comment"># Panel queries reference $service</span></div>
+          <div><span class="cmd">sum by (status) (rate(http_requests_total{service="$service"}[5m]))</span></div>
+          <br>
+          <div><span class="comment"># Cloud datasource — query CloudWatch from Grafana</span></div>
+          <div><span class="cmd">SELECT AVG(CPUUtilization) FROM "AWS/EC2"</span></div>
+          <div><span class="cmd">  WHERE InstanceId = '$instance' GROUP BY interval(5m)</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag yellow">datasource</span>
+        <span class="tag yellow">panel</span>
+        <span class="tag green">variable</span>
+        <span class="tag blue">RED dashboard</span>
+        <span class="tag blue">USE method</span>
+        <span class="tag purple">CloudWatch DS</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A dashboard has 47 panels. Why is this an anti-pattern? Suggest the rule for what should and shouldn't be on the front page.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                A dashboard with 47 panels is unreadable in an incident — it takes 5 minutes to find the broken one. The <strong>front-page</strong> dashboard should answer one question: <em>"Is the service healthy?"</em> 5–8 panels max, big and obvious.<br><br>
+                Rule: <strong>front page = SLI / RED / USE only</strong>. Drilldowns (per-route latency, per-customer error rate, GC pauses) belong on linked sub-dashboards. Use <strong>row collapse</strong> + drilldown links to keep things tiered.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain RED (Rate, Errors, Duration) vs USE (Utilisation, Saturation, Errors). When would you use each?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A dashboard variable <code>$service</code> uses <code>label_values(http_requests_total, service)</code>. What happens if no metrics with that label exist yet (e.g., new env)?</div>
+            <div class="pq-hint">💡 Variable returns empty → all queries become invalid.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Loki — Log Aggregation that Plays Nicely with Grafana</div>
+        <div class="module-desc">"Prometheus, but for logs" — same labels, same Grafana, much cheaper than ELK</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>Loki</strong> takes a different approach from Elasticsearch: it indexes only the <em>labels</em> (service, level, host), not the message body. This makes it 10–100× cheaper than ELK at the cost of slower full-text search. For most DevOps teams that's the right trade — <em>"give me all logs for service=api, level=error in the last hour"</em> is fast; brute-force "find the word 'kafka'" is slow.</p>
+        <p class="explain-text">The query language is <strong>LogQL</strong> — basically PromQL but for logs. <code>{service="api"} |= "ERROR"</code> filters; <code>rate(...)</code> turns logs into a metric. You can plot log-derived metrics on the same dashboard as Prometheus metrics — that's the killer feature.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">loki — promtail config + LogQL</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># promtail.yml — log shipper (one per host or k8s daemonset)</span></div>
+          <div><span class="cmd">clients:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- url: http://loki:3100/loki/api/v1/push</span></div>
+          <br>
+          <div><span class="cmd">scrape_configs:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- job_name: containers</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">docker_sd_configs: [{ host: unix:///var/run/docker.sock }]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">relabel_configs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- source_labels: [__meta_docker_container_label_service]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">target_label: service</span></div>
+          <br>
+          <div><span class="comment"># LogQL — three queries you'll write often</span></div>
+          <br>
+          <div><span class="comment"># 1. All errors from the api service in the last 15 minutes</span></div>
+          <div><span class="cmd">{service="api", level="error"}</span></div>
+          <br>
+          <div><span class="comment"># 2. Filter further by message substring</span></div>
+          <div><span class="cmd">{service="api"} |= "DB connection refused"</span></div>
+          <br>
+          <div><span class="comment"># 3. Turn logs INTO a metric — error rate per minute</span></div>
+          <div><span class="cmd">sum by (service) (</span></div>
+          <div><span class="cmd">  rate({level="error"}[1m])</span></div>
+          <div><span class="cmd">)</span></div>
+          <br>
+          <div><span class="comment"># 4. Parse JSON logs in LogQL</span></div>
+          <div><span class="cmd">{service="api"} | json | latency &gt; 500</span> &nbsp;<span class="comment"># slow requests only</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Loki indexes labels, not log bodies. Name two trade-offs of this design (one win, one loss).</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Win — cost:</strong> indexing only labels keeps storage 10–100× cheaper than Elasticsearch. A small team can keep 90 days of logs for under $50/month.<br><br>
+                <strong>Loss — search speed:</strong> full-text searches without a label filter ("find the word 'oom' anywhere") are linear scans over compressed chunks — slow on large volumes. Always query with at least one label filter (<code>{service="api"} |= "oom"</code>) so Loki can prune to the relevant chunks first.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is structured (JSON) logging important in a Loki workflow?</div>
+            <div class="pq-hint">💡 LogQL <code>| json</code> parses fields you can filter on.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a LogQL query that finds API logs where the parsed JSON field <code>latency_ms</code> is greater than 1000.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Alerting — Alertmanager, Slack/Discord, and the "Wake Me Up" Rule</div>
+        <div class="module-desc">An alert that doesn't require a human action is a notification, not an alert</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Bad alerts erode trust faster than no alerts. Two rules: <strong>(1)</strong> every alert must have a <em>runbook</em> linking what to do, and <strong>(2)</strong> if an alert can't be acted on, it shouldn't page — it should be a notification or a dashboard signal.</p>
+        <p class="explain-text">Architecture: Prometheus evaluates <strong>alerting rules</strong> against metrics. Firing alerts go to <strong>Alertmanager</strong>, which de-duplicates, groups, silences, and <em>routes</em> them to Slack / Discord / email / PagerDuty based on labels (severity, team).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">alerts.yml + alertmanager.yml</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># alerts.yml — Prometheus alerting rules</span></div>
+          <div><span class="cmd">groups:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: api</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">rules:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- alert: HighErrorRate</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">expr: |</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">sum(rate(http_requests_total{status=~"5.."}[5m]))</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">  / sum(rate(http_requests_total[5m])) &gt; 0.02</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">for: 5m</span> &nbsp;<span class="comment"># must persist 5 min before firing</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">labels: { severity: page, team: backend }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">annotations:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">summary: 'API error rate &gt; 2% (current {{ $value | humanizePercentage }})'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runbook: https://wiki.example.com/runbooks/api-errors</span></div>
+          <br>
+          <div><span class="comment"># alertmanager.yml — routing</span></div>
+          <div><span class="cmd">route:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">group_by: [alertname, service]</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">group_wait: 30s</span> &nbsp;<span class="comment"># batch alerts arriving in same window</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">repeat_interval: 4h</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">receiver: slack-default</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">routes:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- matchers: [severity="page"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">receiver: pagerduty-oncall</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- matchers: [severity="warn"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">receiver: slack-default</span></div>
+          <br>
+          <div><span class="cmd">receivers:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: slack-default</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">slack_configs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- api_url: 'https://hooks.slack.com/services/T0/B0/XXXXX'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">channel: '#alerts'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">title: '{{ .CommonAnnotations.summary }}'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">text: 'Runbook: {{ .CommonAnnotations.runbook }}'</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">- name: discord</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">webhook_configs:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- url: 'https://discord.com/api/webhooks/...'</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📖</div><div class="kp-title">Runbook required</div><div class="kp-desc">Every alert links to "what to do." If you can't write one, the alert isn't ready.</div></div>
+        <div class="key-point"><div class="kp-icon">⏳</div><div class="kp-title">for: 5m</div><div class="kp-desc">Persist condition before firing. Kills 90% of false positives from spikes.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Alert on symptoms</div><div class="kp-desc">Error rate, latency — what users feel. Not "CPU high" (that's a cause).</div></div>
+        <div class="key-point"><div class="kp-icon">🔇</div><div class="kp-title">Silences for maintenance</div><div class="kp-desc">Use Alertmanager silences during planned work — don't disable rules.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Two pages a week from a single alert no one ever takes action on. List three changes to consider — without disabling the alert.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "alert when CPU &gt; 90%" usually a worse alert than "alert when API error rate &gt; 1%"?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                CPU = <strong>cause</strong>. Error rate = <strong>symptom</strong>.<br><br>
+                A service can run at 95% CPU and serve every user fine (it's just busy). A service can run at 30% CPU and be returning 500s to half the world (a downstream is broken). Alerting on CPU pages you when no one is suffering, and stays silent when they are.<br><br>
+                Modern SRE practice: alert on <strong>SLI breaches</strong> — error rate, latency, availability — and use CPU only as a diagnostic signal during incident response. (The Google SRE workbook calls this "page on symptoms, dashboard on causes.")
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the Slack webhook config in Alertmanager that posts <strong>only</strong> alerts with <code>severity=page</code> to channel <code>#oncall</code>.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate wants to silence an alert during a 2-hour deploy window. How do you do this without editing alert rules?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 - AI -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI to Write PromQL, LogQL & Grafana Dashboards</div>
+        <div class="module-desc">PromQL is concise but tricky — exactly the shape AI is best at</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">PromQL syntax (<code>rate</code>, <code>histogram_quantile</code>, label matchers) is concise but unforgiving. AI shines here: describe the question in English, get the query, then refine. Same for Grafana dashboard JSON — AI can scaffold a 5-panel RED dashboard from a description, saving an hour of clicking.</p>
+        <p class="explain-text">The trap: AI sometimes invents <strong>metric names</strong> that don't exist in your fleet (<code>http_requests_total</code> exists; <code>app_user_requests</code> probably doesn't). Always verify by querying the metric first in Prometheus's expression browser.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">AI prompts for observability</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight"># ✅ Strong PromQL prompt</span></div>
+          <div><span class="comment">"Write PromQL queries for an HTTP service exposing these metrics:</span></div>
+          <div><span class="comment"> - http_requests_total{method, route, status}  (counter)</span></div>
+          <div><span class="comment"> - http_request_duration_seconds_bucket{method, route, status, le}  (histogram)</span></div>
+          <div><span class="comment">Give me:</span></div>
+          <div><span class="comment"> 1. Per-route requests/sec over 5 min</span></div>
+          <div><span class="comment"> 2. p95 latency per route</span></div>
+          <div><span class="comment"> 3. 5xx error ratio over 5 min as a percentage</span></div>
+          <div><span class="comment"> 4. SLO burn-rate alert: error budget for 99.9% availability over 30 days</span></div>
+          <div><span class="comment">Use the proper rate() / histogram_quantile() forms."</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong LogQL prompt</span></div>
+          <div><span class="comment">"Write LogQL for Loki to find: (a) all error logs from service=api in last 1h,</span></div>
+          <div><span class="comment"> (b) requests where parsed JSON field 'latency_ms' &gt; 1000,</span></div>
+          <div><span class="comment"> (c) error rate per minute as a metric for a Grafana panel."</span></div>
+          <br>
+          <div><span class="comment"># Verify before pasting into a dashboard</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -G "http://prometheus:9090/api/v1/query" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--data-urlencode 'query=&lt;the AI-generated query&gt;'</span></div>
+          <div><span class="output">"resultType": "vector", "result": [...]</span> &nbsp;<span class="comment"># non-empty = the metric exists</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take "show me errors in Grafana" and turn it into a 5-bullet detailed prompt that produces a working PromQL query.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI-generated PromQL uses <code>http_requests</code> (no <code>_total</code>). Why might the query work locally but break in production, and what's the convention?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Prometheus convention: <strong>counters MUST end in <code>_total</code></strong>. Tools like the <code>rate()</code> function and the Prometheus operator's auto-generated rules assume this naming.<br><br>
+                If your local app exposes <code>http_requests</code> (without <code>_total</code>), AI's query <code>rate(http_requests[5m])</code> works in your dev cluster — but breaks the moment it gets renamed in prod, or when a teammate writes the same query and assumes the canonical <code>_total</code> name.<br><br>
+                Always verify against your actual <code>/metrics</code> endpoint before merging an AI-generated query.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is asking AI to "generate a complete Grafana dashboard JSON" usually less useful than asking for individual panel queries?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - PROJECT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Full Prometheus + Grafana + Loki Stack via Docker Compose</div>
+        <div class="module-desc">Bring up the whole observability stack on your laptop in one command, instrument an app, see metrics + logs together</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Walk through this on screen first. Once it works locally, students take the same compose stack and adapt it for their EC2 instances or homelab. The shape — Prometheus + node-exporter + Grafana + Loki + Promtail — is the same in production, just with persistent volumes, auth, and TLS in front.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">compose.yaml — full stack</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">services:</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">app:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">build: ./app</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ports: ["3000:3000"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">labels: { service: api }</span> &nbsp;<span class="comment"># for Loki to pick up</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">prometheus:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: prom/prometheus:latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">volumes: ['./prometheus.yml:/etc/prometheus/prometheus.yml']</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ports: ["9090:9090"]</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">node-exporter:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: prom/node-exporter:latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">pid: host</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">loki:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: grafana/loki:latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ports: ["3100:3100"]</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">promtail:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: grafana/promtail:latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">volumes:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- /var/run/docker.sock:/var/run/docker.sock</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- ./promtail.yml:/etc/promtail/config.yml</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">grafana:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: grafana/grafana:latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ports: ["3001:3000"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment: { GF_SECURITY_ADMIN_PASSWORD: admin }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">volumes:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- ./grafana/datasources:/etc/grafana/provisioning/datasources</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- ./grafana/dashboards:/etc/grafana/provisioning/dashboards</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">docker compose up -d</span></div>
+          <div><span class="output">✓ prometheus  ✓ node-exporter  ✓ loki  ✓ promtail  ✓ grafana  ✓ app</span></div>
+          <div><span class="output">Open Grafana → http://localhost:3001  (admin / admin)</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">All in one compose</div><div class="kp-desc">6 services, one <code>up -d</code>. Lower the barrier to "I have monitoring."</div></div>
+        <div class="key-point"><div class="kp-icon">🗂️</div><div class="kp-title">Provisioned datasources</div><div class="kp-desc">Grafana sees Prometheus + Loki on first boot — no clicking through wizards.</div></div>
+        <div class="key-point"><div class="kp-icon">🔗</div><div class="kp-title">Metrics + logs linked</div><div class="kp-desc">Click a Grafana panel → "show logs at this time" → Loki opens with the same window.</div></div>
+        <div class="key-point"><div class="kp-icon">🚀</div><div class="kp-title">Production shape</div><div class="kp-desc">Same setup with persistent volumes + auth + TLS = a real prod deployment.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 - QUIZ -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Observability Basics, Grafana & Alerting</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. The "three pillars of observability" are:</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> Dashboards, alerts, runbooks</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q1','b')"><div class="opt-letter">B</div> Metrics, logs, traces</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Prometheus, Grafana, Loki</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> CPU, memory, disk</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. Prometheus is mostly:</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q2','a')"><div class="opt-letter">A</div> Pull-based — scrapes /metrics endpoints</div>
+        <div class="option" onclick="answer('q2','b')"><div class="opt-letter">B</div> Push-based — apps push metrics to Prometheus</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Log-based — parses log files</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Trace-based — follows request spans</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. Best metric-type for "current queue depth"?</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Counter</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q3','b')"><div class="opt-letter">B</div> Gauge</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Histogram</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Summary</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. To get p95 latency you query:</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> rate(http_request_duration[5m])</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> avg(http_request_duration_seconds)</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q4','c')"><div class="opt-letter">C</div> histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> max(http_request_duration_seconds)</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Best practice — alert on:</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> CPU &gt; 90% always</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> Symptoms users care about (error rate, latency)</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> Anything that changes</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> Disk &gt; 50% — early warning</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: PromQL — error rate as a percentage over 5 minutes (assume <code>http_requests_total{status}</code>).</div>
+          <input type="text" id="fi1" placeholder="sum(rate(...)) / sum(rate(...)) * 100" />
+          <button class="fi-check" onclick="checkFill('fi1', ['sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) * 100'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: LogQL — all <code>error</code>-level logs from <code>service=api</code>.</div>
+          <input type="text" id="fi2" placeholder='{service=...} ...' />
+          <button class="fi-check" onclick='checkFill(&apos;fi2&apos;, [&apos;{service=&quot;api&quot;, level=&quot;error&quot;}&apos;, &apos;{service=&quot;api&quot;,level=&quot;error&quot;}&apos;])'>Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 - ASSIGNMENT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Slack/Discord Alert when CPU Exceeds 80%</div>
+        <div class="module-desc">A real, end-to-end alerting pipeline: instrument → scrape → rule → route → message in chat</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as the on-call setup task: <em>"By Monday, CPU above 80% on any of our hosts must post a message to <code>#alerts</code> in Slack within 2 minutes."</em> Forces them to integrate Prometheus + node-exporter + Alertmanager + a Slack/Discord webhook end-to-end.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Run the Compose stack from Module 9 (Prometheus + Grafana + Loki + node-exporter + Alertmanager)</li>
+          <li>Configure Prometheus to scrape <code>node-exporter</code> on at least one host (your laptop or an EC2)</li>
+          <li>Write a Prometheus alerting rule: <code>HighCpu</code> fires when 1-minute average CPU usage on any host &gt; 80% for 2 minutes</li>
+          <li>Wire Alertmanager to a Slack incoming webhook OR Discord webhook (your choice)</li>
+          <li>Alert payload must include: hostname, current value (formatted), runbook URL (a placeholder is fine)</li>
+          <li>Demonstrate end-to-end by running <code>stress --cpu 4 --timeout 180</code> and showing the resulting Slack/Discord post</li>
+          <li>Add a Grafana dashboard with one panel: CPU usage per host, last 1 hour</li>
+          <li>Bonus: Add a <code>severity</code> label and route <code>severity=warn</code> to a different channel than <code>severity=page</code></li>
+          <li>Bonus: Add a silence via Alertmanager during a "maintenance window" — show the alert is suppressed</li>
+          <li>Bonus: Add a CPU-usage SLO ("CPU below 70% for 99% of the month") and a burn-rate alert</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected slack message</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color">🚨 [FIRING] HighCpu — host: laptop-01</span></div>
+          <div><span class="output">CPU usage: 91.2% (threshold: 80%)</span></div>
+          <div><span class="output">Started: 14:23 UTC · Severity: page</span></div>
+          <div><span class="info">Runbook: https://wiki.example.com/runbooks/high-cpu</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Stack runs: 25. Rule fires correctly: 25. Slack/Discord delivery: 20. Dashboard panel: 15. Runbook + labels: 15.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Forgot <code>for: 2m</code> (alerts flap), used <code>node_cpu_seconds_total</code> directly (need <code>rate</code> + <code>(1 - idle)</code>), webhook URL pasted in repo.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Replace CPU with a real SLI — request error rate, p95 latency. CPU is a teaching example, not a great real-world signal.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

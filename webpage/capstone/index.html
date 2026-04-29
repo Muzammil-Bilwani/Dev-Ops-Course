@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Capstone Project — Full DevOps Pipeline End-to-End | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Build a complete DevOps capstone project: Terraform infrastructure, Docker containerisation, GitHub Actions CI/CD with OIDC, AWS deployment, Grafana monitoring, Trivy security scanning, and a 30-minute final assessment. The full-stack DevOps pipeline from code to production.">
+<meta name="keywords" content="devops capstone project, full devops pipeline, terraform aws ec2, docker compose devops, github actions OIDC, grafana prometheus monitoring, trivy security scanning, devops final project, banoqabil capstone, muzammil bilwani devops, devops portfolio project">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Capstone Project — Full DevOps Pipeline End-to-End | BanoQabil">
+<meta property="og:description" content="The final module: build a complete production-grade DevOps pipeline with Terraform, Docker, GitHub Actions OIDC, AWS, Grafana monitoring, and Trivy security scanning.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevOps Capstone Project — BanoQabil Foundations">
+<meta name="twitter:description" content="End-to-end DevOps pipeline: Terraform + Docker + CI/CD + AWS + Monitoring + Security. The final project that brings everything together.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Capstone Project — Full DevOps Pipeline End-to-End",
+  "description": "The final capstone module of the BanoQabil DevOps Foundations course. Students build a complete production-grade application with Terraform-provisioned AWS infrastructure, Docker containerisation, GitHub Actions CI/CD with OIDC, AWS deployment (EC2/ECS), Grafana + Prometheus monitoring, Trivy security scanning, and present at a 30-minute Q&A panel.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Intermediate",
+  "inLanguage": "en",
+  "teaches": [
+    "End-to-end DevOps pipeline design",
+    "Terraform infrastructure provisioning on AWS",
+    "Docker and Docker Compose containerisation",
+    "GitHub Actions CI/CD with OIDC AWS authentication",
+    "End-to-end testing of microservices",
+    "AWS deployment strategies (EC2, ECS, Elastic Beanstalk)",
+    "CloudFront rollback scenarios",
+    "Grafana and Prometheus monitoring and alerting",
+    "Trivy image scanning and secrets review",
+    "DevOps documentation and architecture diagrams"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT20H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #39d353;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--topic); }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--topic); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--cyan); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(57,211,83,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1)  { animation-delay: 0.05s; }
+  .module:nth-child(2)  { animation-delay: 0.1s; }
+  .module:nth-child(3)  { animation-delay: 0.15s; }
+  .module:nth-child(4)  { animation-delay: 0.2s; }
+  .module:nth-child(5)  { animation-delay: 0.25s; }
+  .module:nth-child(6)  { animation-delay: 0.3s; }
+  .module:nth-child(7)  { animation-delay: 0.35s; }
+  .module:nth-child(8)  { animation-delay: 0.4s; }
+  .module:nth-child(9)  { animation-delay: 0.45s; }
+  .module:nth-child(10) { animation-delay: 0.5s; }
+  .module:nth-child(11) { animation-delay: 0.55s; }
+  .module:nth-child(12) { animation-delay: 0.6s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--topic);
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+
+  .quiz-q .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+
+  .quiz-q .option .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .fill-in {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+
+  .fill-in input {
+    background: #010409;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .fill-in input:focus { border-color: var(--green); }
+
+  .fill-in .fi-check {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(188,140,255,0.05);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--purple);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(188,140,255,0.12);
+  }
+
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(57,211,83,0.06);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--green);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(57,211,83,0.08);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="../index.html">← Back to all topics</a>
+  <div class="badge">$ terraform apply && docker build && gh workflow run deploy</div>
+  <h1>DevOps <span>Capstone</span> Project</h1>
+  <p class="subtitle">Build a complete production-grade DevOps pipeline — Terraform → Docker → CI/CD → AWS → Monitoring → Security</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Capstone Overview — What You're Building</div>
+        <div class="module-desc">Architecture, tech stack, deliverables — the full picture before you write a single line</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>The capstone at a glance</h3>
+        <p class="explain-text">The capstone is a complete, production-grade DevOps project that integrates every module in this course into one coherent system. You'll provision infrastructure with Terraform, containerise an app with Docker, automate deployments with GitHub Actions (OIDC, no long-lived keys), deploy to AWS, add Grafana + Prometheus monitoring, and harden the pipeline with Trivy security scanning. The final deliverable is a working system + polished documentation + a 30-minute live walkthrough.</p>
+        <p class="explain-text">Pick any simple full-stack app (a Node.js REST API + React frontend, a Python Flask API, etc.). The DevOps layer — not the app code — is what you're graded on.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — capstone-architecture.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### CAPSTONE STACK ###</span></div>
+          <br>
+          <div><span class="highlight">Infrastructure (Terraform)</span></div>
+          <div><span class="output">  VPC + subnets + security groups</span></div>
+          <div><span class="output">  EC2 instance (or ECS cluster) for the app</span></div>
+          <div><span class="output">  S3 bucket for Terraform state</span></div>
+          <div><span class="output">  IAM roles for OIDC GitHub Actions trust</span></div>
+          <br>
+          <div><span class="highlight">Application (Docker)</span></div>
+          <div><span class="output">  Dockerfile (multi-stage, non-root USER)</span></div>
+          <div><span class="output">  docker-compose.yml (app + postgres + monitoring)</span></div>
+          <div><span class="output">  Image pushed to AWS ECR</span></div>
+          <br>
+          <div><span class="highlight">CI/CD (GitHub Actions)</span></div>
+          <div><span class="output">  PR: lint → test → Trivy scan → build</span></div>
+          <div><span class="output">  Main: push to ECR → deploy to EC2/ECS</span></div>
+          <div><span class="output">  OIDC: no AWS_SECRET_ACCESS_KEY in secrets</span></div>
+          <br>
+          <div><span class="highlight">Monitoring (Grafana + Prometheus)</span></div>
+          <div><span class="output">  Prometheus scrapes app + node_exporter</span></div>
+          <div><span class="output">  Grafana dashboard: RED metrics + CPU/memory</span></div>
+          <div><span class="output">  Alertmanager: CPU alert → Slack webhook</span></div>
+          <br>
+          <div><span class="highlight">Security</span></div>
+          <div><span class="output">  Trivy image scan in CI — CRITICAL blocks deploy</span></div>
+          <div><span class="output">  gitleaks pre-commit hook</span></div>
+          <div><span class="output">  Secrets in AWS Secrets Manager, not .env</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🏗️</div><div class="kp-title">Everything as code</div><div class="kp-desc">No manual clicks. Infrastructure, pipelines, dashboards — all version-controlled.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Full deploy loop</div><div class="kp-desc">A git push triggers lint → test → build → scan → push to ECR → deploy — no manual steps.</div></div>
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Observable from day one</div><div class="kp-desc">Grafana is part of the initial Compose stack — not added as an afterthought.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Secure by design</div><div class="kp-desc">Trivy scans, no secrets in code, OIDC auth, non-root containers — baked in from the start.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">capstone</span>
+        <span class="tag blue">aws</span>
+        <span class="tag purple">terraform</span>
+        <span class="tag orange">docker</span>
+        <span class="tag yellow">github-actions</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Draw (on paper or in a diagram tool) your capstone architecture. Label each component: where does Terraform start? Where does the CI pipeline hand off to the app? Where does Prometheus scrape from?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Expected diagram flow: GitHub repo → GitHub Actions (CI) → Trivy scan → ECR push → SSH/ECS deploy to EC2 (provisioned by Terraform). On the EC2: Docker Compose runs app + Prometheus + Grafana. Prometheus scrapes app (:3000/metrics) and node_exporter (:9100). Alertmanager sends alerts to Slack. Terraform state lives in S3.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does the capstone use OIDC for GitHub Actions → AWS authentication instead of storing <code>AWS_ACCESS_KEY_ID</code> as a GitHub secret? What specific attack does OIDC prevent?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your teammate asks: "Why do we need Terraform if we can just click through the AWS console?" Write a 3-sentence answer that references state management, team collaboration, and reproducibility.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Terraform — Provision AWS Infrastructure</div>
+        <div class="module-desc">VPC, EC2, IAM OIDC role, S3 state backend — infrastructure as code from scratch</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Infrastructure layer</h3>
+        <p class="explain-text">The Terraform layer provisions everything the app needs to run: a VPC, a public subnet, a security group (ports 22, 80, 443, 9090 for Prometheus, 3000 for Grafana), an EC2 instance with an IAM instance profile, an ECR repository, an S3 bucket for Terraform state, and — critically — an IAM OIDC provider and role that GitHub Actions can assume without long-lived keys.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — terraform-structure.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Directory layout for capstone Terraform</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">tree infra/</span></div>
+          <div><span class="output">infra/</span></div>
+          <div><span class="output">├── main.tf          # VPC, subnet, security group, EC2</span></div>
+          <div><span class="output">├── iam.tf           # OIDC provider + GitHub Actions role</span></div>
+          <div><span class="output">├── ecr.tf           # ECR repository</span></div>
+          <div><span class="output">├── outputs.tf       # EC2 public IP, ECR URL, role ARN</span></div>
+          <div><span class="output">├── variables.tf     # region, instance_type, github_repo</span></div>
+          <div><span class="output">├── terraform.tfvars # var values (never commit secrets)</span></div>
+          <div><span class="output">└── backend.tf       # S3 + DynamoDB remote state</span></div>
+          <br>
+          <div><span class="comment"># Bootstrap once (chicken-and-egg: S3 bucket before Terraform)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 mb s3://capstone-tfstate-${RANDOM}</span></div>
+          <div><span class="output">make_bucket: capstone-tfstate-14423</span></div>
+          <br>
+          <div><span class="comment"># Then provision everything else</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cd infra && terraform init && terraform plan -out=tfplan</span></div>
+          <div><span class="output">Plan: 14 to add, 0 to change, 0 to destroy.</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">terraform apply tfplan</span></div>
+          <div><span class="output"><span class="highlight">Apply complete! Resources: 14 added, 0 changed, 0 destroyed.</span></span></div>
+          <br>
+          <div><span class="comment"># Grab outputs for GitHub Actions secrets</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">terraform output -raw ecr_url</span></div>
+          <div><span class="output">123456789.dkr.ecr.ap-southeast-1.amazonaws.com/capstone</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">terraform output -raw github_actions_role_arn</span></div>
+          <div><span class="output">arn:aws:iam::123456789:role/github-actions-capstone</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">OIDC role in Terraform</div><div class="kp-desc">Create the GitHub OIDC provider and IAM role in <code>iam.tf</code> — the role ARN becomes a GitHub Actions env var.</div></div>
+        <div class="key-point"><div class="kp-icon">🗄️</div><div class="kp-title">Remote state first</div><div class="kp-desc">Bootstrap the S3 bucket manually once, then all Terraform state lives remotely — safe for team use.</div></div>
+        <div class="key-point"><div class="kp-icon">📤</div><div class="kp-title">Outputs drive the pipeline</div><div class="kp-desc">ECR URL, EC2 IP, and role ARN as Terraform outputs flow directly into GitHub Actions environment variables.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Destroy safely</div><div class="kp-desc"><code>terraform destroy</code> tears down the whole stack cleanly — great for cost control while iterating.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">terraform</span>
+        <span class="tag blue">aws-iam</span>
+        <span class="tag green">oidc</span>
+        <span class="tag yellow">ec2</span>
+        <span class="tag orange">ecr</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the Terraform <code>iam.tf</code> snippet that creates an OIDC provider for GitHub Actions and an IAM role that trusts it. The role should allow push to ECR and describe EC2 instances.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body"><code>resource "aws_iam_openid_connect_provider" "github" {
+  url             = "https://token.actions.githubusercontent.com"
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+}
+
+resource "aws_iam_role" "github_actions" {
+  name = "github-actions-capstone"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Federated = aws_iam_openid_connect_provider.github.arn }
+      Action    = "sts:AssumeRoleWithWebIdentity"
+      Condition = {
+        StringLike = {
+          "token.actions.githubusercontent.com:sub" = "repo:YOUR_ORG/YOUR_REPO:*"
+        }
+      }
+    }]
+  })
+}</code></div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What does <code>terraform output -raw ecr_url</code> return and why is piping this value into a GitHub Actions secret better than hardcoding it?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">You run <code>terraform plan</code> and see "14 to add, 0 to change, 0 to destroy." You then run it again immediately. What does Terraform report and why?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Docker — Containerise the Application</div>
+        <div class="module-desc">Multi-stage Dockerfile, non-root user, Docker Compose with healthchecks, push to ECR</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Container layer</h3>
+        <p class="explain-text">The application runs inside Docker containers — both locally (via Compose) and on EC2/ECS in production. A production-grade Dockerfile uses multi-stage builds to keep the final image small, runs as a non-root user, and exposes only the necessary port. The Compose file adds PostgreSQL, Prometheus, Grafana, and node_exporter as sidecar services.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">dockerfile — Dockerfile</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Stage 1: build</span></div>
+          <div><span class="highlight">FROM</span> <span class="output">node:20-alpine AS builder</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="output">/app</span></div>
+          <div><span class="highlight">COPY</span> <span class="output">package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="output">npm ci --only=production</span></div>
+          <div><span class="highlight">COPY</span> <span class="output">. .</span></div>
+          <div><span class="highlight">RUN</span> <span class="output">npm run build</span></div>
+          <br>
+          <div><span class="comment"># Stage 2: runtime (no dev deps, no build tools)</span></div>
+          <div><span class="highlight">FROM</span> <span class="output">node:20-alpine</span></div>
+          <div><span class="highlight">RUN</span> <span class="output">addgroup -S appgroup && adduser -S appuser -G appgroup</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="output">/app</span></div>
+          <div><span class="highlight">COPY</span> <span class="output">--from=builder /app/dist ./dist</span></div>
+          <div><span class="highlight">COPY</span> <span class="output">--from=builder /app/node_modules ./node_modules</span></div>
+          <div><span class="highlight">USER</span> <span class="output">appuser</span></div>
+          <div><span class="highlight">EXPOSE</span> <span class="output">3000</span></div>
+          <div><span class="highlight">CMD</span> <span class="output">["node", "dist/server.js"]</span></div>
+          <br>
+          <div><span class="comment"># Build and push to ECR</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t capstone:latest .</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker tag capstone:latest $ECR_URL:latest</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URL</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker push $ECR_URL:latest</span></div>
+          <div><span class="output"><span class="highlight">latest: digest: sha256:abc123... size: 28476</span></span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🏗️</div><div class="kp-title">Multi-stage build</div><div class="kp-desc">Builder stage compiles; runtime stage runs. Dev dependencies never reach production.</div></div>
+        <div class="key-point"><div class="kp-icon">👤</div><div class="kp-title">Non-root USER</div><div class="kp-desc">Running as root in a container means a breakout gives full host access. Always create a dedicated user.</div></div>
+        <div class="key-point"><div class="kp-icon">🔗</div><div class="kp-title">Compose for local dev</div><div class="kp-desc">One <code>docker compose up</code> starts the full stack: app + database + monitoring. Mirrors production.</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">ECR as registry</div><div class="kp-desc">AWS ECR is private, co-located with your ECS/EC2, and integrates natively with IAM — no registry credentials to manage separately.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">docker</span>
+        <span class="tag green">multi-stage</span>
+        <span class="tag orange">ecr</span>
+        <span class="tag purple">compose</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Run <code>docker images</code> before and after converting a single-stage Dockerfile to multi-stage. What size reduction do you see? Record the before/after numbers.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Typical result for a Node.js app: single-stage with <code>node:20</code> base ≈ 900MB–1.2GB. Multi-stage with <code>node:20-alpine</code> runtime ≈ 120–200MB. That's a 75–85% reduction. Alpine strips all non-essential OS packages; multi-stage removes build tools and dev dependencies.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the <code>docker-compose.yml</code> service block for the monitoring sidecar (Prometheus + Grafana). Include volume mounts for config and data persistence, and a healthcheck for Prometheus.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the Trivy command to scan your built Docker image before pushing to ECR? What flag makes it exit with a non-zero code if any CRITICAL severity CVEs are found?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">CI/CD Pipeline — GitHub Actions with OIDC</div>
+        <div class="module-desc">Full workflow: lint → test → Trivy scan → build → push → deploy — no long-lived AWS keys</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Pipeline design</h3>
+        <p class="explain-text">The GitHub Actions workflow has two jobs: <strong>ci</strong> (runs on every PR) and <strong>deploy</strong> (runs on push to main). The CI job runs lint, unit tests, and Trivy image scan — if any fails, the PR cannot merge. The deploy job authenticates to AWS via OIDC (no secrets stored), pulls the latest image, and restarts the container on EC2 via SSH or updates the ECS task definition.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">yaml — .github/workflows/deploy.yml</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">name:</span> <span class="output">CI/CD Pipeline</span></div>
+          <div><span class="highlight">on:</span></div>
+          <div><span class="output">  pull_request:</span></div>
+          <div><span class="output">  push:</span></div>
+          <div><span class="output">    branches: [main]</span></div>
+          <br>
+          <div><span class="highlight">jobs:</span></div>
+          <div><span class="output">  ci:</span></div>
+          <div><span class="output">    runs-on: ubuntu-latest</span></div>
+          <div><span class="output">    steps:</span></div>
+          <div><span class="output">      - uses: actions/checkout@v4</span></div>
+          <div><span class="output">      - run: npm ci && npm run lint && npm test</span></div>
+          <div><span class="output">      - name: Build image for scanning</span></div>
+          <div><span class="output">        run: docker build -t capstone:${{ github.sha }} .</span></div>
+          <div><span class="output">      - name: Trivy scan</span></div>
+          <div><span class="output">        uses: aquasecurity/trivy-action@master</span></div>
+          <div><span class="output">        with:</span></div>
+          <div><span class="output">          image-ref: capstone:${{ github.sha }}</span></div>
+          <div><span class="output">          exit-code: '1'          <span class="comment"># fail on CRITICAL</span></span></div>
+          <div><span class="output">          severity: CRITICAL,HIGH</span></div>
+          <br>
+          <div><span class="output">  deploy:</span></div>
+          <div><span class="output">    needs: ci</span></div>
+          <div><span class="output">    if: github.ref == 'refs/heads/main'</span></div>
+          <div><span class="output">    permissions:</span></div>
+          <div><span class="output">      id-token: write      <span class="comment"># required for OIDC</span></span></div>
+          <div><span class="output">      contents: read</span></div>
+          <div><span class="output">    steps:</span></div>
+          <div><span class="output">      - uses: aws-actions/configure-aws-credentials@v4</span></div>
+          <div><span class="output">        with:</span></div>
+          <div><span class="output">          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}</span></div>
+          <div><span class="output">          aws-region: ap-southeast-1</span></div>
+          <div><span class="output">      - run: |</span></div>
+          <div><span class="output">          aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URL</span></div>
+          <div><span class="output">          docker build -t $ECR_URL:${{ github.sha }} . && docker push $ECR_URL:${{ github.sha }}</span></div>
+          <div><span class="output">      - name: Deploy to EC2</span></div>
+          <div><span class="output">        run: ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} 'cd /app && ./deploy.sh'</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔑</div><div class="kp-title">OIDC = no keys</div><div class="kp-desc"><code>id-token: write</code> + <code>configure-aws-credentials</code> with <code>role-to-assume</code> — GitHub mints a short-lived token, AWS trusts it.</div></div>
+        <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">Trivy gates the deploy</div><div class="kp-desc">Trivy scan runs in the <code>ci</code> job; <code>deploy</code> uses <code>needs: ci</code> — a CRITICAL CVE blocks production.</div></div>
+        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">SHA tagging</div><div class="kp-desc">Tagging images with <code>github.sha</code> makes every deploy traceable — you know exactly which commit is running.</div></div>
+        <div class="key-point"><div class="kp-icon">🔀</div><div class="kp-title">PR vs main split</div><div class="kp-desc"><code>ci</code> runs on all events; <code>deploy</code> only on <code>main</code> push — developers get fast feedback without triggering deploys.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">github-actions</span>
+        <span class="tag green">oidc</span>
+        <span class="tag orange">trivy</span>
+        <span class="tag blue">ci-cd</span>
+        <span class="tag yellow">ecr</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does the deploy job have <code>permissions: id-token: write</code> but the CI job does not? What happens if you add that permission to the CI job as well?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">The <code>id-token: write</code> permission allows the job to request an OIDC JWT from GitHub's token endpoint — it's only needed for the job that calls <code>configure-aws-credentials</code> with OIDC. Adding it to the CI job is harmless but unnecessary — it won't trigger AWS auth unless you also call <code>configure-aws-credentials</code>. The principle of least privilege suggests not adding it unless needed.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain what happens step-by-step when a developer opens a PR to main. Which jobs run? What would cause the PR to be blocked from merging?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">The deploy script on the EC2 server (<code>./deploy.sh</code>) needs to pull the new image and restart the container with zero downtime. Write the 5-line shell script that achieves this using Docker Compose.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between tagging an image as <code>:latest</code> versus <code>:${{ github.sha }}</code>? Why does using SHA tags make rollbacks easier?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">End-to-End Testing of Microservices</div>
+        <div class="module-desc">Integration tests, contract tests, and smoke tests that run in the CI pipeline</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Testing strategy</h3>
+        <p class="explain-text">Unit tests verify individual functions; end-to-end (E2E) tests verify the whole system. In a CI pipeline, the testing pyramid looks like: unit tests (many, fast), integration tests (moderate, medium-speed), and smoke tests (few, run post-deploy). For the capstone, the CI job runs unit + integration tests against a test database; a post-deploy smoke test hits the real staging endpoint.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">yaml — test strategy in CI</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># GitHub Actions: spin up test DB, run tests</span></div>
+          <div><span class="highlight">services:</span></div>
+          <div><span class="output">  postgres:</span></div>
+          <div><span class="output">    image: postgres:15</span></div>
+          <div><span class="output">    env:</span></div>
+          <div><span class="output">      POSTGRES_PASSWORD: testpass</span></div>
+          <div><span class="output">    options: &gt;-</span></div>
+          <div><span class="output">      --health-cmd pg_isready</span></div>
+          <div><span class="output">      --health-interval 5s</span></div>
+          <div><span class="output">      --health-retries 5</span></div>
+          <br>
+          <div><span class="comment"># Run integration tests against real Postgres</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">DATABASE_URL=postgres://postgres:testpass@localhost/test npm test</span></div>
+          <div><span class="output">  ✔ POST /api/users creates a user (45ms)</span></div>
+          <div><span class="output">  ✔ GET /api/users/:id returns user (12ms)</span></div>
+          <div><span class="output">  ✔ DELETE /api/users/:id soft-deletes (8ms)</span></div>
+          <div><span class="output">  <span class="highlight">3 passing (65ms)</span></span></div>
+          <br>
+          <div><span class="comment"># Smoke test after deploy (staging env)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -sf https://staging.myapp.com/health | jq .status</span></div>
+          <div><span class="output"><span class="highlight">"ok"</span></span></div>
+          <br>
+          <div><span class="comment"># If smoke test fails → trigger rollback</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">if ! curl -sf https://staging.myapp.com/health; then ./rollback.sh; fi</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🧪</div><div class="kp-title">Integration over mocks</div><div class="kp-desc">GitHub Actions service containers give you a real Postgres in CI — mocks hide real-world failures.</div></div>
+        <div class="key-point"><div class="kp-icon">💨</div><div class="kp-title">Smoke tests post-deploy</div><div class="kp-desc">A simple <code>/health</code> endpoint check after deploy catches broken deploys before users do.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Auto-rollback on failure</div><div class="kp-desc">Pair the smoke test with a rollback script — failed smoke test restores the previous SHA-tagged image.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Testing pyramid</div><div class="kp-desc">Many unit (milliseconds) → fewer integration (seconds) → minimal E2E (minutes). Don't invert the pyramid.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">testing</span>
+        <span class="tag blue">integration-tests</span>
+        <span class="tag yellow">smoke-tests</span>
+        <span class="tag purple">ci-pipeline</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a <code>/health</code> endpoint to your application that returns <code>{"status":"ok","db":"connected"}</code>. The endpoint should actually check the database connection — not just return a hardcoded string.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Node.js + Postgres example:<br><code>app.get('/health', async (req, res) => {
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', db: 'connected' });
+  } catch (err) {
+    res.status(503).json({ status: 'error', db: err.message });
+  }
+});</code><br>This fails fast when the database is unreachable — which is exactly what a health check should do.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is using a real Postgres container in CI better than mocking the database layer? Give a concrete example of a bug that mocks would miss but an integration test would catch.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the <code>rollback.sh</code> script that re-deploys the previous Docker image on the EC2 server when a smoke test fails. Assume the previous SHA is stored in a file called <code>.last_sha</code>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">AWS Deployment — EC2, ECS & Elastic Beanstalk</div>
+        <div class="module-desc">Choose the right AWS compute target and deploy your Docker container to production</div>
+      </div>
+      <div class="module-body">
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Compute target decision</h3>
+        <p class="explain-text">Three AWS options for running a Dockerised app — pick one for your capstone. <strong>EC2 + Docker Compose</strong>: simplest, most control, you manage updates. <strong>ECS Fargate</strong>: serverless containers, AWS manages the host, integrates with ALB and service discovery. <strong>Elastic Beanstalk</strong>: managed PaaS, best for teams who want one-command deploys without thinking about ECS task definitions.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — deployment-options.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># OPTION A: EC2 + Compose (capstone default)</span></div>
+          <div><span class="comment"># deploy.sh runs on the server via SSH in GitHub Actions</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cat deploy.sh</span></div>
+          <div><span class="output">#!/bin/bash</span></div>
+          <div><span class="output">set -e</span></div>
+          <div><span class="output">aws ecr get-login-password | docker login --username AWS --password-stdin $ECR_URL</span></div>
+          <div><span class="output">docker compose pull app</span></div>
+          <div><span class="output">docker compose up -d --no-deps app</span></div>
+          <div><span class="output">echo $(cat .current_sha) &gt; .last_sha</span></div>
+          <div><span class="output">echo $NEW_SHA &gt; .current_sha</span></div>
+          <br>
+          <div><span class="comment"># OPTION B: ECS Fargate (GitHub Actions step)</span></div>
+          <div><span class="output">- name: Deploy to ECS</span></div>
+          <div><span class="output">  uses: aws-actions/amazon-ecs-deploy-task-definition@v1</span></div>
+          <div><span class="output">  with:</span></div>
+          <div><span class="output">    task-definition: ecs-task-def.json</span></div>
+          <div><span class="output">    service: capstone-service</span></div>
+          <div><span class="output">    cluster: capstone-cluster</span></div>
+          <div><span class="output">    wait-for-service-stability: true</span></div>
+          <br>
+          <div><span class="comment"># OPTION C: Elastic Beanstalk</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb deploy capstone-prod --label v1.2.0</span></div>
+          <div><span class="output">INFO: Deploying new version to instance(s).</span></div>
+          <div><span class="output"><span class="highlight">INFO: New application version was deployed to running EC2 instances.</span></span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🖥️</div><div class="kp-title">EC2 + Compose</div><div class="kp-desc">Most control, lowest abstraction. Good for capstone — you see every moving part.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">ECS Fargate</div><div class="kp-desc">No server management. AWS scales tasks automatically. Best for production at scale.</div></div>
+        <div class="key-point"><div class="kp-icon">🌱</div><div class="kp-title">Elastic Beanstalk</div><div class="kp-desc">Managed PaaS — <code>eb deploy</code> handles load balancer, rolling deploy, and health checks automatically.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Rolling deploy</div><div class="kp-desc"><code>docker compose up -d --no-deps app</code> replaces only the app container, keeping the database and monitoring running.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">ec2</span>
+        <span class="tag yellow">ecs-fargate</span>
+        <span class="tag green">elastic-beanstalk</span>
+        <span class="tag orange">deployment</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your capstone app is deployed to EC2 using Docker Compose. A deployment fails halfway — the new container crashes at startup. What state is the system in? How do you recover?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Docker Compose's <code>--no-deps</code> means only the app container was replaced. If the new container crashes, the old one is gone — the app is down. Recovery: <code>docker compose up -d --no-deps app</code> with the previous SHA-tagged image (pulled from ECR). This is why storing <code>.last_sha</code> and having a <code>rollback.sh</code> is critical — recovery becomes a one-command operation.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between ECS Fargate and EC2 for running containers? When would a production team choose Fargate over EC2 + Compose?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">The Elastic Beanstalk <code>eb deploy</code> command accepts a <code>--label</code> flag. What is this label used for and how does it help you perform a rollback if the deployment fails?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Rollback via CloudFront & Versioned Deploys</div>
+        <div class="module-desc">How to recover from a bad deploy in under 2 minutes using SHA-tagged images and CloudFront</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Rollback strategy</h3>
+        <p class="explain-text">A rollback is a deploy of the previous known-good version. It should be a one-command operation. For the capstone: (1) every image is tagged with its <code>github.sha</code>, (2) CloudFront serves the static frontend, (3) API calls go to the EC2 origin. A bad deploy on EC2 is rolled back by SSH + <code>rollback.sh</code>. A bad frontend deploy is rolled back by invalidating the CloudFront cache and re-deploying the old static build to S3.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — rollback-runbook.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### API ROLLBACK (EC2 + Docker) ###</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cat rollback.sh</span></div>
+          <div><span class="output">#!/bin/bash</span></div>
+          <div><span class="output">PREV_SHA=$(cat .last_sha)</span></div>
+          <div><span class="output">echo "Rolling back to $PREV_SHA"</span></div>
+          <div><span class="output">docker pull $ECR_URL:$PREV_SHA</span></div>
+          <div><span class="output">ECR_IMAGE=$ECR_URL:$PREV_SHA docker compose up -d --no-deps app</span></div>
+          <div><span class="output">echo "Rollback complete. Running: $PREV_SHA"</span></div>
+          <br>
+          <div><span class="comment">### FRONTEND ROLLBACK (S3 + CloudFront) ###</span></div>
+          <div><span class="comment"># 1. Re-upload the previous build artifact</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 sync s3://capstone-builds/$PREV_SHA/ s3://capstone-frontend/ --delete</span></div>
+          <br>
+          <div><span class="comment"># 2. Invalidate CloudFront cache so edge serves new (old) files</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"</span></div>
+          <div><span class="output">{</span></div>
+          <div><span class="output">    "Invalidation": {</span></div>
+          <div><span class="output">        "Status": "<span class="highlight">InProgress</span>",</span></div>
+          <div><span class="output">        "InvalidationBatch": { "Paths": { "Items": ["/*"] } }</span></div>
+          <div><span class="output">    }</span></div>
+          <div><span class="output">}</span></div>
+          <div><span class="info"># Propagates to all edge locations in ~30 seconds</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⏪</div><div class="kp-title">One-command rollback</div><div class="kp-desc">SHA-tagged images in ECR mean any previous version can be pulled and deployed in under 60 seconds.</div></div>
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">CloudFront invalidation</div><div class="kp-desc">Old static files cached at edge nodes must be explicitly invalidated — S3 sync alone is not enough.</div></div>
+        <div class="key-point"><div class="kp-icon">📋</div><div class="kp-title">Runbook over heroics</div><div class="kp-desc">A rollback script that anyone on the team can run beats a complex procedure only the senior engineer knows.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Smoke test before rollback</div><div class="kp-desc">Always run the smoke test after rollback — confirm the previous version is actually healthy before declaring victory.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">cloudfront</span>
+        <span class="tag green">rollback</span>
+        <span class="tag yellow">s3</span>
+        <span class="tag orange">incident-response</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Walk through a full rollback scenario: production goes down at 2am. Your smoke test failed after the last deploy. Write the 5 commands you run — in order — to restore service.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">1. <code>ssh ec2-user@$EC2_HOST</code> — get on the server<br>2. <code>./rollback.sh</code> — restore previous image<br>3. <code>docker compose ps app</code> — confirm container is Up<br>4. <code>curl -sf http://localhost:3000/health</code> — confirm app responds<br>5. <code>aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"</code> — clear edge cache if frontend was also deployed. Then notify the team and write a post-mortem.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does CloudFront serve stale content even after you've re-uploaded files to S3? What is the default CloudFront cache TTL and how do you override it per file type?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between a "rollback" and a "revert"? When would you use a git revert instead of a deployment rollback?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Monitoring & Alerting — Grafana + Prometheus</div>
+        <div class="module-desc">Wire up the full observability stack: metrics, dashboards, and a CPU alert to Slack</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Observability layer</h3>
+        <p class="explain-text">The monitoring stack runs as Docker Compose services alongside the application: Prometheus scrapes metrics from the app (via <code>prom-client</code>) and from node_exporter (host CPU/memory/disk). Grafana visualises both with a RED dashboard (Rate, Errors, Duration) and a USE dashboard (CPU Utilisation, Saturation, Errors). Alertmanager routes CPU alerts to a Slack webhook.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">yaml — prometheus/alerts.yml</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">groups:</span></div>
+          <div><span class="output">  - name: capstone.rules</span></div>
+          <div><span class="output">    rules:</span></div>
+          <br>
+          <div><span class="output">      - alert: HighCPU</span></div>
+          <div><span class="output">        expr: 100 - (avg by(instance)(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) &gt; 80</span></div>
+          <div><span class="output">        for: 2m</span></div>
+          <div><span class="output">        labels:</span></div>
+          <div><span class="output">          severity: warning</span></div>
+          <div><span class="output">        annotations:</span></div>
+          <div><span class="output">          summary: "CPU above 80% for 2 minutes on {{ $labels.instance }}"</span></div>
+          <br>
+          <div><span class="output">      - alert: AppHighErrorRate</span></div>
+          <div><span class="output">        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) &gt; 0.05</span></div>
+          <div><span class="output">        for: 1m</span></div>
+          <div><span class="output">        labels:</span></div>
+          <div><span class="output">          severity: critical</span></div>
+          <div><span class="output">        annotations:</span></div>
+          <div><span class="output">          summary: "Error rate above 5% on {{ $labels.instance }}"</span></div>
+          <br>
+          <div><span class="comment"># Verify alerts loaded correctly</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -s localhost:9090/api/v1/rules | jq '.data.groups[].rules[].name'</span></div>
+          <div><span class="output">"HighCPU"</span></div>
+          <div><span class="output">"AppHighErrorRate"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📈</div><div class="kp-title">RED + USE dashboards</div><div class="kp-desc">RED (Rate/Errors/Duration) for your app; USE (Utilisation/Saturation/Errors) for the host. Two panels, full picture.</div></div>
+        <div class="key-point"><div class="kp-icon">⏱️</div><div class="kp-title">Alert "for" duration</div><div class="kp-desc">The <code>for: 2m</code> clause prevents alert flapping — the condition must persist for 2 minutes before firing.</div></div>
+        <div class="key-point"><div class="kp-icon">🔔</div><div class="kp-title">Slack webhook</div><div class="kp-desc">Alertmanager sends structured messages to a Slack channel — include the instance name and metric value in annotations.</div></div>
+        <div class="key-point"><div class="kp-icon">🩺</div><div class="kp-title">prom-client in the app</div><div class="kp-desc">Add <code>prom-client</code> (Node.js) or <code>prometheus_client</code> (Python) to instrument HTTP request count, duration, and errors.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag orange">prometheus</span>
+        <span class="tag yellow">grafana</span>
+        <span class="tag blue">alertmanager</span>
+        <span class="tag green">monitoring</span>
+        <span class="tag purple">node-exporter</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Instrument your capstone app with <code>prom-client</code>. Add a counter for total HTTP requests by method and status code. Write the middleware function and the <code>/metrics</code> endpoint that Prometheus scrapes.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body"><code>const client = require('prom-client');
+const httpRequests = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total HTTP requests',
+  labelNames: ['method', 'status']
+});
+
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequests.inc({ method: req.method, status: res.statusCode });
+  });
+  next();
+});
+
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', client.register.contentType);
+  res.end(await client.register.metrics());
+});</code></div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does the CPU alert use a <code>for: 2m</code> clause? What would happen if you removed it and set the threshold to 80%?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the Alertmanager <code>alertmanager.yml</code> receiver block that sends a message to a Slack webhook URL stored in an environment variable called <code>SLACK_WEBHOOK</code>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Security — Trivy, Secrets & Pipeline Hardening</div>
+        <div class="module-desc">Scan images, manage secrets properly, and lock down the pipeline before the final assessment</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Security checklist for the capstone</h3>
+        <p class="explain-text">A production-grade capstone must pass a security review. The five areas checked: (1) no secrets in git history, (2) Trivy CRITICAL/HIGH scan blocking the pipeline, (3) all runtime secrets in AWS Secrets Manager (not <code>.env</code> files on the server), (4) non-root USER in Dockerfile, (5) IAM roles follow least privilege (OIDC role can only push to ECR and deploy to ECS — not admin).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — security-audit.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Check git history for leaked secrets</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">gitleaks detect --source . --verbose</span></div>
+          <div><span class="output">No leaks found.</span></div>
+          <br>
+          <div><span class="comment"># 2. Trivy scan — must pass before merge</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy image --exit-code 1 --severity CRITICAL,HIGH $ECR_URL:latest</span></div>
+          <div><span class="output">Total: 0 (CRITICAL: 0, HIGH: 0)</span></div>
+          <div><span class="output"><span class="highlight">capstone:latest (alpine 3.19) — no vulnerabilities found</span></span></div>
+          <br>
+          <div><span class="comment"># 3. Secrets Manager — retrieve at runtime, not startup</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws secretsmanager get-secret-value --secret-id capstone/db-password --query SecretString --output text</span></div>
+          <div><span class="output"><span class="highlight">{"DB_PASSWORD":"my-secure-pass"}</span></span></div>
+          <br>
+          <div><span class="comment"># 4. Confirm container runs as non-root</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker inspect capstone:latest | jq '.[0].Config.User'</span></div>
+          <div><span class="output">"appuser"</span></div>
+          <br>
+          <div><span class="comment"># 5. IAM role policy — scope to minimum needed</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam get-role-policy --role-name github-actions-capstone --policy-name deploy | jq '.PolicyDocument.Statement[].Action'</span></div>
+          <div><span class="output">["ecr:GetAuthorizationToken","ecr:BatchGetImage","ecr:PutImage","ecs:UpdateService"]</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Gitleaks pre-commit</div><div class="kp-desc">Install as a pre-commit hook — prevents secrets reaching the remote before CI ever runs.</div></div>
+        <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">Trivy in CI gate</div><div class="kp-desc"><code>--exit-code 1</code> means a CRITICAL CVE blocks the PR merge. No exceptions during capstone assessment.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">Secrets Manager at runtime</div><div class="kp-desc">The app calls Secrets Manager on startup — secrets never sit in .env files or GitHub secrets in plaintext.</div></div>
+        <div class="key-point"><div class="kp-icon">📏</div><div class="kp-title">Least-privilege IAM</div><div class="kp-desc">The OIDC role can only do what the pipeline needs: ECR push + ECS update. No AdministratorAccess.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag orange">trivy</span>
+        <span class="tag green">gitleaks</span>
+        <span class="tag blue">secrets-manager</span>
+        <span class="tag purple">iam-least-privilege</span>
+        <span class="tag yellow">devsecops</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Run <code>trivy image</code> against your capstone image. If you find any CRITICAL or HIGH CVEs, what are the options for fixing them? List at least 3 remediation approaches.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Options: (1) <strong>Update base image</strong> — <code>FROM node:20-alpine</code> → <code>FROM node:20-alpine3.19</code> (pinned, latest patch), (2) <strong>Update the vulnerable package</strong> — add <code>RUN apk upgrade --no-cache</code> to the runtime stage to apply OS patches, (3) <strong>Remove the package</strong> — if a vulnerable library isn't used, delete it from the image, (4) <strong>Accept and document</strong> — use <code>--ignore-unfixed</code> for CVEs with no available fix, and track in your SECURITY.md.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A developer accidentally commits <code>DB_PASSWORD=supersecret</code> in a <code>.env</code> file to a public GitHub repo. What are the first 3 actions to take in the correct order?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Configure your app to retrieve the database password from AWS Secrets Manager at startup. Write the Node.js code that fetches the secret and sets it as an environment variable before the database pool is initialised.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Documentation — README & Architecture Diagram</div>
+        <div class="module-desc">Professional documentation that lets any engineer understand and operate your system in 30 minutes</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Documentation as code</h3>
+        <p class="explain-text">The capstone README is as important as the code. An interviewer, hiring manager, or future team member should be able to read it and: (1) understand what the system does, (2) spin up a local dev environment in under 5 minutes, (3) understand how to deploy and roll back, (4) know where to look when something breaks. The architecture diagram replaces a thousand words — draw it once, link it in the README.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — readme-structure.md</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### CAPSTONE README STRUCTURE ###</span></div>
+          <br>
+          <div><span class="highlight"># Capstone: [App Name] — Full DevOps Pipeline</span></div>
+          <br>
+          <div><span class="output">## Architecture</span></div>
+          <div><span class="output">![architecture diagram](./docs/architecture.png)</span></div>
+          <div><span class="output">Brief description: what each component does and how they connect.</span></div>
+          <br>
+          <div><span class="output">## Tech Stack</span></div>
+          <div><span class="output">| Layer       | Technology        |</span></div>
+          <div><span class="output">|-------------|-------------------|</span></div>
+          <div><span class="output">| App         | Node.js + Express |</span></div>
+          <div><span class="output">| DB          | PostgreSQL 15     |</span></div>
+          <div><span class="output">| IaC         | Terraform 1.7     |</span></div>
+          <div><span class="output">| CI/CD       | GitHub Actions    |</span></div>
+          <div><span class="output">| Monitoring  | Prometheus+Grafana|</span></div>
+          <div><span class="output">| Registry    | AWS ECR           |</span></div>
+          <div><span class="output">| Hosting     | EC2 (t3.micro)    |</span></div>
+          <br>
+          <div><span class="output">## Local Development</span></div>
+          <div><span class="output">```bash</span></div>
+          <div><span class="output">git clone https://github.com/you/capstone</span></div>
+          <div><span class="output">cp .env.example .env  # fill in secrets</span></div>
+          <div><span class="output">docker compose up -d</span></div>
+          <div><span class="output">open http://localhost:3000</span></div>
+          <div><span class="output">```</span></div>
+          <br>
+          <div><span class="output">## Deploying to AWS</span></div>
+          <div><span class="output">## Rolling Back</span></div>
+          <div><span class="output">## Monitoring</span></div>
+          <div><span class="output">## Security Decisions</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Architecture diagram</div><div class="kp-desc">Use draw.io, Excalidraw, or Mermaid. Show: GitHub → Actions → ECR → EC2, Prometheus scraping, Grafana, CloudFront.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">5-minute local setup</div><div class="kp-desc">If the "Local Development" section takes more than 5 minutes to follow, it's too complex. Simplify with Compose.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Runbooks in README</div><div class="kp-desc">Include a "Rolling Back" section with the exact command. Your future self at 2am will thank you.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Security decisions</div><div class="kp-desc">Document why you chose Secrets Manager over env vars, why non-root user, why OIDC. Shows engineering judgment.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">documentation</span>
+        <span class="tag blue">readme</span>
+        <span class="tag yellow">architecture-diagram</span>
+        <span class="tag orange">runbook</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Draw your capstone architecture diagram using Excalidraw or draw.io. Include: GitHub repo, GitHub Actions, ECR, EC2, Docker Compose, Prometheus, Grafana, Alertmanager, CloudFront. Export as PNG and add to your README.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a "Security Decisions" section for your README that explains 3 choices you made (e.g., OIDC instead of access keys, Secrets Manager instead of .env, non-root Docker user). For each, explain the threat it mitigates.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Hand your README to a classmate who hasn't seen your project. Time how long it takes them to get the app running locally. What did they get stuck on? Fix those friction points.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 — ASSESSMENT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Final Assessment — 30-Minute Walkthrough + Q&A</div>
+        <div class="module-desc">What the panel evaluates, how to prepare, and questions you should be ready to answer</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Assessment structure</h3>
+        <p class="explain-text">The 30-minute assessment has three parts: (1) <strong>10-minute demo</strong> — you walk through a live deploy from a git push to a running container on AWS, (2) <strong>15-minute technical Q&A</strong> — the panel asks deep questions on any module in the course, (3) <strong>5-minute architectural review</strong> — "what would you do differently if you had to scale this to 10,000 users?" The panel is looking for depth of understanding, not memorised answers.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — assessment-prep.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### DEMO SCRIPT (rehearse this 3+ times) ###</span></div>
+          <br>
+          <div><span class="output">1. Show the repo structure and Terraform infra/</span></div>
+          <div><span class="output">2. Make a small code change, push to a feature branch, open a PR</span></div>
+          <div><span class="output">3. Show the CI checks running: lint → test → Trivy</span></div>
+          <div><span class="output">4. Merge the PR → show deploy job running with OIDC</span></div>
+          <div><span class="output">5. Open the live URL — show the change is live</span></div>
+          <div><span class="output">6. Open Grafana — show the deploy spike in the RED dashboard</span></div>
+          <div><span class="output">7. Trigger the CPU alert by running a load test (optional)</span></div>
+          <div><span class="output">8. Run rollback.sh to demonstrate recovery</span></div>
+          <br>
+          <div><span class="comment">### LIKELY Q&amp;A QUESTIONS ###</span></div>
+          <div><span class="info">"Why OIDC instead of access keys?"</span></div>
+          <div><span class="info">"What happens if Trivy finds a CRITICAL CVE?"</span></div>
+          <div><span class="info">"How would you add staging + production environments?"</span></div>
+          <div><span class="info">"What's the MTTR if production goes down at 2am?"</span></div>
+          <div><span class="info">"How would you scale this to 100 users? 10,000 users?"</span></div>
+          <div><span class="info">"What would you add first if you had another week?"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🎭</div><div class="kp-title">Live demo, no slides</div><div class="kp-desc">The panel wants to see real infrastructure working — not PowerPoint. Make sure your EC2 is running before you start.</div></div>
+        <div class="key-point"><div class="kp-icon">🧠</div><div class="kp-title">Know your "why"s</div><div class="kp-desc">Every tool choice should have a reason: "I chose Fargate because..." or "I chose EC2 because..." No random decisions.</div></div>
+        <div class="key-point"><div class="kp-icon">🔮</div><div class="kp-title">Scale questions</div><div class="kp-desc">Scaling answer template: database (RDS Multi-AZ), app (ECS auto-scaling), CDN (CloudFront), cache (ElastiCache).</div></div>
+        <div class="key-point"><div class="kp-icon">❌</div><div class="kp-title">Honest about gaps</div><div class="kp-desc">"I didn't implement X because of time, but I know the approach would be..." beats bluffing every time.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">assessment</span>
+        <span class="tag blue">presentation</span>
+        <span class="tag yellow">demo</span>
+        <span class="tag purple">q-and-a</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Answer the scale question: "How would you evolve this capstone architecture to handle 10,000 concurrent users?" List specific AWS services you'd add and why.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">At 10,000 concurrent users: (1) <strong>Database</strong>: Move from Postgres on EC2 to RDS Multi-AZ with a read replica for read-heavy queries. (2) <strong>App tier</strong>: Replace single EC2 with ECS Fargate behind an Application Load Balancer; set auto-scaling on CPU/request count. (3) <strong>Static assets</strong>: Already on CloudFront — tune cache TTL and add S3 Transfer Acceleration. (4) <strong>Caching</strong>: Add ElastiCache (Redis) to cache frequent DB queries and session data. (5) <strong>Async work</strong>: Move background jobs to SQS + Lambda to avoid blocking the API. (6) <strong>Monitoring</strong>: Upgrade to Datadog or managed Grafana Cloud for cross-region visibility.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Practice the full 30-minute demo with a classmate acting as the panel. Time each section. What parts run over? What questions catch you off guard?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">The panel asks: "What would you do differently if you rebuilt this from scratch?" Give an honest answer that shows technical growth — not just "I'd do everything the same."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 12 — ASSIGNMENT -->
+  <div class="module" id="m12">
+    <div class="module-header" onclick="toggle('m12')">
+      <div class="module-num">12</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Polish Docs & Ship the Full Project</div>
+        <div class="module-desc">Final submission checklist — everything that must be live and documented before the assessment</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Final submission</h3>
+        <p class="explain-text">The capstone is assessed on the combination of working infrastructure + clean documentation + clear explanations. Use this checklist to ensure nothing is missing before your 30-minute walkthrough. Submit the GitHub repo URL and the live URL to your instructor at least 24 hours before the assessment so they can review the pipeline and documentation independently.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — submission-checklist.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### INFRASTRUCTURE ✓ ###</span></div>
+          <div><span class="output">☐ terraform apply completes with 0 errors</span></div>
+          <div><span class="output">☐ EC2 instance is running and accessible via SSH</span></div>
+          <div><span class="output">☐ ECR repository contains at least 3 SHA-tagged images</span></div>
+          <div><span class="output">☐ S3 + DynamoDB Terraform state backend configured</span></div>
+          <br>
+          <div><span class="comment">### CI/CD ✓ ###</span></div>
+          <div><span class="output">☐ GitHub Actions pipeline: all 3 stages (lint/test/Trivy) pass on PR</span></div>
+          <div><span class="output">☐ OIDC authentication working (no AWS_SECRET_ACCESS_KEY in secrets)</span></div>
+          <div><span class="output">☐ Push to main triggers automatic deploy to EC2</span></div>
+          <div><span class="output">☐ Smoke test runs post-deploy and rollback.sh works</span></div>
+          <br>
+          <div><span class="comment">### MONITORING ✓ ###</span></div>
+          <div><span class="output">☐ Grafana dashboard live at http://[EC2_IP]:3001</span></div>
+          <div><span class="output">☐ RED dashboard showing app request rate and error rate</span></div>
+          <div><span class="output">☐ CPU alert configured and tested (fire + resolve)</span></div>
+          <div><span class="output">☐ Slack webhook receiving alert messages</span></div>
+          <br>
+          <div><span class="comment">### SECURITY ✓ ###</span></div>
+          <div><span class="output">☐ gitleaks: 0 secrets found in git history</span></div>
+          <div><span class="output">☐ trivy image: 0 CRITICAL/HIGH CVEs in final image</span></div>
+          <div><span class="output">☐ All secrets in AWS Secrets Manager (not .env on server)</span></div>
+          <div><span class="output">☐ Dockerfile runs as non-root user</span></div>
+          <br>
+          <div><span class="comment">### DOCUMENTATION ✓ ###</span></div>
+          <div><span class="output">☐ README: architecture diagram + local setup + deploy + rollback</span></div>
+          <div><span class="output">☐ Architecture diagram exported as PNG in /docs</span></div>
+          <div><span class="output">☐ SECURITY.md documenting decisions + known limitations</span></div>
+          <div><span class="output">☐ .env.example (never .env) committed to the repo</span></div>
+        </div>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Final Assessment Grading (100 points)</h4>
+        <ul>
+          <li><strong>Working infrastructure (25pts)</strong> — Terraform provisions cleanly, EC2 running, ECR populated with SHA-tagged images</li>
+          <li><strong>CI/CD pipeline (25pts)</strong> — All stages pass, OIDC auth, auto-deploy on main push, smoke test + rollback demonstrated live</li>
+          <li><strong>Monitoring (20pts)</strong> — Grafana dashboard live, RED metrics, CPU alert fires to Slack, alert resolves correctly</li>
+          <li><strong>Security (15pts)</strong> — No secrets in git, Trivy clean, Secrets Manager used, non-root Dockerfile, least-privilege IAM</li>
+          <li><strong>Documentation (15pts)</strong> — README with architecture diagram, local setup under 5 minutes, runbooks, security decisions documented</li>
+          <li><strong>Q&A depth (bonus up to 10pts)</strong> — Demonstrates understanding beyond surface level: trade-offs explained, scale thinking, honest gaps acknowledged</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct', 'wrong');
+    });
+    const opts = q.querySelectorAll('.option');
+    const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) {
+        opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      }
+      if (letters[i] === correct && chosen !== correct) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect
+      ? '✅ Correct!'
+      : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

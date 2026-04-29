@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AWS Cloud Essentials for DevOps — EC2, S3, IAM, CloudFront, Beanstalk | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn AWS for DevOps from scratch: cloud computing fundamentals, EC2, S3, IAM, VPC, regions and AZs, deploying static sites with S3 + CloudFront + Route 53, deploying dynamic apps with Elastic Beanstalk, environment variables, deployment strategies, and CloudWatch logs. Hands-on terminal examples with 35+ practice questions.">
+<meta name="keywords" content="AWS for DevOps, AWS beginner course, EC2 tutorial, S3 static hosting, IAM policies, CloudFront CDN, Route 53 DNS, Elastic Beanstalk deploy, AWS free tier, billing alerts, AWS regions, banoqabil, devops foundations, CloudWatch logs, deployment strategies AWS">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="AWS Cloud Essentials for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master AWS for DevOps with hands-on EC2, S3, IAM, CloudFront, and Elastic Beanstalk deploys. Built for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AWS Cloud Essentials for DevOps — Beginner to Practical Course">
+<meta name="twitter:description" content="Hands-on AWS course: EC2, S3, IAM, CloudFront, Beanstalk, deployment strategies, CloudWatch.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "AWS Cloud Essentials for DevOps — Foundations",
+  "description": "A practical, beginner-friendly AWS course for aspiring DevOps engineers. Covers cloud computing fundamentals (IaaS/PaaS/SaaS), AWS core services (EC2, S3, IAM, VPC), account setup with free tier and billing alerts, regions and availability zones, IAM policies and least-privilege, static vs dynamic deployment, S3 + CloudFront + Route 53 static hosting, Elastic Beanstalk for dynamic apps, environment variables, rolling and blue-green deployment strategies, CloudWatch logs, AI-assisted IAM authoring, and a graded Beanstalk deployment assignment.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Cloud computing fundamentals (IaaS, PaaS, SaaS)",
+    "AWS core services (EC2, S3, IAM, VPC)",
+    "AWS account setup, free tier, and billing alerts",
+    "AWS regions and availability zones",
+    "IAM users, roles, and least-privilege policies",
+    "Static site hosting with S3 + CloudFront + Route 53",
+    "Dynamic app deployment with Elastic Beanstalk",
+    "Environment variables and runtime configuration",
+    "Rolling and blue-green deployment strategies on AWS",
+    "Process and log management with CloudWatch + systemd",
+    "AI-assisted AWS troubleshooting and IAM policy authoring"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT12H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #e3b341;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(227,179,65,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1)  { animation-delay: 0.04s; }
+  .module:nth-child(2)  { animation-delay: 0.08s; }
+  .module:nth-child(3)  { animation-delay: 0.12s; }
+  .module:nth-child(4)  { animation-delay: 0.16s; }
+  .module:nth-child(5)  { animation-delay: 0.20s; }
+  .module:nth-child(6)  { animation-delay: 0.24s; }
+  .module:nth-child(7)  { animation-delay: 0.28s; }
+  .module:nth-child(8)  { animation-delay: 0.32s; }
+  .module:nth-child(9)  { animation-delay: 0.36s; }
+  .module:nth-child(10) { animation-delay: 0.40s; }
+  .module:nth-child(11) { animation-delay: 0.44s; }
+  .module:nth-child(12) { animation-delay: 0.48s; }
+  .module:nth-child(13) { animation-delay: 0.52s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(227,179,65,0.1); border: 1px solid rgba(227,179,65,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ aws configure --profile devops</div>
+  <h1>AWS <span>Cloud Essentials</span><br>Instructor Guide</h1>
+  <p class="subtitle">EC2, S3, IAM, CloudFront, Beanstalk — every AWS service a junior DevOps engineer must know, hands-on.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Cloud Computing Fundamentals — IaaS, PaaS, SaaS</div>
+        <div class="module-desc">Why companies moved from racks to AWS, and the three abstractions you'll meet daily</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with the pizza analogy: <em>"Cooking at home = on-prem (you do everything). Take-and-bake = IaaS (kitchen + ingredients are yours, but the dough is provided). Delivery = PaaS (you eat at home, someone else cooks). Dining out = SaaS (you just show up)."</em> Same hunger, very different ownership boundaries.</p>
+        <p class="explain-text">In AWS terms: <strong>EC2</strong> is IaaS (you get a VM, you install everything). <strong>Elastic Beanstalk</strong> is PaaS (push your code, AWS runs it). <strong>Cognito</strong> is SaaS (auth-as-a-service, no code). DevOps engineers spend most time in IaaS + PaaS.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">cloud-models.txt</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Layered responsibility — what YOU manage vs what AWS manages</span></div>
+          <br>
+          <div><span class="output">                ON-PREM        IaaS (EC2)     PaaS (Beanstalk)   SaaS (Cognito)</span></div>
+          <div><span class="output">App code        you            you            you                <span class="info">AWS</span></span></div>
+          <div><span class="output">Runtime         you            you            <span class="info">AWS</span>                <span class="info">AWS</span></span></div>
+          <div><span class="output">OS              you            you            <span class="info">AWS</span>                <span class="info">AWS</span></span></div>
+          <div><span class="output">Hypervisor      you            <span class="info">AWS</span>            <span class="info">AWS</span>                <span class="info">AWS</span></span></div>
+          <div><span class="output">Servers         you            <span class="info">AWS</span>            <span class="info">AWS</span>                <span class="info">AWS</span></span></div>
+          <div><span class="output">Networking      you            <span class="info">AWS</span>            <span class="info">AWS</span>                <span class="info">AWS</span></span></div>
+          <br>
+          <div><span class="comment"># Pizza version</span></div>
+          <div><span class="output">On-prem    = make your own from scratch</span></div>
+          <div><span class="output">IaaS       = take-and-bake kit (you bake)</span></div>
+          <div><span class="output">PaaS       = delivery (someone bakes, you serve)</span></div>
+          <div><span class="output">SaaS       = restaurant (just eat)</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚙️</div><div class="kp-title">IaaS = max control</div><div class="kp-desc">Bare VMs. You patch the kernel, run nginx, manage backups. Examples: EC2, EBS.</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">PaaS = ship faster</div><div class="kp-desc">"Here's my code, run it." AWS handles OS, scaling, balancer. Examples: Beanstalk, App Runner, Lambda.</div></div>
+        <div class="key-point"><div class="kp-icon">🍽️</div><div class="kp-title">SaaS = pure consumption</div><div class="kp-desc">No infra at all. You call an API. Examples: Cognito, SES, Slack.</div></div>
+        <div class="key-point"><div class="kp-icon">🪜</div><div class="kp-title">Move up the stack</div><div class="kp-desc">Start IaaS for control, graduate to PaaS once patterns are stable.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Place these AWS services on the IaaS / PaaS / SaaS spectrum: EC2, RDS, Lambda, Cognito, S3, Elastic Beanstalk.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>IaaS:</strong> EC2 (raw VM), S3 (raw storage). You decide what to run / store on top.<br>
+                <strong>PaaS:</strong> RDS (managed database — you choose engine + size, AWS handles backups + patches), Elastic Beanstalk (push code, AWS runs it), Lambda (push functions, AWS runs them).<br>
+                <strong>SaaS:</strong> Cognito (auth-as-a-service — call an API, no infra at all).<br><br>
+                The lines blur — Lambda is sometimes called <em>Functions as a Service</em> (FaaS), a sub-category of PaaS. The point is: as you move IaaS → SaaS, you give up control to gain speed.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A startup wants to ship a Node.js API in 2 days. Should they pick EC2 or Beanstalk? Justify in 2 sentences.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Name two trade-offs of moving from IaaS (EC2) to PaaS (Beanstalk) — one win, one loss.</div>
+            <div class="pq-hint">💡 Think about velocity vs. customisation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">AWS Core Services — EC2, S3, IAM, VPC</div>
+        <div class="module-desc">The four services that show up in every AWS architecture diagram</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">AWS has 250+ services. <em>You don't need 250</em>. Master four — <strong>EC2</strong> (compute), <strong>S3</strong> (storage), <strong>IAM</strong> (permissions), <strong>VPC</strong> (networking) — and you can read 90% of architecture diagrams. Everything else is built on top of these.</p>
+        <p class="explain-text">Mental model: <em>"VPC is the building. EC2 is the rooms. S3 is the warehouse next door. IAM is the keycard system."</em></p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">aws-cli — quick tour</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># EC2 — virtual machines</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ec2 run-instances \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--image-id ami-0abcd1234 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--instance-type t3.micro \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--key-name my-keypair</span></div>
+          <div><span class="output">"InstanceId": "i-0a1b2c3d4e5f", "State": { "Name": "pending" }</span></div>
+          <br>
+          <div><span class="comment"># S3 — object storage (think Dropbox for code)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 mb s3://my-portfolio-site</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 sync ./dist s3://my-portfolio-site</span></div>
+          <div><span class="output">upload: dist/index.html to s3://my-portfolio-site/index.html ✓</span></div>
+          <br>
+          <div><span class="comment"># IAM — who can do what</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-user --user-name deployer</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam attach-user-policy --user-name deployer \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess</span></div>
+          <br>
+          <div><span class="comment"># VPC — your private network in the cloud</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ec2 describe-vpcs --query "Vpcs[].[VpcId,CidrBlock]"</span></div>
+          <div><span class="output">[["vpc-default-abc", "172.31.0.0/16"]]</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">💻</div><div class="kp-title">EC2</div><div class="kp-desc">Virtual machines. Pick AMI + instance type + key pair → SSH in.</div></div>
+        <div class="key-point"><div class="kp-icon">🗄️</div><div class="kp-title">S3</div><div class="kp-desc">Object storage. Effectively unlimited, $0.023/GB/month. Static sites live here.</div></div>
+        <div class="key-point"><div class="kp-icon">🔑</div><div class="kp-title">IAM</div><div class="kp-desc">Users, groups, roles, policies. The auth-and-authz layer.</div></div>
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">VPC</div><div class="kp-desc">Your private network. Subnets, route tables, security groups, NAT gateways.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Match each AWS service to its closest "everyday" analogue: EC2, S3, IAM, VPC. Use exactly one of: keycard system, file cabinet, rented apartment, gated community.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>EC2 → rented apartment</strong> — you furnish it, you live there. Comes empty.<br>
+                <strong>S3 → file cabinet</strong> — drop in objects, retrieve them. No structure beyond keys.<br>
+                <strong>IAM → keycard system</strong> — controls who can enter which rooms.<br>
+                <strong>VPC → gated community</strong> — the whole neighborhood + which cars can enter, with internal streets (subnets) and gates (security groups).
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An EC2 instance can't reach the internet. Name three places to look in the VPC layer.</div>
+            <div class="pq-hint">💡 Internet gateway, route table, security group.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">You see <code>i-0a1b2c3d</code>, <code>vpc-456</code>, and <code>arn:aws:iam::123:user/deploy</code> in a CloudFormation log. What is each, and which AWS service?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Without using IAM, can you make an S3 bucket private? Why is using IAM still preferable for app-level access?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Account Setup, Free Tier, Regions & Billing Discipline</div>
+        <div class="module-desc">The "first 30 minutes" that prevents a surprise $400 bill</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">More students quit AWS over a surprise bill than for any technical reason. Spend 30 minutes locking down billing <em>before</em> spinning up a single resource: enable MFA on root, create an IAM user for daily work, set a billing alarm at <code>$5</code>, and confirm Free Tier is active. This is non-negotiable.</p>
+        <p class="explain-text">Pick a <strong>region</strong> close to you (latency) and to your students (compliance). For Pakistan-based learners, <code>me-central-1</code> (UAE) or <code>ap-south-1</code> (Mumbai) are the lowest latency. For free-tier learning, <code>us-east-1</code> often has the broadest service availability.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">first-30-minutes.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Enable MFA on the ROOT account immediately</span></div>
+          <div><span class="comment">#    Console → Security credentials → Enable MFA (use Authy/1Password)</span></div>
+          <br>
+          <div><span class="comment"># 2. Create an IAM user for daily work — never use root for day-to-day</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-user --user-name muzammil</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam attach-user-policy --user-name muzammil \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--policy-arn arn:aws:iam::aws:policy/AdministratorAccess</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-access-key --user-name muzammil</span></div>
+          <br>
+          <div><span class="comment"># 3. Configure CLI with the new user — root key never touches your laptop</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws configure</span></div>
+          <div><span class="output">AWS Access Key ID: AKIA...</span></div>
+          <div><span class="output">AWS Secret Access Key: ****</span></div>
+          <div><span class="output">Default region: me-central-1</span></div>
+          <div><span class="output">Default output: json</span></div>
+          <br>
+          <div><span class="comment"># 4. Billing alarm at $5 — catches drift before it becomes pain</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws cloudwatch put-metric-alarm \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--alarm-name "billing-5usd" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--metric-name EstimatedCharges \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--namespace AWS/Billing \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--statistic Maximum --period 21600 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--threshold 5 --comparison-operator GreaterThanThreshold \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--region us-east-1 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--alarm-actions arn:aws:sns:us-east-1:123:billing-topic</span></div>
+          <br>
+          <div><span class="comment"># 5. Pick the right region for your AZs</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ec2 describe-availability-zones --region me-central-1</span></div>
+          <div><span class="output">"ZoneName": "me-central-1a", "State": "available"</span></div>
+          <div><span class="output">"ZoneName": "me-central-1b", "State": "available"</span></div>
+          <div><span class="output">"ZoneName": "me-central-1c", "State": "available"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚨</div><div class="kp-title">Billing alarm @ $5</div><div class="kp-desc">First thing you do. Tied to email/SMS via SNS. Has saved every junior I've taught.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">MFA on root</div><div class="kp-desc">Then never log in as root again. Daily work in an IAM user.</div></div>
+        <div class="key-point"><div class="kp-icon">🌍</div><div class="kp-title">Pick one region</div><div class="kp-desc">Resources don't cross regions easily. Pick by latency + compliance.</div></div>
+        <div class="key-point"><div class="kp-icon">🆓</div><div class="kp-title">Free tier ≠ free</div><div class="kp-desc">12-month free tier on some services, always-free on others. Read each line.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A student wakes up to a $217 AWS bill from one weekend. Name three things they almost certainly didn't set up before launching resources.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Most likely missed:<br>
+                1. <strong>A billing alarm</strong> via CloudWatch + SNS — would have emailed at $5, $25, $100.<br>
+                2. <strong>Free-tier verification</strong> — they ran a non-free-tier instance type (e.g. <code>t3.large</code> instead of <code>t3.micro</code>), or kept resources running 24/7 past the 750-hr/month free quota.<br>
+                3. <strong>A "stop on shutdown" plan</strong> — left an EC2 + RDS + NAT gateway running. NAT gateway alone is ~$32/month idle.<br><br>
+                Honourable mentions: no AWS Budgets, no <code>aws-nuke</code> teardown script, no daily check-in habit.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is creating an IAM user for daily work the very first thing you do, instead of just using your root credentials?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">For a student in Karachi, list two AWS regions you'd choose first and why. List one region you'd avoid for latency reasons.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What's an Availability Zone, and why does Amazon recommend deploying production workloads across at least two of them?</div>
+            <div class="pq-hint">💡 An AZ is roughly one physical data centre.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">IAM Concepts & Writing Least-Privilege Policies</div>
+        <div class="module-desc">Users, roles, groups, policies — the AWS auth model demystified</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">IAM is the most-skipped, most-failed-interview-on AWS topic. The mental model: <strong>users</strong> are humans, <strong>roles</strong> are non-humans (an EC2 instance, a Lambda, GitHub Actions). Both can have <strong>policies</strong> attached — JSON documents listing allowed actions on specific resources. Always grant the <em>minimum</em> permissions to do the job (least privilege).</p>
+        <p class="explain-text">Anti-pattern: <code>Action: "*", Resource: "*"</code>. That's the IAM equivalent of <code>chmod 777</code> — it works, until it ruins your week.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">iam — least-privilege policy</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># ❌ The lazy-but-disastrous policy</span></div>
+          <div><span class="cmd">{</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Version": "2012-10-17",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Statement": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Effect": "Allow",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="error-color">"Action": "*",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="error-color">"Resource": "*"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}]</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Least-privilege: deploy script can ONLY put objects in ONE bucket</span></div>
+          <div><span class="cmd">{</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Version": "2012-10-17",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Statement": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Sid": "DeployToPortfolio",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Effect": "Allow",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Action": [</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"s3:PutObject", "s3:DeleteObject",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"s3:ListBucket"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">],</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Resource": [</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"arn:aws:s3:::my-portfolio-site",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"arn:aws:s3:::my-portfolio-site/*"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">]</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}]</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="comment"># Roles for non-humans — EC2 instance assumes a role</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam create-role --role-name ec2-app-role \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--assume-role-policy-document '{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Version":"2012-10-17",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Statement":[{"Effect":"Allow",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Principal":{"Service":"ec2.amazonaws.com"},</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Action":"sts:AssumeRole"}]}'</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">👤</div><div class="kp-title">User vs Role</div><div class="kp-desc">User = human (with password). Role = non-human (assumed temporarily, no long-lived creds).</div></div>
+        <div class="key-point"><div class="kp-icon">📜</div><div class="kp-title">Policies = JSON</div><div class="kp-desc">Effect (Allow/Deny), Action, Resource, optional Condition. That's it.</div></div>
+        <div class="key-point"><div class="kp-icon">👥</div><div class="kp-title">Groups for humans</div><div class="kp-desc">Attach policies to a group ("developers"), add users. Don't policy each user individually.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Least privilege</div><div class="kp-desc">Start with nothing, add only what fails. Use Access Analyzer to find unused permissions.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a minimal IAM policy that lets a user upload to <em>only</em> the S3 bucket <code>course-uploads</code> — and nothing else.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>{<br>
+                &nbsp;&nbsp;"Version": "2012-10-17",<br>
+                &nbsp;&nbsp;"Statement": [{<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"Effect": "Allow",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"Action": ["s3:PutObject", "s3:ListBucket"],<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;"Resource": [<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"arn:aws:s3:::course-uploads",<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"arn:aws:s3:::course-uploads/*"<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;]<br>
+                &nbsp;&nbsp;}]<br>
+                }</code><br><br>
+                Notice <strong>two ARNs</strong>: the bucket itself (for <code>ListBucket</code>) and <code>/*</code> for the objects inside (for <code>PutObject</code>). Forgetting <code>ListBucket</code> on the bucket ARN is the most common bug.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why give an EC2 instance a <em>role</em> instead of baking long-lived AWS credentials into the instance via env vars?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate's policy uses <code>"Action": "*"</code>. Suggest two specific replacements for two different real-world scenarios (e.g. a CI deploy role, a read-only audit user).</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is an <em>assume-role trust policy</em>, and how is it different from the regular permission policies you attach?</div>
+            <div class="pq-hint">💡 Trust policy = "who can assume this role?" Permission policy = "what can the role do once assumed?"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Static vs Dynamic Application Deployment</div>
+        <div class="module-desc">The single decision that determines half your AWS architecture</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>Static</strong> = pre-built HTML/CSS/JS files. No server required. Render once, serve forever (until rebuild). Examples: portfolios, marketing sites, React/Vue SPAs after build. AWS path: <strong>S3 + CloudFront</strong> ($1–2/month).</p>
+        <p class="explain-text"><strong>Dynamic</strong> = a server runs code on every request. Examples: REST APIs, server-rendered apps, anything with a database. AWS path: <strong>Elastic Beanstalk, ECS, or EC2</strong> ($10+/month).</p>
+        <p class="explain-text">Many students push static sites onto EC2 because they don't realise S3 + CloudFront is faster, cheaper, and infinitely more scalable. Always ask: <em>"Does this need a runtime, or just files?"</em></p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">decision-tree</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Does your app need a server runtime?</span></div>
+          <br>
+          <div><span class="output">                ┌─ "Just HTML/CSS/JS files?"</span></div>
+          <div><span class="output">                │     → STATIC: S3 + CloudFront</span></div>
+          <div><span class="output">                │       Cost: $1–2/mo</span></div>
+          <div><span class="output">                │       Scale: ∞ (CDN edge)</span></div>
+          <div><span class="output">                │</span></div>
+          <div><span class="output">  Your app  ───┤</span></div>
+          <div><span class="output">                │     "Code runs on every request?"</span></div>
+          <div><span class="output">                │     "Talks to a database?"</span></div>
+          <div><span class="output">                └──→ DYNAMIC: Beanstalk / ECS / EC2 / Lambda</span></div>
+          <div><span class="output">                       Cost: $10+/mo</span></div>
+          <div><span class="output">                       Scale: pay per instance/request</span></div>
+          <br>
+          <div><span class="comment"># Examples</span></div>
+          <div><span class="output">Portfolio site         → STATIC  (S3 + CloudFront)</span></div>
+          <div><span class="output">Marketing landing page → STATIC  (S3 + CloudFront)</span></div>
+          <div><span class="output">React SPA (built dist) → STATIC  (S3 + CloudFront)</span></div>
+          <div><span class="output">Node API + Postgres    → DYNAMIC (Beanstalk / ECS)</span></div>
+          <div><span class="output">Next.js (SSR)          → DYNAMIC (Beanstalk / Lambda@Edge)</span></div>
+          <div><span class="output">Login form + form data → DYNAMIC (Lambda + DynamoDB)</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Classify these as static or dynamic, and pick the AWS path: (a) a Markdown blog generated by Astro, (b) a Node.js auth service, (c) a Vue SPA + REST backend, (d) a static résumé.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is putting a portfolio site on EC2 (rather than S3 + CloudFront) usually the wrong choice — even if it "works"?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Three reasons:<br>
+                1. <strong>Cost:</strong> EC2 t3.micro = ~$8/mo running 24/7. S3 + CloudFront for a low-traffic portfolio = under $1/mo.<br>
+                2. <strong>Operational burden:</strong> EC2 needs OS patches, restarts, certificate management, security-group tuning. S3 + CloudFront is fully managed — zero ops.<br>
+                3. <strong>Performance + scale:</strong> EC2 serves from one region. CloudFront caches at 400+ edge locations globally — your portfolio loads in 50ms in Karachi <em>and</em> Toronto.<br><br>
+                The only reason to use EC2 for a static site is if your hosting platform requires it (rare). Otherwise, S3 + CloudFront wins on every axis.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Next.js can run as a fully-static export (SSG) or as a server-rendered app (SSR). Which AWS path fits each?</div>
+            <div class="pq-hint">💡 SSG = pre-built HTML files. SSR = needs a runtime per request.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Static Site Hosting — S3 + CloudFront + Route 53</div>
+        <div class="module-desc">The cheapest, fastest, most reliable way to put HTML on the internet</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">The architecture is simple: <strong>S3</strong> stores your files. <strong>CloudFront</strong> is the CDN that caches them at 400+ edge locations and adds HTTPS. <strong>Route 53</strong> points your custom domain at CloudFront. Total cost for a typical portfolio: <em>under $2/month</em>.</p>
+        <p class="explain-text">Common mistake: students enable <em>"S3 static website hosting"</em> directly and skip CloudFront. That gives you HTTP-only and no CDN. Always front S3 with CloudFront — it's free up to 1 TB/month outbound on most regions.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">deploy-static.sh — full setup</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Create + sync to S3</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 mb s3://muzammil-portfolio --region me-central-1</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3 sync ./dist s3://muzammil-portfolio \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--delete --cache-control "max-age=86400"</span></div>
+          <br>
+          <div><span class="comment"># 2. Block public bucket access — CloudFront will read via OAC</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws s3api put-public-access-block --bucket muzammil-portfolio \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true</span></div>
+          <br>
+          <div><span class="comment"># 3. Request a free TLS cert in us-east-1 (CloudFront requirement)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws acm request-certificate --domain-name muzammilbilwani.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--validation-method DNS --region us-east-1</span></div>
+          <br>
+          <div><span class="comment"># 4. Create CloudFront distribution pointing at S3</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws cloudfront create-distribution \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--distribution-config file://cf-config.json</span></div>
+          <div><span class="output">"Id": "E1A2B3C4D5", "DomainName": "d1234.cloudfront.net"</span></div>
+          <br>
+          <div><span class="comment"># 5. Point the domain at CloudFront via Route 53 alias record</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws route53 change-resource-record-sets --hosted-zone-id Z123 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--change-batch '{ "Changes": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Action": "UPSERT",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"ResourceRecordSet": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Name": "muzammilbilwani.com",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Type": "A",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"AliasTarget": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"HostedZoneId": "Z2FDTNDATAQYW2",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"DNSName": "d1234.cloudfront.net",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"EvaluateTargetHealth": false</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}}}]}'</span></div>
+          <br>
+          <div><span class="comment"># 6. After every redeploy, invalidate CloudFront cache</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws cloudfront create-invalidation \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--distribution-id E1A2B3C4D5 --paths "/*"</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag yellow">S3</span>
+        <span class="tag yellow">CloudFront</span>
+        <span class="tag yellow">Route 53</span>
+        <span class="tag green">ACM</span>
+        <span class="tag blue">OAC</span>
+        <span class="tag orange">cache invalidation</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why must the ACM certificate for CloudFront be requested in <code>us-east-1</code> (N. Virginia), even if your S3 bucket is in <code>me-central-1</code>?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                CloudFront is a <strong>global service</strong> with no notion of region for itself, but its certificate-validation backend lives in <code>us-east-1</code> by historical AWS design. CloudFront <em>only</em> reads ACM certificates from <code>us-east-1</code>.<br><br>
+                Your S3 bucket can live in any region — CloudFront pulls from it via signed requests regardless. But if you request your cert in <code>me-central-1</code>, CloudFront simply won't see it. This is one of the most common day-1 AWS gotchas.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">After deploying a new index.html via <code>aws s3 sync</code>, users still see the old version. What command makes CloudFront fetch the new file?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">What's an Origin Access Control (OAC), and why use one instead of making the S3 bucket publicly readable?</div>
+            <div class="pq-hint">💡 With OAC, the bucket stays private; only CloudFront can read.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A Route 53 <strong>A record</strong> usually points at an IP address, but for CloudFront/Beanstalk you use an <strong>alias</strong> A record. Why?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Dynamic Apps — EC2, ECS, and Elastic Beanstalk</div>
+        <div class="module-desc">The three paths to running server code on AWS, with a concrete recommendation</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>EC2:</strong> raw VM. You SSH in, install Node, run <code>pm2 start</code>. Maximum control, maximum maintenance. <br><strong>ECS Fargate:</strong> "run my container, don't bother me with VMs". You write a task definition, AWS runs it. <br><strong>Elastic Beanstalk:</strong> "run my code, handle everything". You upload a zip or a Docker image, AWS does the rest.</p>
+        <p class="explain-text">For first deploys, <strong>Beanstalk is the right answer</strong>. For containerised apps, <strong>ECS Fargate</strong>. For learning + customization, <strong>EC2</strong>. Anything that says "Kubernetes" can wait — you don't need K8s before your first 100 customers.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">three-paths.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># ─── PATH 1: EC2 (rent a VM) ─────────────────</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ec2 run-instances --image-id ami-0abcd --instance-type t3.micro \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--key-name my-key --security-group-ids sg-123</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ssh -i my-key.pem ubuntu@&lt;ec2-ip&gt;</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt update && sudo apt install -y nodejs npm</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">git clone &lt;repo&gt; && cd &lt;repo&gt; && npm ci && npm run build</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">pm2 start dist/server.js && pm2 save</span></div>
+          <br>
+          <div><span class="comment"># ─── PATH 2: ECS Fargate (containers, no VMs) ─</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecs register-task-definition \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--family myapp --requires-compatibilities FARGATE \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cpu 256 --memory 512 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--container-definitions '[{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"name":"web","image":"123.dkr.ecr.../myapp:1.0",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"portMappings":[{"containerPort":3000}]</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}]'</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecs create-service --cluster prod --service-name myapp \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--task-definition myapp:1 --desired-count 2</span></div>
+          <br>
+          <div><span class="comment"># ─── PATH 3: Elastic Beanstalk (push + go) ───</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb init -p node.js-20 myapp --region me-central-1</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb create myapp-prod --instance-type t3.small</span></div>
+          <div><span class="output">Creating environment "myapp-prod"...</span></div>
+          <div><span class="output">  Application available at myapp-prod.me-central-1.elasticbeanstalk.com</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb deploy</span></div>
+          <div><span class="output">Environment update completed. Status: <span class="info">Ready</span> ✓</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🛠️</div><div class="kp-title">EC2 = control</div><div class="kp-desc">Use when you need custom OS-level setup, GPUs, or to learn how things work.</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">ECS Fargate = containers</div><div class="kp-desc">Best fit if you've already Dockerised the app. No EC2 fleet to manage.</div></div>
+        <div class="key-point"><div class="kp-icon">🚀</div><div class="kp-title">Beanstalk = velocity</div><div class="kp-desc">Push code, get HTTPS + load balancer + autoscaling. First-deploy default.</div></div>
+        <div class="key-point"><div class="kp-icon">🚫</div><div class="kp-title">Skip K8s for now</div><div class="kp-desc">Eks/k8s is powerful but overkill until you have multiple teams + services.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A 2-engineer startup has a Dockerised Express app and needs to deploy by Friday. EC2, ECS Fargate, or Beanstalk? Justify in 3 bullets.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>ECS Fargate</strong> is the best fit, narrowly over Beanstalk:<br>
+                1. App is already containerised → Fargate runs the same Dockerfile from local dev with no changes.<br>
+                2. No EC2 fleet to manage — Fargate handles the underlying compute.<br>
+                3. Per-task pricing scales smoothly from 1 task to 100 without infra rework.<br><br>
+                Beanstalk's Docker single-container platform is also fine and slightly simpler to set up — pick it if the team has zero AWS experience and "5 commands to running" is the priority.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Beanstalk gives you a domain like <code>myapp-prod.eu-west-1.elasticbeanstalk.com</code>. How do you put it behind <code>app.muzammilbilwani.com</code> with HTTPS?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">An EC2 instance you SSH'd into is suddenly unreachable. List four things to check before assuming the instance is dead.</div>
+            <div class="pq-hint">💡 Security group, public IP, instance state, ACM cert? (one of those is wrong here.)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Environment Variables, Secrets & Deployment Strategies</div>
+        <div class="module-desc">Twelve-factor config, AWS Parameter Store, and rolling vs blue-green on AWS</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Rule 1: <em>"Code goes in git, config goes in env vars."</em> Anything that changes between dev and prod (database URLs, API keys, log levels) is environment configuration. Inject at runtime, never hard-code.</p>
+        <p class="explain-text">For non-secret config: env vars or AWS <strong>Parameter Store</strong> (free, encrypted-at-rest). For secrets: AWS <strong>Secrets Manager</strong> (~$0.40/secret/month, supports automatic rotation). Beanstalk and ECS can pull these directly into the running app.</p>
+        <p class="explain-text">For deployment strategies, AWS gives you <strong>rolling</strong> by default on Beanstalk and ECS, and <strong>blue-green</strong> via CodeDeploy or "Swap Environment URLs" on Beanstalk.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">config + secrets</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Beanstalk env vars (safe for non-secrets)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb setenv NODE_ENV=production LOG_LEVEL=info</span></div>
+          <br>
+          <div><span class="comment"># Parameter Store — free, encrypted at rest</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ssm put-parameter \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name "/myapp/prod/DB_URL" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--type SecureString \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--value "postgres://user:pass@db.amazonaws.com:5432/app"</span></div>
+          <br>
+          <div><span class="comment"># Secrets Manager — rotation-friendly</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws secretsmanager create-secret \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name myapp/stripe-key \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--secret-string '{"key":"sk_live_..."}'</span></div>
+          <br>
+          <div><span class="comment"># Read in Node.js — fetched once at startup</span></div>
+          <div><span class="cmd">const ssm = new SSMClient({});</span></div>
+          <div><span class="cmd">const { Parameter } = await ssm.send(new GetParameterCommand({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">Name: '/myapp/prod/DB_URL', WithDecryption: true</span></div>
+          <div><span class="cmd">}));</span></div>
+          <div><span class="cmd">const dbUrl = Parameter.Value;</span></div>
+          <br>
+          <div><span class="comment"># Beanstalk rolling deploy (default)</span></div>
+          <div><span class="output">[v1][v1][v1][v1] → [v2][v1][v1][v1] → ... → [v2][v2][v2][v2]</span></div>
+          <br>
+          <div><span class="comment"># Beanstalk blue-green via Swap Environment URLs</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb create myapp-prod-green --version v2</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb swap myapp-prod-blue --destination-name myapp-prod-green</span></div>
+          <div><span class="output">Successfully swapped CNAMEs. Old "blue" is still hot for instant rollback.</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is hard-coding <code>DB_URL = "postgres://..."</code> in your application source code a bug, even if you only deploy to one environment?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare AWS Parameter Store and Secrets Manager. Which is right for a database password that must be rotated every 30 days?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Secrets Manager.</strong> It supports <em>automatic</em> rotation — you wire it to a Lambda that updates the database password and the secret in lockstep. Apps re-fetch the secret transparently.<br><br>
+                <strong>Parameter Store</strong> is free + encrypted, but rotation is manual. Use it for non-rotating config (feature flags, log levels, public URLs).<br><br>
+                Practical default: <em>"Use Parameter Store for everything; promote to Secrets Manager only when you need rotation or cross-account access."</em>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Sketch the Beanstalk "blue-green" flow using <code>eb swap</code> in 4 steps. What happens to the old environment after a successful swap?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your app reads <code>process.env.DB_URL</code> on startup. The value is set in Beanstalk env vars. After a deploy, <code>DB_URL</code> is empty inside the container. List two likely causes.</div>
+            <div class="pq-hint">💡 Container env vars vs. process env vars; Beanstalk env passing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Process & Log Management — CloudWatch, systemd, PM2</div>
+        <div class="module-desc">Where logs go, who restarts your app when it crashes, and how to find a 3am bug</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">A deployed app is only as good as its <em>recovery</em> story. Two questions to answer for every deploy: <strong>(1) when the process crashes, who restarts it? (2) when something breaks, where do I read the logs?</strong></p>
+        <p class="explain-text">On EC2: <strong>systemd</strong> or <strong>PM2</strong> manage the process. Logs flow to journald or PM2's log files, then forwarded to <strong>CloudWatch Logs</strong>. On Beanstalk + ECS: AWS handles process management; logs go to CloudWatch automatically. Your job is to make the app log to <em>stdout</em>, not files — AWS captures stdout.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">systemd unit + CloudWatch agent</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># /etc/systemd/system/myapp.service</span></div>
+          <div><span class="cmd">[Unit]</span></div>
+          <div><span class="cmd">Description=My Node API</span></div>
+          <div><span class="cmd">After=network.target</span></div>
+          <br>
+          <div><span class="cmd">[Service]</span></div>
+          <div><span class="cmd">Type=simple</span></div>
+          <div><span class="cmd">User=ubuntu</span></div>
+          <div><span class="cmd">WorkingDirectory=/srv/myapp</span></div>
+          <div><span class="cmd">ExecStart=/usr/bin/node dist/server.js</span></div>
+          <div><span class="cmd">Restart=always</span> &nbsp;<span class="comment"># systemd auto-restarts on crash</span></div>
+          <div><span class="cmd">RestartSec=5</span></div>
+          <div><span class="cmd">StandardOutput=journal</span></div>
+          <div><span class="cmd">StandardError=journal</span></div>
+          <br>
+          <div><span class="cmd">[Install]</span></div>
+          <div><span class="cmd">WantedBy=multi-user.target</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">sudo systemctl enable --now myapp</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">journalctl -u myapp -f</span> &nbsp;<span class="comment"># tail the logs</span></div>
+          <br>
+          <div><span class="comment"># Stream system + app logs to CloudWatch via the agent</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-a fetch-config -m ec2 -c file:cwagent.json -s</span></div>
+          <br>
+          <div><span class="comment"># Query logs in CloudWatch Insights</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws logs start-query --log-group-name /aws/myapp \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--start-time $(date -d '1 hour ago' +%s) \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--end-time $(date +%s) \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--query-string 'fields @timestamp,@message | filter @message like /ERROR/ | sort @timestamp desc | limit 20'</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Restart=always</div><div class="kp-desc">systemd brings the app back if it crashes. Don't write your own babysitter.</div></div>
+        <div class="key-point"><div class="kp-icon">📤</div><div class="kp-title">Log to stdout</div><div class="kp-desc">Twelve-factor: stdout/stderr only. AWS captures it; don't write to files.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">CloudWatch Insights</div><div class="kp-desc">SQL-like queries over logs. Faster than grepping by hand.</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">PM2 alternative</div><div class="kp-desc">Lighter than systemd for Node-only setups. <code>pm2 startup</code> + <code>pm2 save</code>.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "log to stdout" the modern best practice instead of "log to <code>/var/log/myapp.log</code>"?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Three reasons:<br>
+                1. <strong>Containers are ephemeral.</strong> Files inside a container vanish when the container restarts. stdout is captured by the container runtime (Docker / ECS / Beanstalk) and forwarded to a durable log service (CloudWatch).<br>
+                2. <strong>Twelve-factor app:</strong> the app shouldn't decide where logs go — that's the platform's job. Decoupling lets you swap log sinks (CloudWatch → Loki → Datadog) without touching code.<br>
+                3. <strong>Multiple instances:</strong> 10 EC2 instances writing to 10 separate <code>/var/log</code> files is a debugging nightmare. stdout → CloudWatch unifies them.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a CloudWatch Insights query to find all log lines containing "ERROR" in the last 30 minutes, sorted newest-first, top 50.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A Node app crashes silently. systemd restarts it (because <code>Restart=always</code>). How would you detect that this is happening and alert on it?</div>
+            <div class="pq-hint">💡 CloudWatch metric on systemd unit restarts, or alarm on app uptime.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 - AI -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI for AWS — Debugging Errors & Writing IAM Policies</div>
+        <div class="module-desc">AI is excellent at IAM JSON, AWS error messages, and CloudFormation YAML. Verify before you ship.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">AWS error messages are notorious — <em>"User: arn:aws:iam::… is not authorized to perform … because no identity-based policy allows the … action"</em> is a paragraph saying "you forgot a permission." AI is great at translating these into a fix. It's also great at writing the first draft of an IAM policy from a plain-English description.</p>
+        <p class="explain-text">The trap: AI confidently invents IAM action names that don't exist (<code>s3:GetAllObjects</code> isn't real). Always verify against the AWS docs before merging. And never paste real ARNs that contain account IDs into public AI tools — even though account IDs are technically not secret, they're useful for an attacker.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">AI prompts for AWS</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># ❌ Weak</span></div>
+          <div><span class="comment">"Write me an IAM policy"</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong</span></div>
+          <div><span class="comment">"Write a least-privilege IAM policy for a CI deployer that needs to:</span></div>
+          <div><span class="comment"> - Push images to ONE specific ECR repo: 'myapp' in eu-west-1</span></div>
+          <div><span class="comment"> - Update ONE specific ECS service: 'myapp-prod' in cluster 'prod'</span></div>
+          <div><span class="comment"> - Read parameters under /myapp/prod/* in Parameter Store</span></div>
+          <div><span class="comment"> - Nothing else.</span></div>
+          <div><span class="comment">Use specific ARNs (replace ACCOUNT_ID with the placeholder).</span></div>
+          <div><span class="comment">After the policy, list 2 things that could still go wrong."</span></div>
+          <br>
+          <div><span class="comment"># Debug-by-AI: paste the EXACT error</span></div>
+          <div><span class="error-color">User: arn:aws:iam::123:user/deploy is not authorized to perform: s3:GetObject on resource: "arn:aws:s3:::my-bucket/key" because no identity-based policy allows the s3:GetObject action</span></div>
+          <div><span class="comment">→ AI prompt: "Translate this IAM error into the missing policy I need to add."</span></div>
+          <br>
+          <div><span class="comment"># Verify AI-generated policies in the simulator</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam simulate-principal-policy \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--policy-source-arn arn:aws:iam::123:user/deploy \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--action-names s3:PutObject \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--resource-arns arn:aws:s3:::my-bucket/file.txt</span></div>
+          <div><span class="output">"EvalDecision": "<span class="info">allowed</span>"</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">ChatGPT</span>
+        <span class="tag purple">Claude</span>
+        <span class="tag purple">Q Developer</span>
+        <span class="tag orange">Verify ARNs</span>
+        <span class="tag green">simulate-principal-policy</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take the vague prompt "give me an IAM policy for my Lambda" and rewrite it as a 5-bullet detailed prompt that produces a least-privilege policy.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI-generated policy uses <code>s3:GetAllObjects</code>. You apply it and the deploy fails. Why?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>s3:GetAllObjects</code> doesn't exist. AI hallucinated a plausible-sounding action name. The real action is <code>s3:GetObject</code> (singular), and to "read everything" you broaden the <em>Resource</em> ARN to <code>arn:aws:s3:::bucket/*</code>, not the action.<br><br>
+                <strong>Verification routine:</strong> any unfamiliar IAM action name → search the AWS Service Authorization Reference. If it's not there, the AI invented it.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Use the <code>aws iam simulate-principal-policy</code> command to verify whether user "deploy" can <code>ecs:UpdateService</code> on cluster "prod". Sketch the command.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 - PROJECT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Deploy a Portfolio Site to S3 + Route 53 + CloudFront</div>
+        <div class="module-desc">The capstone — your résumé live at your own domain, under $2/month, with HTTPS and CDN</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Walk through this end-to-end on screen. By the end of this project, every student should have a personal <code>https://&lt;name&gt;.com</code> serving a real portfolio. This is the artefact they list on their CV. Insist on a custom domain — <code>cloudfront.net</code> URLs don't impress recruiters.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">deploy.sh — full pipeline</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">#!/bin/bash</span></div>
+          <div><span class="cmd">set -euo pipefail</span></div>
+          <br>
+          <div><span class="cmd">BUCKET="muzammil-portfolio"</span></div>
+          <div><span class="cmd">DIST_ID="E1A2B3C4D5"</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Building site"</span></div>
+          <div><span class="cmd">npm run build</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Syncing to S3 (with cache headers)"</span></div>
+          <div><span class="cmd">aws s3 sync ./dist "s3://$BUCKET" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--delete \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=31536000,immutable" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--exclude "index.html"</span></div>
+          <br>
+          <div><span class="comment"># index.html gets short cache so deploys are visible quickly</span></div>
+          <div><span class="cmd">aws s3 cp ./dist/index.html "s3://$BUCKET/index.html" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--cache-control "public,max-age=60"</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Invalidating CloudFront cache"</span></div>
+          <div><span class="cmd">aws cloudfront create-invalidation \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--distribution-id "$DIST_ID" \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--paths "/index.html"</span></div>
+          <br>
+          <div><span class="cmd">echo "✅ Deployed to https://muzammilbilwani.com"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🪙</div><div class="kp-title">Smart cache headers</div><div class="kp-desc">Long cache for hashed assets, short cache for index.html — fast loads + visible deploys.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Bucket private + OAC</div><div class="kp-desc">Only CloudFront can read — no public bucket policy.</div></div>
+        <div class="key-point"><div class="kp-icon">🌍</div><div class="kp-title">Custom domain + HTTPS</div><div class="kp-desc">Route 53 alias + ACM cert in us-east-1.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">Targeted invalidation</div><div class="kp-desc">Only invalidate <code>/index.html</code>, not <code>/*</code> — saves on the free tier limit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 12 - QUIZ -->
+  <div class="module" id="m12">
+    <div class="module-header" onclick="toggle('m12')">
+      <div class="module-num">12</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: AWS Services + Deployment Strategies</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. Which AWS service lets you serve a static portfolio site with a CDN and HTTPS?</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> EC2 + nginx</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q1','b')"><div class="opt-letter">B</div> S3 + CloudFront</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Lambda + API Gateway</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> RDS + ELB</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. The CloudFront ACM certificate must be created in which region?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q2','a')"><div class="opt-letter">A</div> us-east-1</div>
+        <div class="option" onclick="answer('q2','b')"><div class="opt-letter">B</div> The same region as the S3 bucket</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Any region</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> me-central-1</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. Which IAM construct is used by an EC2 instance to access AWS APIs without storing long-lived keys?</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> User</div>
+        <div class="option" onclick="answer('q3','b')"><div class="opt-letter">B</div> Group</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q3','c')"><div class="opt-letter">C</div> Role (assumed via EC2 instance profile)</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Federated identity</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. The first thing you set up in a new AWS account is...</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> A VPC</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q4','b')"><div class="opt-letter">B</div> Root MFA, an IAM user, and a billing alarm</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> An EC2 instance</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> An RDS database</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Which service is the easiest first deploy for a Node.js API with a database?</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> Raw EC2 + manual setup</div>
+        <div class="option" onclick="answer('q5','b')"><div class="opt-letter">B</div> EKS</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q5','c')"><div class="opt-letter">C</div> Elastic Beanstalk</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> CloudFormation alone</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: Sync the local <code>./dist</code> folder to bucket <code>my-site</code> while deleting orphaned files.</div>
+          <input type="text" id="fi1" placeholder="aws s3 sync ..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['aws s3 sync ./dist s3://my-site --delete','aws s3 sync ./dist/ s3://my-site --delete'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: Invalidate every path in CloudFront distribution <code>E123ABC</code>.</div>
+          <input type="text" id="fi2" placeholder="aws cloudfront create-invalidation ..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['aws cloudfront create-invalidation --distribution-id E123ABC --paths /*','aws cloudfront create-invalidation --distribution-id E123ABC --paths \"/*\"'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 13 - ASSIGNMENT -->
+  <div class="module" id="m13">
+    <div class="module-header" onclick="toggle('m13')">
+      <div class="module-num">13</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Deploy a Dynamic App to Elastic Beanstalk</div>
+        <div class="module-desc">Take a Node.js (or Python/Go) API + Postgres and ship it to a public URL with HTTPS</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame this as a real internship task: <em>"Your manager: 'We need this API live behind a custom domain by Friday. Use Beanstalk. Make sure it has HTTPS, env vars for the database, and a working healthcheck.'"</em> This forces them to integrate everything from the prior modules into one shipping artefact.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Pick (or write) a Node.js/Python/Go REST API with at least 3 endpoints, including <code>/healthz</code></li>
+          <li>Provision a free-tier Postgres on AWS RDS (or Aurora Serverless v2 for zero-cost-at-rest)</li>
+          <li>Deploy the app via Elastic Beanstalk on a t3.small (one instance is fine)</li>
+          <li>Pass <code>DB_URL</code> via Beanstalk env vars or Parameter Store — never hard-coded</li>
+          <li>Configure healthcheck path = <code>/healthz</code> in Beanstalk</li>
+          <li>Attach a custom subdomain (<code>api.yourname.com</code>) via Route 53 alias to Beanstalk's CNAME</li>
+          <li>Provision a free TLS cert via ACM and attach to the Beanstalk load balancer (HTTPS only, redirect HTTP → HTTPS)</li>
+          <li>Logs from the app must appear in CloudWatch Logs</li>
+          <li>The app must restart automatically when it crashes (Beanstalk default)</li>
+          <li>Document the deploy in a 1-page README — architecture diagram + cost breakdown + how to redeploy</li>
+          <li>Bonus: GitHub Actions workflow that runs <code>eb deploy</code> on push to <code>main</code> via OIDC (no long-lived AWS keys)</li>
+          <li>Bonus: Tear-down script that removes every resource you created</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected acceptance test</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">curl -i https://api.muzammilbilwani.com/healthz</span></div>
+          <div><span class="output">HTTP/2 200</span></div>
+          <div><span class="output">content-type: application/json</span></div>
+          <div><span class="output">x-served-by: aws-beanstalk</span></div>
+          <div><span class="output"></span></div>
+          <div><span class="output">{"status":"ok","db":"connected","commit":"a3f1c2"}</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">aws logs tail /aws/elasticbeanstalk/myapp-prod/var/log/web.stdout.log --since 5m</span></div>
+          <div><span class="output">[2025-04-29T10:24:01Z] GET /healthz 200 12ms</span></div>
+          <div><span class="output">[2025-04-29T10:24:08Z] POST /items 201 86ms</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">App live on HTTPS: 30. DB connected via Parameter Store: 20. Healthcheck wired: 15. Logs in CloudWatch: 15. README + diagram: 10. Code quality: 10.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">ACM cert in wrong region, security group blocks RDS, env var typo, healthcheck returns 404, Beanstalk role missing CloudWatch permission.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch goal</div><div class="kp-desc">Make it blue-green: deploy a "green" environment, smoke-test it, swap CNAMEs, retire "blue".</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

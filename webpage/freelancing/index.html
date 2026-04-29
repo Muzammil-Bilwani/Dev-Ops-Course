@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Freelancing as a DevOps Engineer — Land Clients & Price Your Services | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn how to freelance as a DevOps engineer: where to find work on Upwork and LinkedIn, how to pick profitable services, write winning proposals, price confidently, and avoid low-pay traps. Includes a real proposal project and graded assignment.">
+<meta name="keywords" content="freelancing devops, upwork devops, fiverr devops engineer, devops freelancer Pakistan, CI/CD freelance, AWS freelance, how to price devops services, writing proposals devops, linkedin devops profile, banoqabil devops, muzammil bilwani">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Freelancing as a DevOps Engineer — Land Clients & Price Your Services">
+<meta property="og:description" content="Practical freelancing module for DevOps engineers: Upwork/Fiverr profiles, service selection, proposal writing, pricing strategy, and red-flag client detection.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Freelancing as a DevOps Engineer — BanoQabil">
+<meta name="twitter:description" content="Land your first DevOps freelance client: Upwork profiles, CI/CD proposals, pricing services, and spotting low-pay traps.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Freelancing as a DevOps Engineer — Module 15",
+  "description": "A practical module on starting a DevOps freelance career: platforms (Upwork, Fiverr, LinkedIn), service selection, profile optimization, proposal writing, pricing frameworks, and red-flag client detection. Includes a polished proposal project and real-world proposal assignment.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Intermediate",
+  "inLanguage": "en",
+  "teaches": [
+    "Finding DevOps freelance work on Upwork, Fiverr, and LinkedIn",
+    "Selecting profitable DevOps services to offer",
+    "Building a converting Upwork and LinkedIn profile",
+    "Writing winning DevOps proposals",
+    "Pricing CI/CD, AWS migration, and monitoring services",
+    "Detecting low-pay clients and red-flag projects",
+    "Creating a professional proposal for CI/CD setup"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT4H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #39d353;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--topic); }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--topic); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--cyan); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(57,211,83,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.1s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.2s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.3s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+  .module:nth-child(8) { animation-delay: 0.4s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--topic);
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+
+  .quiz-q .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+
+  .quiz-q .option .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .fill-in {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+
+  .fill-in input {
+    background: #010409;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .fill-in input:focus { border-color: var(--green); }
+
+  .fill-in .fi-check {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(188,140,255,0.05);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--purple);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(188,140,255,0.12);
+  }
+
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(57,211,83,0.06);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--green);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(57,211,83,0.08);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="../index.html">← Back to all topics</a>
+  <div class="badge">$ upwork profile --optimize && earn</div>
+  <h1>Freelancing as a <span>DevOps</span> Engineer</h1>
+  <p class="subtitle">Land clients, price services confidently, and grow a DevOps freelance income from Pakistan or remotely</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Where DevOps Freelance Work Lives</div>
+        <div class="module-desc">Upwork, Fiverr, LinkedIn — where clients are searching and why platform choice matters</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Platform landscape</h3>
+        <p class="explain-text">DevOps freelance work is scattered across three main channels. <strong>Upwork</strong> is the largest marketplace for DevOps contracts — hourly rates $25–$150/hr for experienced engineers, fixed-price projects from $200 to $5,000+. <strong>Fiverr</strong> is gig-based: great for productized services like "set up a GitHub Actions CI pipeline" — but underpricing is common if you're not careful. <strong>LinkedIn</strong> is for direct outreach and inbound leads — many mid-sized companies hire directly through DMs without ever posting on job boards.</p>
+        <p class="explain-text">From Pakistan: Upwork is most accessible (payment via Payoneer or bank transfer). Remote DevOps roles are now common at $1,500–$5,000/month for solid mid-level engineers — equivalent to 5–10× a typical local salary.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — market-research.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Upwork DevOps search — what clients are paying right now</span></div>
+          <div><span class="comment"># Top search terms: "DevOps engineer", "CI/CD pipeline", "AWS setup"</span></div>
+          <div><span class="comment"># "Terraform", "Docker Compose", "GitHub Actions"</span></div>
+          <br>
+          <div><span class="comment"># Fiverr category: Programming &gt; DevOps &amp; Cloud</span></div>
+          <div><span class="comment"># Typical gigs: Docker setup $50–$200, CI/CD $100–$500</span></div>
+          <br>
+          <div><span class="comment"># LinkedIn: search "devops engineer" + "contract" + location "Remote"</span></div>
+          <div><span class="comment"># Use "Open to Work" badge + targeted connection requests to hiring managers</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">echo "Best first platform: Upwork for beginners, LinkedIn for $4k+/month"</span></div>
+          <div><span class="output"><span class="highlight">Best first platform: Upwork for beginners, LinkedIn for $4k+/month</span></span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">💼</div><div class="kp-title">Upwork</div><div class="kp-desc">Largest pool of DevOps contracts. Hourly + fixed-price. Best for beginners building a track record.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Fiverr</div><div class="kp-desc">Gig-based. Package your service into a clear deliverable. Danger: race to the bottom on price.</div></div>
+        <div class="key-point"><div class="kp-icon">🔗</div><div class="kp-title">LinkedIn</div><div class="kp-desc">Direct client relationships. Higher rates. Requires social proof (posts, referrals, portfolio).</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">Cold Outreach</div><div class="kp-desc">Identify startups with poor DevOps (no CI, no monitoring) and pitch a specific audit + fix.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">upwork</span>
+        <span class="tag blue">fiverr</span>
+        <span class="tag purple">linkedin</span>
+        <span class="tag yellow">remote-work</span>
+        <span class="tag orange">freelancing</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Search Upwork for "CI/CD pipeline setup". List 3 active job postings: note the budget, required skills, and estimated hours. What pattern do you see?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Common patterns: $200–$500 fixed price for "set up GitHub Actions for our Node.js app"; required skills usually include Docker, YAML, and one cloud (AWS/GCP). Most jobs are under 10 hours — perfect for packaged offerings rather than open-ended contracts.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is Fiverr riskier for DevOps income than Upwork, even though it has lower competition? What structural difference leads to price erosion on Fiverr?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Find a Pakistani DevOps engineer on LinkedIn who shares content publicly. Analyse their profile: what services do they highlight? Do they show project outcomes or just skills?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain the concept of "cold outreach" for DevOps freelancing. Write a 3-sentence DM to a startup CTO offering a free 30-minute DevOps audit.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Picking Your Services</div>
+        <div class="module-desc">CI/CD setup, AWS migrations, monitoring — which services are high-demand and easy to package</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>The "niche down to win" principle</h3>
+        <p class="explain-text">Generalist DevOps profiles ("I do everything DevOps") convert poorly. Clients on Upwork search for specific outcomes: "set up CI/CD for my Rails app", "migrate our app from Heroku to AWS", "add monitoring alerts". The engineer with a targeted portfolio wins over the generalist every time.</p>
+        <p class="explain-text">High-value, packaged DevOps services in 2024–2025:</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — service-menu.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># HIGH DEMAND — pick 1-2 to start</span></div>
+          <br>
+          <div><span class="highlight">CI/CD Pipeline Setup</span></div>
+          <div><span class="output">  → GitHub Actions / GitLab CI for any stack</span></div>
+          <div><span class="output">  → Price: $200–$800 fixed | Duration: 1–3 days</span></div>
+          <div><span class="output">  → Deliverable: working pipeline + README</span></div>
+          <br>
+          <div><span class="highlight">AWS Setup &amp; Migration</span></div>
+          <div><span class="output">  → Move from Heroku/shared-hosting to EC2/ECS/Beanstalk</span></div>
+          <div><span class="output">  → Price: $500–$3,000 | Duration: 3–10 days</span></div>
+          <div><span class="output">  → Deliverable: running app + architecture doc</span></div>
+          <br>
+          <div><span class="highlight">Monitoring &amp; Alerting</span></div>
+          <div><span class="output">  → Grafana + Prometheus + Alertmanager stack</span></div>
+          <div><span class="output">  → Price: $300–$1,000 | Duration: 2–5 days</span></div>
+          <div><span class="output">  → Deliverable: dashboard + alert rules</span></div>
+          <br>
+          <div><span class="highlight">Dockerfile Optimisation</span></div>
+          <div><span class="output">  → Audit existing Dockerfiles, reduce image size 50%+</span></div>
+          <div><span class="output">  → Price: $150–$400 | Duration: 1–2 days</span></div>
+          <br>
+          <div><span class="info">STARTER TIP: Begin with CI/CD — fastest to deliver, lowest scope creep</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚀</div><div class="kp-title">CI/CD First</div><div class="kp-desc">Fastest turnaround, clearest deliverable, every dev team needs it. Best entry service.</div></div>
+        <div class="key-point"><div class="kp-icon">☁️</div><div class="kp-title">AWS Migrations</div><div class="kp-desc">Higher value, longer engagement. Requires you to understand the client's stack first.</div></div>
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Monitoring</div><div class="kp-desc">Often add-on to CI/CD or AWS work. Grafana + Prometheus dashboards are visual and impressive.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">DevSecOps Audit</div><div class="kp-desc">Add Trivy scans + secrets detection to existing pipelines. High value, low time investment.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">cicd-setup</span>
+        <span class="tag blue">aws-migration</span>
+        <span class="tag orange">monitoring</span>
+        <span class="tag purple">service-design</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Design a Fiverr gig for "GitHub Actions CI/CD Setup". Write: gig title (max 80 chars), 3-tier pricing (Basic/Standard/Premium), and 3 deliverables for the Standard tier.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body"><strong>Title:</strong> "I will set up a GitHub Actions CI/CD pipeline for your Node, Python or Go app"<br><br><strong>Standard ($299):</strong> 1. Working GitHub Actions workflow (lint → test → build → deploy), 2. Secrets configured for one environment (staging or prod), 3. README documenting the pipeline and how to extend it. Delivery: 3 days.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "Dockerfile Optimisation" a good entry service for a junior DevOps freelancer even though the price is lower? What skills does it demonstrate to future clients?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A client says "I need full DevOps setup" with no further details. How do you scope this project? Write 5 discovery questions you'd ask before agreeing on a price.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What does "scope creep" mean in freelancing? Give a concrete DevOps example and describe how you'd prevent it in a CI/CD contract.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">List the tools you'd need to master to deliver all four services in the terminal above (CI/CD, AWS Migration, Monitoring, Dockerfile Optimisation). Which do you already know? Which require the most study?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Building Profiles That Convert</div>
+        <div class="module-desc">Upwork + LinkedIn profile optimization — what clients look for before they message you</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Profile as a sales page</h3>
+        <p class="explain-text">Your Upwork profile is your sales page — not your CV. Clients skim it in under 8 seconds. The profile title, overview first sentence, and portfolio thumbnails decide whether they message you. On LinkedIn, your headline and the "About" section do the same job.</p>
+        <p class="explain-text">The biggest mistake beginners make: listing tools ("I know Docker, Kubernetes, AWS") instead of outcomes ("I reduce CI/CD build times by 60% and help startups ship safely to AWS without downtime").</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — profile-audit.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### UPWORK PROFILE CHECKLIST ###</span></div>
+          <br>
+          <div><span class="error-color">❌ BAD title:</span> <span class="output">"DevOps Engineer with 2 years experience"</span></div>
+          <div><span class="highlight">✅ GOOD title:</span> <span class="output">"CI/CD &amp; AWS DevOps — GitHub Actions | Docker | Terraform"</span></div>
+          <br>
+          <div><span class="error-color">❌ BAD overview start:</span></div>
+          <div><span class="output">  "I am a passionate DevOps engineer who loves technology..."</span></div>
+          <div><span class="highlight">✅ GOOD overview start:</span></div>
+          <div><span class="output">  "I help SaaS teams ship faster by automating their CI/CD</span></div>
+          <div><span class="output">   pipeline on GitHub Actions — from zero to production-grade</span></div>
+          <div><span class="output">   in 2–3 days."</span></div>
+          <br>
+          <div><span class="comment">### PORTFOLIO ITEMS (minimum 3) ###</span></div>
+          <div><span class="output">  1. CI/CD pipeline for a Node.js app (GitHub Actions)</span></div>
+          <div><span class="output">     → screenshot of green pipeline + time saved</span></div>
+          <div><span class="output">  2. AWS static site with CloudFront + Route 53</span></div>
+          <div><span class="output">     → before/after load time comparison</span></div>
+          <div><span class="output">  3. Grafana dashboard for a containerised app</span></div>
+          <div><span class="output">     → screenshot with CPU/memory panels + alert</span></div>
+          <br>
+          <div><span class="comment">### LINKEDIN HEADLINE ###</span></div>
+          <div><span class="error-color">❌ "DevOps Engineer | Looking for opportunities"</span></div>
+          <div><span class="highlight">✅ "DevOps Engineer | GitHub Actions · AWS · Docker | Open to Remote Contracts"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Outcome-first language</div><div class="kp-desc">"Ship faster, break less, save money" beats a tool list every time. Lead with what you do for clients.</div></div>
+        <div class="key-point"><div class="kp-icon">📸</div><div class="kp-title">Visual portfolio</div><div class="kp-desc">Screenshots of green pipelines, Grafana dashboards, architecture diagrams — proof beats words.</div></div>
+        <div class="key-point"><div class="kp-icon">⭐</div><div class="kp-title">First review</div><div class="kp-desc">Accept a smaller first job to get 5 stars. One verified review changes conversion rate by 3–5×.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Keywords matter</div><div class="kp-desc">Upwork search indexes your title + skills section. Use: "GitHub Actions", "Terraform", "Docker", "AWS".</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">upwork-profile</span>
+        <span class="tag blue">linkedin</span>
+        <span class="tag yellow">portfolio</span>
+        <span class="tag purple">personal-brand</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write your own Upwork profile title (max 80 characters) and the first two sentences of your overview, following the outcome-first pattern from the terminal above.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Example: <strong>Title:</strong> "AWS & CI/CD DevOps — GitHub Actions | Docker | Terraform | Monitoring"<br><strong>Overview start:</strong> "I help early-stage startups and growing SaaS teams move from manual deployments to a fully automated CI/CD pipeline in 2–3 days. My typical engagement: GitHub Actions workflow, Docker containerisation, and a one-click deploy to AWS with rollback built in."</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What three portfolio items would best demonstrate your skills after completing this BanoQabil DevOps course? Describe each item's screenshot/demo and the outcome metric you'd show.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Update your LinkedIn headline right now using the skill + value + intent pattern from the terminal. Show before and after.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "taking a smaller first job just for the review" a valid strategy? What is the minimum acceptable rate for this strategy, and when should you stop doing it?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Writing Proposals & Pricing Services</div>
+        <div class="module-desc">Win rate goes up when proposals are specific — and pricing is confident</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>The proposal formula</h3>
+        <p class="explain-text">On Upwork, clients receive 10–30 proposals per job. Generic proposals ("I am the right person for this job…") are ignored. The proposals that win follow a simple formula: <strong>show you read the job → identify the real problem → describe your specific approach → quote a price with confidence</strong>.</p>
+        <p class="explain-text">Pricing: Stop charging by the hour when you're starting out. Package pricing removes the client's hourly anxiety and makes your value clear. Once you have 5+ reviews, move to hourly for ongoing/retainer work ($25–$60/hr is realistic for a solid junior engineer from Pakistan in 2025).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — winning-proposal.md</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### PROPOSAL TEMPLATE (adapt, don't copy) ###</span></div>
+          <br>
+          <div><span class="highlight">Hi [Name],</span></div>
+          <br>
+          <div><span class="output">I noticed [specific detail from the job post — their stack, the pain point].</span></div>
+          <div><span class="output">This is a common problem when [root cause — explain you understand it].</span></div>
+          <br>
+          <div><span class="output">Here's how I'd approach it:</span></div>
+          <div><span class="output">  1. [Specific step 1]</span></div>
+          <div><span class="output">  2. [Specific step 2]</span></div>
+          <div><span class="output">  3. [Deliverable + timeline]</span></div>
+          <br>
+          <div><span class="output">I've done similar work for [project/portfolio example — 1 sentence].</span></div>
+          <br>
+          <div><span class="output">Fixed price: $[X]. Timeline: [Y] days.</span></div>
+          <div><span class="output">Happy to hop on a 15-min call to confirm scope before we start.</span></div>
+          <br>
+          <div><span class="comment">### PRICING GUIDE ###</span></div>
+          <div><span class="output">CI/CD from scratch  → $200–$400 (no reviews) / $500–$800 (5+ reviews)</span></div>
+          <div><span class="output">AWS setup basic    → $300–$600 / $800–$2,000</span></div>
+          <div><span class="output">Monitoring stack    → $250–$500 / $600–$1,200</span></div>
+          <div><span class="output">Hourly (ongoing)    → $25–$40/hr (0 reviews) / $50–$80/hr (10+ reviews)</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📝</div><div class="kp-title">Specific beats generic</div><div class="kp-desc">Reference the client's exact tech stack or pain point. Proves you read the job and aren't spamming.</div></div>
+        <div class="key-point"><div class="kp-icon">💰</div><div class="kp-title">Fixed over hourly</div><div class="kp-desc">Fixed price removes client fear of runaway costs. Rewards your efficiency, not your slowness.</div></div>
+        <div class="key-point"><div class="kp-icon">📞</div><div class="kp-title">Offer a short call</div><div class="kp-desc">A 15-min scope call filters serious clients and dramatically increases win rate.</div></div>
+        <div class="key-point"><div class="kp-icon">🔢</div><div class="kp-title">Confidence in price</div><div class="kp-desc">Don't apologise for your rate. "I charge $X" not "Would $X be okay?" The second signals low confidence.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag green">proposals</span>
+        <span class="tag yellow">pricing</span>
+        <span class="tag blue">fixed-price</span>
+        <span class="tag orange">upwork</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A client posted: "Need GitHub Actions CI pipeline for Node.js app, currently deploying manually via FTP." Write a full Upwork proposal (4–6 sentences, under 150 words) using the template above.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Hi [Name], I noticed you're manually deploying via FTP — this works until it doesn't, and when a deploy fails at 2am, you'll wish you'd automated it. Here's my approach: 1) Set up GitHub Actions to lint, test, and build your Node app on every PR, 2) Configure staging deploy on merge to main + production deploy on version tag, 3) Add rollback via the previous artifact. Fixed price: $280. Timeline: 2 days. I can share a similar pipeline I built for a SaaS startup. Happy to jump on a 15-min call to confirm your AWS/server setup before we start.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does "Would $200 be okay?" communicate something different to a client than "My fixed price for this is $200"? Rewrite the weak version of 3 common freelancer pricing sentences into confident versions.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A client accepts your $400 CI/CD proposal but then adds: "Oh also can you set up our whole AWS infrastructure, Terraform, and monitoring while you're at it?" How do you respond?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">When should you move from fixed-price to hourly billing as a DevOps freelancer? What type of engagement benefits most from hourly billing?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">Calculate your monthly target income goal. Working 3 fixed-price CI/CD projects per month at $350 each + 20 hours/month of retainer work at $35/hr — what's the gross income? What's the Upwork fee impact (20% on first $500 with each client)?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Red Flags — Recognising Low-Pay Clients</div>
+        <div class="module-desc">Save your time: patterns that signal scope creep, non-payment, and disrespect</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Time is your scarcest resource</h3>
+        <p class="explain-text">As a freelancer, the most expensive mistake is spending three weeks on a bad client — someone who changes scope constantly, haggles after work is done, or disappears at payment time. Learning to filter these clients before the contract is signed saves more income than any rate increase.</p>
+        <p class="explain-text">Red flags don't mean "bad person" — they mean "this engagement will cost you more than you earn." Saying no protects your time for quality clients.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — red-flag-detector.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### RED FLAGS — proceed with caution or decline ###</span></div>
+          <br>
+          <div><span class="error-color">⚠️  "Budget: $5–$15" for "full DevOps setup"</span></div>
+          <div><span class="output">    → Unrealistic scope-to-budget ratio. Walk away.</span></div>
+          <br>
+          <div><span class="error-color">⚠️  "We'll pay more if you do good work"</span></div>
+          <div><span class="output">    → Vague incentive. All payment should be agreed upfront.</span></div>
+          <br>
+          <div><span class="error-color">⚠️  No Upwork payment method verified</span></div>
+          <div><span class="output">    → Never start work without a verified payment method + funded milestone.</span></div>
+          <br>
+          <div><span class="error-color">⚠️  "Quick question" before hiring</span></div>
+          <div><span class="output">    → "Can you just show me how to set up the pipeline?"</span></div>
+          <div><span class="output">    → They want free consulting. Limit pre-hire help to 5 minutes.</span></div>
+          <br>
+          <div><span class="error-color">⚠️  Scope changes after agreement</span></div>
+          <div><span class="output">    → "Actually can you also add Kubernetes?" after CI/CD contract is live</span></div>
+          <div><span class="output">    → Respond: "That's a new scope — I'll send a separate proposal."</span></div>
+          <br>
+          <div><span class="error-color">⚠️  History of bad reviews on their profile</span></div>
+          <div><span class="output">    → Multiple "did not pay" or "scope changed" mentions = pattern, not accident</span></div>
+          <br>
+          <div><span class="highlight">✅ GOOD SIGNS: payment verified, clear scope, responds within 24h,</span></div>
+          <div><span class="highlight">   previous hires with positive reviews, accepts your discovery call</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚩</div><div class="kp-title">Unrealistic budgets</div><div class="kp-desc">$10 for a "full CI/CD setup" tells you the client has no idea of complexity — or doesn't value your time.</div></div>
+        <div class="key-point"><div class="kp-icon">🔓</div><div class="kp-title">No verified payment</div><div class="kp-desc">Upwork shows payment verification status. Never start any work without a funded milestone.</div></div>
+        <div class="key-point"><div class="kp-icon">📋</div><div class="kp-title">Vague scope</div><div class="kp-desc">"Set up DevOps for our startup" with no tech stack, repo link, or deliverable = scope creep guarantee.</div></div>
+        <div class="key-point"><div class="kp-icon">💬</div><div class="kp-title">Free consultation trap</div><div class="kp-desc">Clients who ask detailed technical questions before hiring often have no intention of paying for the work.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag orange">red-flags</span>
+        <span class="tag yellow">scope-creep</span>
+        <span class="tag green">client-vetting</span>
+        <span class="tag blue">upwork-safety</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A client messages you: "Can you quickly explain how I'd set up Terraform for AWS before we discuss hiring you?" How do you respond? Write the actual reply message.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">Response: "Happy to share a high-level overview! At a glance: Terraform for AWS needs an S3 backend for state, a provider block, and resource definitions for each AWS service. For your specific setup, I'd need to review your existing infrastructure first — that's usually what our kickoff call covers. Want to book 15 minutes? I can walk through the approach for your exact use case once I understand what you're building."<br><br><em>This gives enough to show expertise without providing free consulting, and steers toward a discovery call.</em></div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A client's Upwork history shows 12 previous contracts, 4 of which ended with "No feedback" (client didn't leave a review). Their current offer looks good. Do you proceed? What questions do you ask?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Mid-contract, a client says "the pipeline works but now we need you to also add monitoring — it's just a small addition." How do you handle this professionally without damaging the relationship?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is Upwork's escrow/milestone system critical for freelancer protection? Describe the milestone workflow: who creates it, when is money released, and what happens if a dispute arises?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 — PROJECT -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Write a Polished CI/CD Proposal</div>
+        <div class="module-desc">Produce a full client-ready proposal for a sample CI/CD pipeline engagement</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Project overview</h3>
+        <p class="explain-text">Writing a proposal is a skill — it improves with deliberate practice. This project simulates a real Upwork job posting and requires you to produce a proposal you could actually send. Your proposal will be peer-reviewed against the rubric below.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — project-brief.md</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### SIMULATED UPWORK JOB POSTING ###</span></div>
+          <br>
+          <div><span class="highlight">Title: Set up CI/CD pipeline for our SaaS app</span></div>
+          <br>
+          <div><span class="output">We're a 4-person startup building a Node.js + PostgreSQL SaaS.</span></div>
+          <div><span class="output">Currently pushing code directly to our EC2 server via SSH.</span></div>
+          <div><span class="output">We've had two incidents where a bad push broke production.</span></div>
+          <br>
+          <div><span class="output">We want:</span></div>
+          <div><span class="output">  - Automated tests to run on every pull request</span></div>
+          <div><span class="output">  - Deploy to staging on merge, to production on tag</span></div>
+          <div><span class="output">  - Zero-downtime deploys</span></div>
+          <div><span class="output">  - The pipeline in GitHub Actions (we already use GitHub)</span></div>
+          <br>
+          <div><span class="output">Budget: $300–$600. Timeline: flexible, needs to be done this week.</span></div>
+          <br>
+          <div><span class="comment">### PROPOSAL REQUIREMENTS ###</span></div>
+          <div><span class="output">1. Reference something specific from the job post</span></div>
+          <div><span class="output">2. Explain your approach in 3 clear steps</span></div>
+          <div><span class="output">3. State your price and timeline with confidence</span></div>
+          <div><span class="output">4. Mention one comparable piece of portfolio work</span></div>
+          <div><span class="output">5. End with a call-to-action (call or questions)</span></div>
+          <div><span class="output">6. Under 200 words total</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📄</div><div class="kp-title">Specificity wins</div><div class="kp-desc">Reference the "two incidents" and "direct SSH push" — it shows you read and understood the problem.</div></div>
+        <div class="key-point"><div class="kp-icon">🔧</div><div class="kp-title">Zero-downtime approach</div><div class="kp-desc">This is the key technical ask. Mention your approach: blue-green with nginx reload or rolling EC2 deploy.</div></div>
+        <div class="key-point"><div class="kp-icon">⏰</div><div class="kp-title">Meet the timeline</div><div class="kp-desc">"Needs to be done this week" is a signal — highlight that 2–3 days is your standard turnaround.</div></div>
+        <div class="key-point"><div class="kp-icon">💬</div><div class="kp-title">CTA closes proposals</div><div class="kp-desc">End with a concrete next step. "Happy to hop on a 15-min call Tuesday" beats "let me know if interested."</div></div>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Project Deliverables</h4>
+        <ul>
+          <li>A written proposal in a Markdown or PDF document, under 200 words, following all 6 requirements above</li>
+          <li>A one-paragraph technical approach section explaining how you'd implement zero-downtime deploys (blue-green or rolling) on EC2 with GitHub Actions</li>
+          <li>Your stated fixed price (between $300–$600) with reasoning: why this price, not lower or higher?</li>
+          <li>A short "portfolio reference" sentence linking to or describing one comparable project from your GitHub</li>
+          <li>Peer review: swap proposals with a classmate and score each other using the rubric (specificity, clarity, confidence, CTA quality, technical credibility)</li>
+        </ul>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write your full proposal for the job posting above. Follow all 6 requirements. Aim for 150–200 words.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">After writing your proposal, read it aloud. Does it sound like a confident professional or like someone hoping to be chosen? Identify one sentence that sounds uncertain and rewrite it.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">The client responds: "Your price is too high, can you do $150?" Write your response. Hint: don't just say no — explain the value, offer a smaller scope, or politely decline.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 — QUIZ -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Freelancing Fundamentals</div>
+        <div class="module-desc">5 multiple-choice + 2 fill-in questions on platforms, pricing, and client management</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Test your knowledge</h3>
+        <p class="explain-text">Click an option to check your answer. Fill-in questions require exact or close matches.</p>
+      </div>
+
+      <div id="fq1" class="quiz-q">
+        <div class="correct-opt" data-correct="b" style="display:none"></div>
+        <div class="q-text">Q1. A client posts a job "Full AWS + CI/CD + Monitoring setup" with a budget of $20–$50. What is the best response?</div>
+        <div class="option" onclick="answer('fq1','a')"><span class="opt-letter">A</span> Submit a proposal and try to negotiate upward after winning</div>
+        <div class="option" onclick="answer('fq1','b')"><span class="opt-letter">B</span> Skip the job — budget-to-scope mismatch is a primary red flag</div>
+        <div class="option" onclick="answer('fq1','c')"><span class="opt-letter">C</span> Submit a proposal explaining you'll do it for $100 as a compromise</div>
+        <div class="option" onclick="answer('fq1','d')"><span class="opt-letter">D</span> Ask if they have more budget before submitting</div>
+      </div>
+
+      <div id="fq2" class="quiz-q">
+        <div class="correct-opt" data-correct="c" style="display:none"></div>
+        <div class="q-text">Q2. What is the primary advantage of fixed-price contracts over hourly billing for a beginner DevOps freelancer?</div>
+        <div class="option" onclick="answer('fq2','a')"><span class="opt-letter">A</span> They always pay more than hourly rates</div>
+        <div class="option" onclick="answer('fq2','b')"><span class="opt-letter">B</span> Clients prefer them because they get unlimited revisions</div>
+        <div class="option" onclick="answer('fq2','c')"><span class="opt-letter">C</span> They reward efficiency — you earn the same whether the task takes 2 hours or 8</div>
+        <div class="option" onclick="answer('fq2','d')"><span class="opt-letter">D</span> Upwork takes a lower fee on fixed-price contracts</div>
+      </div>
+
+      <div id="fq3" class="quiz-q">
+        <div class="correct-opt" data-correct="a" style="display:none"></div>
+        <div class="q-text">Q3. Which Upwork profile element has the most impact on a client's first impression within the first 8 seconds?</div>
+        <div class="option" onclick="answer('fq3','a')"><span class="opt-letter">A</span> Title + first two sentences of the overview</div>
+        <div class="option" onclick="answer('fq3','b')"><span class="opt-letter">B</span> Your listed skills tags</div>
+        <div class="option" onclick="answer('fq3','c')"><span class="opt-letter">C</span> Your hourly rate</div>
+        <div class="option" onclick="answer('fq3','d')"><span class="opt-letter">D</span> Your education section</div>
+      </div>
+
+      <div id="fq4" class="quiz-q">
+        <div class="correct-opt" data-correct="d" style="display:none"></div>
+        <div class="q-text">Q4. A client adds scope after you've started working. What is the correct professional response?</div>
+        <div class="option" onclick="answer('fq4','a')"><span class="opt-letter">A</span> Do it anyway to keep the client happy and get a good review</div>
+        <div class="option" onclick="answer('fq4','b')"><span class="opt-letter">B</span> Stop working until they pay more</div>
+        <div class="option" onclick="answer('fq4','c')"><span class="opt-letter">C</span> Raise a dispute through Upwork immediately</div>
+        <div class="option" onclick="answer('fq4','d')"><span class="opt-letter">D</span> Acknowledge the request and send a separate proposal for the additional scope</div>
+      </div>
+
+      <div id="fq5" class="quiz-q">
+        <div class="correct-opt" data-correct="b" style="display:none"></div>
+        <div class="q-text">Q5. Which platform is generally best for DevOps engineers seeking $4,000+/month remote contracts?</div>
+        <div class="option" onclick="answer('fq5','a')"><span class="opt-letter">A</span> Fiverr — highest volume of gig buyers</div>
+        <div class="option" onclick="answer('fq5','b')"><span class="opt-letter">B</span> LinkedIn — direct outreach and inbound leads from companies</div>
+        <div class="option" onclick="answer('fq5','c')"><span class="opt-letter">C</span> Upwork — only platform with payment protection</div>
+        <div class="option" onclick="answer('fq5','d')"><span class="opt-letter">D</span> Twitter/X — posting builds the most credibility</div>
+      </div>
+
+      <div class="fill-in">
+        <div class="fi-q">Q6. On Upwork, you should never start any work without a verified payment method and a funded _______.</div>
+        <input id="fi-f1" type="text" placeholder="your answer">
+        <button class="fi-check" onclick="checkFill('fi-f1', ['milestone','milestone.','funded milestone'])">Check</button>
+        <div class="fi-result" id="fi-f1-result"></div>
+      </div>
+
+      <div class="fill-in">
+        <div class="fi-q">Q7. The DevOps service with the fastest turnaround, clearest deliverable, and lowest scope creep — recommended as the first service for beginners — is _______ setup.</div>
+        <input id="fi-f2" type="text" placeholder="your answer">
+        <button class="fi-check" onclick="checkFill('fi-f2', ['ci/cd','cicd','ci cd','pipeline','github actions'])">Check</button>
+        <div class="fi-result" id="fi-f2-result"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 — ASSIGNMENT -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Real-World Proposal for a Fake Client</div>
+        <div class="module-desc">Write a complete, submittable proposal for a realistic DevOps gig and build your pitch muscle</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Assignment brief</h3>
+        <p class="explain-text">The best way to get good at proposals is to write them — even to fake clients. This assignment simulates a real Upwork brief and requires you to produce a complete, polished, submittable document. Your instructor will review it against the rubric below.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — assignment-brief.md</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### CLIENT BRIEF (FAKE) ###</span></div>
+          <br>
+          <div><span class="highlight">Client: "TechGrow Analytics" — 8-person startup</span></div>
+          <div><span class="output">Stack: Python Flask API + React frontend, hosted on a single EC2</span></div>
+          <div><span class="output">Problem: deploys take 45 minutes manually, prod broke twice last month</span></div>
+          <div><span class="output">Want: automated CI/CD, staging environment, AWS cost under $100/mo</span></div>
+          <div><span class="output">Budget: $400–$700 | Timeline: 1 week</span></div>
+          <br>
+          <div><span class="comment">### YOUR DELIVERABLES ###</span></div>
+          <div><span class="output">1. Proposal document (Markdown or PDF, under 200 words)</span></div>
+          <div><span class="output">   - References a specific detail from the brief</span></div>
+          <div><span class="output">   - Explains your 3-step approach</span></div>
+          <div><span class="output">   - States price + timeline with confidence</span></div>
+          <div><span class="output">   - Includes one portfolio reference</span></div>
+          <div><span class="output">   - Ends with a strong CTA</span></div>
+          <br>
+          <div><span class="output">2. Technical plan (bullet list, max 10 bullets)</span></div>
+          <div><span class="output">   - Describe the GitHub Actions workflow stages</span></div>
+          <div><span class="output">   - How you'd achieve zero-downtime deploys on one EC2</span></div>
+          <div><span class="output">   - How to keep cost under $100/mo</span></div>
+          <br>
+          <div><span class="output">3. Client vetting note (3 sentences)</span></div>
+          <div><span class="output">   - List 2 questions you'd ask on a discovery call</span></div>
+          <div><span class="output">   - Name 1 red flag that would make you decline this job</span></div>
+        </div>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Grading Rubric</h4>
+        <ul>
+          <li><strong>Proposal quality (40%)</strong> — Specific, confident, under 200 words, references client's pain point, clear CTA</li>
+          <li><strong>Technical accuracy (30%)</strong> — Correct understanding of CI/CD pipeline, zero-downtime approach for EC2, and AWS cost awareness</li>
+          <li><strong>Client management (20%)</strong> — Discovery questions are relevant, red flag is realistic and shows freelance awareness</li>
+          <li><strong>Professionalism (10%)</strong> — Clean formatting, no typos, reads like something you'd actually send</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct', 'wrong');
+    });
+    const opts = q.querySelectorAll('.option');
+    const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) {
+        opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      }
+      if (letters[i] === correct && chosen !== correct) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect
+      ? '✅ Correct!'
+      : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

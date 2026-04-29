@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI-Assisted DevOps — Copilot, Claude & Prompts for Pipelines | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Master AI-assisted DevOps workflows: GitHub Copilot for ops, prompting AI to debug pipelines, AI-assisted Linux + bash troubleshooting, when AI helps vs when it costs critical thinking, and a graded AI-pair-programming assignment. With prompt patterns and 25+ practice questions.">
+<meta name="keywords" content="ai for devops, github copilot devops, claude for sre, ai prompts pipeline debugging, ai bash scripting, prompt engineering devops, copilot dockerfile, claude code agentic, banoqabil, devops foundations">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI-Assisted DevOps — Copilot, Claude & Prompts">
+<meta property="og:description" content="Use AI as a force multiplier in real DevOps work — Dockerfile authoring, pipeline debugging, IAM review, and the verification habit that keeps it safe.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI-Assisted DevOps — Course">
+<meta name="twitter:description" content="Hands-on AI for DevOps: Copilot, Claude, prompt patterns, debug workflows.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "AI-Assisted DevOps Workflows — Foundations",
+  "description": "A practical, beginner-friendly course on using AI in daily DevOps work. Covers GitHub Copilot for ops + bash + Dockerfile + IaC, the prompt patterns that produce production-ready output, AI-assisted pipeline debugging and Linux troubleshooting, when AI helps + when it costs critical thinking, agentic IDEs (Cursor, Claude Code), the verification habit, and a graded assignment to refactor a CI workflow with Copilot.",
+  "provider": { "@type": "EducationalOrganization", "name": "BanoQabil" },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Where AI helps in DevOps and where it doesn't",
+    "GitHub Copilot for bash, Dockerfile, IaC, and CI",
+    "Prompt patterns — context, constraints, verification",
+    "Debugging pipeline errors with AI",
+    "AI-assisted Linux and bash troubleshooting",
+    "Verifying AI output (build, scan, test)",
+    "Agentic IDEs — Cursor, Claude Code, Aider",
+    "When NOT to lean on AI — preserving critical thinking"
+  ],
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT6H" }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --green: #39d353; --cyan: #58a6ff; --orange: #f78166; --yellow: #e3b341; --purple: #bc8cff;
+    --text: #e6edf3; --muted: #8b949e; --prompt: #39d353; --topic: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(188,140,255,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.10s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.20s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.30s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+  .module:nth-child(8) { animation-delay: 0.40s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(188,140,255,0.1); border: 1px solid rgba(188,140,255,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(57,211,83,0.04); border: 1px solid rgba(57,211,83,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--green); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(57,211,83,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--green); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(188,140,255,0.06); border: 1px solid rgba(188,140,255,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--purple); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(188,140,255,0.08); color: var(--purple); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ copilot suggest "fix this k8s ingress"</div>
+  <h1>AI-Assisted <span>DevOps</span><br>Instructor Guide</h1>
+  <p class="subtitle">Use AI as a force multiplier — and keep the critical thinking. The pattern is: detailed prompt → AI draft → human verify → ship.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">GitHub Copilot for Ops, Bash, Dockerfile & IaC</div>
+        <div class="module-desc">In-IDE inline suggestions are 80% of where AI shows up day-to-day</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>GitHub Copilot</strong> sits inside your IDE (VS Code, JetBrains, Vim, Neovim) and suggests as you type. For DevOps work — bash, Dockerfile, Terraform, GitHub Actions YAML — it's particularly strong because the input is structured and the patterns are well-known. Type a comment describing what you want; Copilot completes the rest.</p>
+        <p class="explain-text">It is not magic. It works best when you've already loaded context: open the related files, write a clear comment header, name your variables well. <em>"Garbage in, garbage out"</em> applies. The single biggest skill upgrade is learning to write the comment first.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">copilot inline — Dockerfile sample</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># What you type:</span></div>
+          <div><span class="cmd"># Multi-stage Dockerfile for TypeScript Node 20 API:</span></div>
+          <div><span class="cmd"># - builder stage compiles src/ to dist/</span></div>
+          <div><span class="cmd"># - final stage uses node:20-alpine, runs as non-root</span></div>
+          <div><span class="cmd"># - only production deps in final image (npm ci --omit=dev)</span></div>
+          <div><span class="cmd"># - HEALTHCHECK hits /healthz</span></div>
+          <br>
+          <div><span class="comment"># What Copilot suggests after pressing Tab:</span></div>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20 AS builder</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="cmd">/app</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm ci</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">. .</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm run build</span></div>
+          <br>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20-alpine</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="cmd">/app</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">addgroup -S app && adduser -S app -G app</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">--from=builder /app/dist ./dist</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">--from=builder /app/package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm ci --omit=dev</span></div>
+          <div><span class="highlight">USER</span> <span class="cmd">app</span></div>
+          <div><span class="highlight">HEALTHCHECK</span> <span class="cmd">--interval=30s CMD wget -q -O- localhost:3000/healthz || exit 1</span></div>
+          <div><span class="highlight">CMD</span> <span class="cmd">["node", "dist/server.js"]</span></div>
+          <br>
+          <div><span class="comment"># Press Tab to accept, Esc to dismiss, Alt+] for next suggestion</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⌨️</div><div class="kp-title">In-IDE inline</div><div class="kp-desc">Tab to accept. Tied to your file context — open relevant files first.</div></div>
+        <div class="key-point"><div class="kp-icon">📝</div><div class="kp-title">Write the comment first</div><div class="kp-desc">Detailed comment → great suggestion. Empty file → generic boilerplate.</div></div>
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">Strong on DevOps formats</div><div class="kp-desc">Dockerfile, YAML, HCL, bash — Copilot knows the dialects.</div></div>
+        <div class="key-point"><div class="kp-icon">🚪</div><div class="kp-title">Free for students</div><div class="kp-desc">GitHub Education Pack includes Copilot. Use it.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does Copilot give better suggestions when you have related files open in the editor? What's it actually using as context?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Copilot's prompt to the underlying model includes <strong>your open file</strong>, the <strong>cursor position</strong>, and a window of <strong>nearby open files</strong> (file paths + relevant snippets). It does <em>not</em> have access to your entire repo — only what's loaded in the IDE.<br><br>
+                Practical implications:<br>
+                1. Open the test file before completing the function — Copilot will write code that satisfies the existing tests.<br>
+                2. Open <code>Dockerfile</code> + <code>package.json</code> before writing <code>compose.yaml</code> — Copilot will use the right port + start command.<br>
+                3. Keep the file count reasonable — every open file consumes context budget.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate writes <code># write a docker compose file</code> and presses Tab. Copilot generates a generic 2-service stack. Why? What does the prompt need?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is <code>Alt+]</code> (next suggestion) often more useful than the first suggestion?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Prompting AI to Debug Pipeline Errors</div>
+        <div class="module-desc">CI logs are dense, error messages cryptic, AI translates both — fast</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Pipeline errors are AI's natural habitat: they're text-heavy, the failure modes are well-documented, and the fix is usually a small config change. The pattern: <strong>(1) paste the FULL error</strong> + <strong>(2) the workflow file</strong> + <strong>(3) the question phrased as "what's the most likely cause and the cheapest fix?"</strong>. AI gets to root cause in seconds for issues that would take 30 minutes of Googling.</p>
+        <p class="explain-text">Two anti-patterns to avoid: <em>(a) "my pipeline is broken, help"</em> — no context, useless answer. <em>(b) Pasting just the last line of the error</em> — the line above is usually the root cause.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">debug-by-AI prompts</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># Weak prompt</span></div>
+          <div><span class="comment">"my github actions is broken"</span></div>
+          <br>
+          <div><span class="highlight"># Strong prompt — full error + workflow + question</span></div>
+          <div><span class="comment">"GitHub Actions workflow fails with this error:</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">  Error: Resource not accessible by integration</span></div>
+          <div><span class="comment">  Run gh release create v1.0.0</span></div>
+          <div><span class="comment">  HTTP 403: Resource not accessible by integration</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">My workflow:</span></div>
+          <div><span class="comment">  on: push</span></div>
+          <div><span class="comment">  jobs:</span></div>
+          <div><span class="comment">    release:</span></div>
+          <div><span class="comment">      runs-on: ubuntu-latest</span></div>
+          <div><span class="comment">      steps:</span></div>
+          <div><span class="comment">        - uses: actions/checkout@v4</span></div>
+          <div><span class="comment">        - run: gh release create v1.0.0 --generate-notes</span></div>
+          <div><span class="comment">          env: { GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} }</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">What's the most likely cause and the minimal fix?"</span></div>
+          <br>
+          <div><span class="comment"># AI replies: "Add 'permissions: { contents: write }' to the job</span></div>
+          <div><span class="comment">          — the default GITHUB_TOKEN is read-only since GHA changed the default in 2023."</span></div>
+          <br>
+          <div><span class="comment"># Verify in 30 seconds: read GHA permissions docs, apply fix, push</span></div>
+          <div><span class="comment"># vs 30 minutes Googling the error message manually</span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">prompt template</div></div>
+        <div class="terminal-body">
+          <div><span class="output">[CONTEXT]   What system, what version, what stack</span></div>
+          <div><span class="output">[ERROR]     Paste the FULL error block, not just the last line</span></div>
+          <div><span class="output">[CONFIG]    Paste the relevant config file</span></div>
+          <div><span class="output">[QUESTION]  "Most likely cause + minimal fix?" or "Top 3 causes ranked"</span></div>
+          <div><span class="output">[CONSTRAINT] Optional — what you already tried, what's off-limits</span></div>
+          <br>
+          <div><span class="comment"># Stack the prompt this way and AI hits root cause first time, ~80% of cases.</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take "Terraform plan failed" and turn it into a 4-section prompt that gets a useful AI response.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why pasting <em>only the last line</em> of an error often misleads the AI? Which line is usually the root cause?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                CLI tools usually print errors as a <em>chain</em> — the last line is "the operation failed", and the actual cause is <em>somewhere above</em> in the trace.<br><br>
+                Example:<br>
+                <code>npm ERR! code 1</code><br>
+                <code>npm ERR! path /app</code><br>
+                <code>npm ERR! command failed</code><br>
+                <code>npm ERR! command sh -c node-gyp rebuild</code><br>
+                <code>npm ERR! make: *** [Release/foo.o] Error 1</code><br>
+                <code>npm ERR! ../foo.cc:42: error: 'X' was not declared in this scope ← actual cause</code><br><br>
+                Pasting only "code 1" gets a generic answer. Pasting the full block gets a fix. Default to <strong>30 lines above the failure</strong>.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Should you ever paste production logs to a public AI tool? List two scrub-this-first rules.</div>
+            <div class="pq-hint">💡 PII, real account IDs, customer hostnames.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">AI-Assisted Linux & Bash Troubleshooting</div>
+        <div class="module-desc">"What does this error mean?" + "Write me a one-liner for X" — daily DevOps wins</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Linux errors range from clear (<em>"No such file"</em>) to cryptic (<em>"too many open files"</em>, kernel oops messages). AI is excellent at the cryptic kind — translating into "what's broken, where, why."</p>
+        <p class="explain-text">For one-liners: AI is faster than recall. Need a <code>find ... | xargs ... | awk ...</code> chain to "delete all log files older than 7 days but keep the latest 2 per directory"? Five seconds with AI. Five minutes from memory + man pages.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">linux-debugging via AI</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Cryptic error → AI translation</span></div>
+          <div><span class="error-color">$ docker run myapp</span></div>
+          <div><span class="error-color">  exec /usr/local/bin/docker-entrypoint.sh: exec format error</span></div>
+          <br>
+          <div><span class="comment">→ AI: "Architecture mismatch. The image was built for amd64 but you're running</span></div>
+          <div><span class="comment"> on arm64 (Apple Silicon). Either build for the right arch:</span></div>
+          <div><span class="comment">  docker build --platform linux/amd64 -t myapp .</span></div>
+          <div><span class="comment"> Or use buildx for multi-arch:</span></div>
+          <div><span class="comment">  docker buildx build --platform linux/amd64,linux/arm64 -t myapp ."</span></div>
+          <br>
+          <div><span class="comment"># Bash one-liner generation</span></div>
+          <div><span class="output">"Find every .log file under /var/log modified more than 7 days ago,</span></div>
+          <div><span class="output"> print its size + path, but skip the latest 2 per directory."</span></div>
+          <br>
+          <div><span class="comment"># AI returns:</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">find /var/log -type d | while read dir; do</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">find "$dir" -maxdepth 1 -name '*.log' -mtime +7 \</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">-printf '%T+ %s %p\n' | sort -r | tail -n +3 | awk '{print $2, $3}'</span></div>
+          <div><span class="cmd">done</span></div>
+          <br>
+          <div><span class="comment"># Always run with --dry-run / list-only first; verify behaviour before chaining rm</span></div>
+          <br>
+          <div><span class="comment"># Error walkthrough: explain me this</span></div>
+          <div><span class="output">"Walk me through what each part of this command does:</span></div>
+          <div><span class="output">  awk 'NR==2 {print $5}' /etc/passwd | tr ':' '\n' | sort -u</span></div>
+          <div><span class="output">Explain it as if I'm 6 months into Linux."</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">explain-this</span>
+        <span class="tag blue">one-liner</span>
+        <span class="tag yellow">cryptic-error</span>
+        <span class="tag orange">--dry-run first</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI gives you a destructive bash one-liner (<code>rm -rf</code>, <code>find ... -exec rm</code>, <code>truncate</code>). What's the safety routine before running it?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Three-step routine:<br>
+                1. <strong>Read every flag.</strong> If you don't know what a flag does, look it up in <code>man</code> first. AI is fluent in obscure flags you might not know.<br>
+                2. <strong>Replace the destructive verb with a safe one.</strong> <code>-exec rm</code> → <code>-print</code>. <code>truncate -s 0</code> → <code>ls -la</code>. Run the modified version. Inspect the list.<br>
+                3. <strong>Re-add the destructive verb only after you've eyeballed the list.</strong> If anything looks off — anything — abort.<br><br>
+                Bonus: in production-like envs, run on one host first, then expand. "Try it on staging" is the cheap save.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">"explain-this" prompts: paste a complex one-liner and ask AI to walk through it. Why is this a great learning loop?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI generates a script using <code>grep -P</code> for Perl regex. It works on Mac but fails on Alpine in Docker. What's the explanation, and what's the more portable alternative?</div>
+            <div class="pq-hint">💡 BSD grep vs GNU grep vs busybox grep.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Where AI Helps and Where It Costs Critical Thinking</div>
+        <div class="module-desc">An honest map. Lean on AI for the cheap; do not let it think for you on the expensive.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">AI is brilliant at <strong>generation</strong> (write me X) and <strong>translation</strong> (explain this). It is shaky on <strong>judgement</strong> (should we do X?) and weak on <strong>novel architecture</strong> (something not heavily represented in training data). The trap is using AI for judgement work because it produces a confident-sounding answer either way.</p>
+        <p class="explain-text">A senior engineer who relies on AI for judgement plateaus. A junior who uses AI for generation while practising judgement themselves accelerates. The <em>goal of every prompt</em> should ideally include "explain why" — so you build the muscle alongside the output.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">where-ai-helps</div></div>
+        <div class="terminal-body">
+          <div><span class="output">                            AI                  You</span></div>
+          <div><span class="output">────────────────────────  ────────────────  ──────────────</span></div>
+          <div><span class="output">Generate Dockerfile        ✓ first draft      review + verify</span></div>
+          <div><span class="output">Translate cryptic error    ✓ very good        validate</span></div>
+          <div><span class="output">Explain unfamiliar code    ✓ great            confirm</span></div>
+          <div><span class="output">Write awk/jq one-liner     ✓ instant          --dry-run first</span></div>
+          <div><span class="output">Refactor a function        ✓ usually right    test coverage</span></div>
+          <div><span class="output">Pick architecture          ✗ surface-level    YOUR CALL</span></div>
+          <div><span class="output">Decide blue-green vs canary ✗ context-blind   YOUR CALL</span></div>
+          <div><span class="output">Triage a real incident     ✗ no situational  YOUR CALL</span></div>
+          <div><span class="output">Convince a stakeholder     ✗ generic prose    YOUR CALL</span></div>
+          <div><span class="output">Mentor a junior            ✗ no continuity    YOUR CALL</span></div>
+          <br>
+          <div><span class="comment"># Dangerous patterns to spot in yourself</span></div>
+          <div><span class="error-color">- Accepting AI suggestions without reading them</span></div>
+          <div><span class="error-color">- Using AI to skip the docs entirely</span></div>
+          <div><span class="error-color">- Defending an AI-generated decision because "the AI said so"</span></div>
+          <div><span class="error-color">- Skipping mental practice — only typing prompts, never solving</span></div>
+          <div><span class="error-color">- Trusting AI's confidence rather than its evidence</span></div>
+          <br>
+          <div><span class="comment"># Healthy patterns</span></div>
+          <div><span class="output">+ "Why does this work?" prompts after every accepted suggestion</span></div>
+          <div><span class="output">+ AI for the first 80% (scaffold), human for the last 20% (judgement)</span></div>
+          <div><span class="output">+ Re-derive a small piece of the answer manually as a check</span></div>
+          <div><span class="output">+ Pair-prompting: explain to AI, listen to feedback, iterate</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚙️</div><div class="kp-title">Generate, then verify</div><div class="kp-desc">AI saves typing. You still own the verify.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Judgement = you</div><div class="kp-desc">Architecture, trade-offs, stakeholder pushback — practice these, don't outsource.</div></div>
+        <div class="key-point"><div class="kp-icon">🧠</div><div class="kp-title">Practice retrieval</div><div class="kp-desc">Type the answer from memory occasionally. Atrophy is real.</div></div>
+        <div class="key-point"><div class="kp-icon">📚</div><div class="kp-title">Read primary docs</div><div class="kp-desc">AI summarises. Docs are authoritative. Mix both.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A junior says "I don't read AWS docs anymore — I just ask Claude." List two skills they're failing to build.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Sketch a 30-second self-check before clicking "merge" on an AI-generated PR.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                A useful checklist:<br>
+                1. <strong>Can I explain every change in 1 sentence?</strong> If not, I don't understand it.<br>
+                2. <strong>What test would catch this if it broke?</strong> Does that test exist?<br>
+                3. <strong>What's the rollback path?</strong> One command? Many manual steps?<br>
+                4. <strong>What did I assume the AI knew that it might not?</strong> (e.g. "this is the v5 AWS provider, not v4").<br>
+                5. <strong>Would I have done it the same way without AI?</strong> If yes, ship. If no, write down why — that's where you learn.<br><br>
+                30 seconds is enough. Skip it and you'll merge an AI-generated <code>chmod 777</code> within a year.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick a small thing you've done with AI in the last 24h. Re-do it from memory. What did you forget? That's your skill gap.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Agentic IDEs — Cursor, Claude Code & Aider</div>
+        <div class="module-desc">Beyond inline suggestions — let AI edit many files at once, with you as reviewer</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">2024–2026 saw the rise of <strong>agentic IDEs</strong>. Where Copilot suggests one line at a time, agentic tools take a goal (<em>"add OIDC authentication to this CI workflow"</em>), <strong>read your codebase</strong>, plan a multi-file edit, run terminal commands, and present a diff for you to approve. The leap is from "auto-complete" to "auto-PR".</p>
+        <p class="explain-text">Two major categories: <strong>IDE-native</strong> (Cursor, JetBrains AI Assistant, GitHub Copilot Workspace) and <strong>CLI-native</strong> (Claude Code, Aider, Continue). Both have their place. CLI-native tools are particularly strong for DevOps because much of the work happens at the shell.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">claude-code — agentic CLI session</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">claude</span></div>
+          <div><span class="output">Welcome to Claude Code. Working directory: ~/projects/myapp</span></div>
+          <br>
+          <div><span class="output">&gt; "Add OIDC AWS auth to the existing GitHub Actions deploy workflow.</span></div>
+          <div><span class="output">  No long-lived AWS_* secrets. Add a permissions block."</span></div>
+          <br>
+          <div><span class="output">[Reading: .github/workflows/deploy.yml]</span></div>
+          <div><span class="output">[Reading: README.md]</span></div>
+          <div><span class="output">[Plan]</span></div>
+          <div><span class="output">  1. Add permissions: { id-token: write, contents: read } at workflow level</span></div>
+          <div><span class="output">  2. Replace AWS_ACCESS_KEY_ID/SECRET steps with</span></div>
+          <div><span class="output">     aws-actions/configure-aws-credentials@v4 + role-to-assume</span></div>
+          <div><span class="output">  3. Update README's "secrets needed" section</span></div>
+          <br>
+          <div><span class="output">[Diff preview — apply? y/n]</span></div>
+          <div><span class="output">  .github/workflows/deploy.yml: -8 +6</span></div>
+          <div><span class="output">  README.md: -2 +3</span></div>
+          <br>
+          <div><span class="prompt">&gt; </span><span class="cmd">y</span></div>
+          <div><span class="output">[Applied. Run terraform plan + push to test? y/n]</span></div>
+          <div><span class="prompt">&gt; </span><span class="cmd">just push to a feature branch and open PR for review</span></div>
+          <br>
+          <div><span class="output">[Created branch: ai/oidc-migration]</span></div>
+          <div><span class="output">[Opened PR #234 with full diff + this conversation as context]</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">Cursor</span>
+        <span class="tag purple">Claude Code</span>
+        <span class="tag purple">GH Copilot Workspace</span>
+        <span class="tag green">Aider</span>
+        <span class="tag green">Continue</span>
+        <span class="tag yellow">multi-file edit</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare "inline-suggestion Copilot" vs "agentic Claude Code" — when is each the right tool?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is requiring a PR-review checkpoint critical when an agentic tool edits multiple files at once?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                The blast radius of agentic tools is much larger than inline. A single approve can change 10 files, run 5 terminal commands, and update 2 cloud resources. Without a PR checkpoint:<br><br>
+                1. <strong>Subtle errors slip in</strong> — a wrong region, an over-permissive IAM, a typo in a healthcheck path. Each looks fine alone; combined they break prod.<br>
+                2. <strong>You lose the learning loop</strong> — by reviewing the diff, you absorb how the change works. Skipping that means you can't reason about it later when it breaks.<br>
+                3. <strong>Audit trail</strong> — a PR with the AI conversation attached is searchable, blameable, revertable. A direct apply is none of those.<br><br>
+                Treat agentic output like an intern's PR — high value, must review.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Set up Aider or Continue in your editor for one of your earlier projects. Use it for a 30-minute task. Reflect on where it shone vs failed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 - PROJECT -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Use AI to Refactor a Workflow + Add a Feature</div>
+        <div class="module-desc">Real-world AI-pair-programming on a repo of your choice — and document the workflow that worked</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Pick one of the earlier projects (Docker, CI/CD, AWS) and use AI to do two real tasks: <strong>(1) refactor</strong> something already there (e.g. "convert this CI workflow to use OIDC"), <strong>(2) add</strong> a new feature (e.g. "add a Slack notification on deploy failure"). Document the prompts that worked, the false starts, and the verification steps. The artefact: a real PR + a short post-mortem write-up.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">project-flow</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Suggested project layout</span></div>
+          <div><span class="output">myapp/</span></div>
+          <div><span class="output">├── .github/workflows/deploy.yml      ← refactor target</span></div>
+          <div><span class="output">├── ai-session.md                     ← prompt + responses log</span></div>
+          <div><span class="output">└── retro.md                          ← what worked, what didn't</span></div>
+          <br>
+          <div><span class="comment"># ai-session.md — what to log</span></div>
+          <div><span class="output">## Task 1: refactor deploy.yml to use OIDC</span></div>
+          <div><span class="output">Prompt 1: [exact text I sent]</span></div>
+          <div><span class="output">Response: [TL;DR what AI returned]</span></div>
+          <div><span class="output">Verdict: applied / partially applied / discarded — why</span></div>
+          <br>
+          <div><span class="output">## Task 2: add Slack notification on failure</span></div>
+          <div><span class="output">Prompt: ...</span></div>
+          <div><span class="output">Response: ...</span></div>
+          <div><span class="output">Verdict: ...</span></div>
+          <br>
+          <div><span class="comment"># retro.md — short reflection</span></div>
+          <div><span class="output">- What did AI nail first time?</span></div>
+          <div><span class="output">- Where did it hallucinate / use deprecated args?</span></div>
+          <div><span class="output">- How long did the task take vs estimate without AI?</span></div>
+          <div><span class="output">- What did I learn about prompting that I'll keep doing?</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📝</div><div class="kp-title">Log every prompt</div><div class="kp-desc">Forces self-awareness. Builds your personal prompt library.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Verdict per response</div><div class="kp-desc">"Applied / partial / discarded — why" trains your judgement.</div></div>
+        <div class="key-point"><div class="kp-icon">⏱️</div><div class="kp-title">Time the task</div><div class="kp-desc">Compare to your estimate without AI. Calibrates expectation.</div></div>
+        <div class="key-point"><div class="kp-icon">🧪</div><div class="kp-title">Verify in CI</div><div class="kp-desc">PR must pass CI. AI-generated code goes through the same gates as human code.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 - QUIZ -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Where AI Helps and Where It Costs Critical Thinking</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-prompt questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. AI is consistently strong at:</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> Picking the right cloud architecture for your business</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q1','b')"><div class="opt-letter">B</div> Generating Dockerfile / YAML / HCL drafts and translating cryptic errors</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Triaging a real production incident in your stack</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> Understanding stakeholder politics</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. The most common AI failure mode in DevOps:</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> Refusing to answer security questions</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> Confidently inventing fake action names / deprecated arguments</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Slow response times</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Output truncation</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. The single biggest predictor of useful AI output:</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Picking the right model</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q3','b')"><div class="opt-letter">B</div> Quality of the prompt — context + constraints + verification ask</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Long token limit</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Internet access for the model</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. Inline Copilot vs agentic Claude Code — the right tool for "rename a variable across the file I'm editing" is:</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q4','a')"><div class="opt-letter">A</div> Inline Copilot — faster, fewer dependencies</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> Agentic Claude Code — always</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> Either, identical results</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> Neither — manual edit</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Why is "ask AI to explain what each part does" a great learning loop?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q5','a')"><div class="opt-letter">A</div> Builds your mental model alongside the output</div>
+        <div class="option" onclick="answer('q5','b')"><div class="opt-letter">B</div> Generates more accurate output</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> Always finds bugs</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> Required by GitHub Actions</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-prompt</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: Acronym for the "GH Actions" workflow runner provider's auth method to AWS without long-lived keys.</div>
+          <input type="text" id="fi1" placeholder="acronym..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['OIDC','oidc'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: A single keyword for the AI failure mode of inventing plausible-looking facts.</div>
+          <input type="text" id="fi2" placeholder="one word..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['hallucination','hallucinations','hallucinating'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 - ASSIGNMENT -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Use AI to Write a Lint/Format CI for a Real Service</div>
+        <div class="module-desc">A bounded, real-world task to practise prompt → draft → verify → ship</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as a real task: <em>"Pick any GitHub repo you maintain (or fork a public one). Use AI to add a CI job that lints + formats the code. Submit a PR. Document every prompt + verdict. Total time budget: 90 minutes."</em></p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Pick a real repo: yours or a fork. Must have at least one source language (TS/JS, Python, Go, Bash, HCL — any).</li>
+          <li>Add a <code>.github/workflows/lint.yml</code> that runs on pull_request: lint + format-check + (if relevant) typecheck</li>
+          <li>Use exactly one AI tool (Copilot, Claude, ChatGPT, Cursor, Claude Code — your choice). Document which.</li>
+          <li>Maintain an <code>ai-log.md</code>: every prompt + 1-line summary of the response + your verdict (applied / edited / discarded)</li>
+          <li>Final workflow must <strong>fail the build</strong> on any lint or format violation</li>
+          <li>Pin every action to <code>@vN</code> — no <code>@main</code></li>
+          <li>Demonstrate end-to-end: push a deliberately badly-formatted commit on a branch; show the workflow blocking it via a screenshot</li>
+          <li>Write a 1-page <code>retro.md</code> covering: what AI did well, where it hallucinated, total time spent, what you'd prompt differently next time</li>
+          <li>Open the PR in the original repo (or your fork's main branch). Include the <code>ai-log.md</code> + <code>retro.md</code> alongside the workflow.</li>
+          <li>Bonus: Add a pre-commit hook mirror so contributors fail fast locally</li>
+          <li>Bonus: Use 2 different AI tools side-by-side and compare outcomes for the same prompt</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected ai-log.md sample</div></div>
+        <div class="terminal-body">
+          <div><span class="output"># AI Session Log — Lint/Format CI</span></div>
+          <div><span class="output">Tool: GitHub Copilot Chat (in VS Code)</span></div>
+          <div><span class="output">Total time: 47 minutes</span></div>
+          <br>
+          <div><span class="output">## Prompt 1 — initial scaffold</span></div>
+          <div><span class="output">"Write a GitHub Actions workflow .github/workflows/lint.yml that runs</span></div>
+          <div><span class="output"> on pull_request to main. 3 jobs: eslint, prettier --check, tsc --noEmit.</span></div>
+          <div><span class="output"> Pin every action to a specific vN tag. Use Node 20."</span></div>
+          <div><span class="output"></span></div>
+          <div><span class="output">Response: produced workflow with 3 jobs as requested.</span></div>
+          <div><span class="output">Verdict: applied with 1 edit — Copilot used actions/setup-node@v3,</span></div>
+          <div><span class="output">         I bumped to v4 (latest GA).</span></div>
+          <br>
+          <div><span class="output">## Prompt 2 — type-check failed locally with "tsc not found"</span></div>
+          <div><span class="output">[paste error]</span></div>
+          <div><span class="output">"Why does the typecheck job fail? My package.json has typescript as a devDep."</span></div>
+          <div><span class="output"></span></div>
+          <div><span class="output">Response: pointed out the job uses npm ci then runs tsc directly,</span></div>
+          <div><span class="output">         but npx tsc would find the local install. Suggested:</span></div>
+          <div><span class="output">         "run: npx tsc --noEmit" instead of "run: tsc --noEmit"</span></div>
+          <div><span class="output">Verdict: applied verbatim. Worked.</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Workflow runs + fails on bad commit: 30. ai-log.md substantive: 25. Verdicts thoughtful: 20. retro.md reflective: 15. Pinned actions: 10.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Workflow runs but doesn't fail (lint warning-only); ai-log just lists prompts (no verdicts); retro is fluff ("AI is helpful").</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Open the PR in someone else's open-source project — and get it merged. The most-impactful version of the assignment.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

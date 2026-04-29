@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DevSecOps for DevOps — Secrets, Trivy, SAST/DAST, OWASP Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn DevSecOps from scratch: shift-left security, secrets management with AWS Secrets Manager, container scanning with Trivy, SAST and DAST in CI pipelines, the OWASP Top 10 for DevOps engineers, AI-assisted threat modelling, and a graded pipeline-hardening assignment. 30+ practice questions.">
+<meta name="keywords" content="devsecops course, secrets management aws, trivy container scan, sast dast pipeline, owasp top 10 devops, secure ci cd, semgrep snyk, dependabot, banoqabil, devops foundations, secure pipeline">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevSecOps for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master DevSecOps with hands-on secrets management, Trivy scans, SAST/DAST, OWASP Top 10, and pipeline hardening. Built for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevSecOps for DevOps — Course">
+<meta name="twitter:description" content="Hands-on security: secrets, Trivy, SAST/DAST, OWASP, pipeline hardening.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "DevSecOps — Foundations",
+  "description": "A practical, beginner-friendly DevSecOps course for aspiring DevOps engineers. Covers shift-left security, secrets management with AWS Secrets Manager and SSM Parameter Store, container vulnerability scanning with Trivy, SAST (static analysis) with Semgrep / CodeQL, DAST (dynamic analysis) with OWASP ZAP, the OWASP Top 10 mapped to DevOps responsibilities, AI-assisted threat modelling, and a graded pipeline-hardening assignment that adds Trivy + secrets scanning + Dependabot to a real repo.",
+  "provider": { "@type": "EducationalOrganization", "name": "BanoQabil" },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Shift-left security and the DevSecOps mindset",
+    "Secrets management — AWS Secrets Manager, SSM Parameter Store",
+    "Detecting committed secrets with gitleaks + trufflehog",
+    "Container image scanning with Trivy",
+    "SAST basics — Semgrep, CodeQL, language-specific linters",
+    "DAST basics — OWASP ZAP, automated scanning in CI",
+    "OWASP Top 10 — what each item means for DevOps",
+    "Supply-chain security — Dependabot, npm audit, SBOM",
+    "AI-assisted threat modelling and policy review"
+  ],
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT8H" }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --green: #39d353; --cyan: #58a6ff; --orange: #f78166; --yellow: #e3b341; --purple: #bc8cff;
+    --text: #e6edf3; --muted: #8b949e; --prompt: #39d353; --topic: #f78166;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(247,129,102,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.10s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.20s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.30s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+  .module:nth-child(8) { animation-delay: 0.40s; }
+  .module:nth-child(9) { animation-delay: 0.45s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(247,129,102,0.1); border: 1px solid rgba(247,129,102,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ trivy fs . --severity HIGH,CRITICAL</div>
+  <h1>DevSec<span>Ops</span><br>Instructor Guide</h1>
+  <p class="subtitle">Shift security left — into the pipeline, into the Dockerfile, into git pre-commit hooks. Catch the bug before it ships.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Why DevSecOps? Shift-Left and the Cost-of-a-Bug Curve</div>
+        <div class="module-desc">A vulnerability caught in CI costs $10. Caught in production costs $10,000. The math drives the practice.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with the cost-of-a-bug curve: the earlier you catch a security issue, the cheaper it is to fix. <strong>Caught at code-write time</strong> (IDE warning) → 5 minutes. <strong>Caught in CI</strong> → 30 minutes. <strong>Caught in production</strong> → days of incident response, customer notifications, possibly regulatory fines. <strong>"Shift-left"</strong> means moving security checks <em>earlier</em> in the pipeline, where they're cheap.</p>
+        <p class="explain-text">DevSecOps is <em>not</em> "now we have a security team". It's "every engineer owns security as part of their workflow." The DevOps engineer's job: make the right thing easy — pre-commit hooks that catch secrets, CI jobs that scan images, dashboards that show drift.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">cost-of-a-bug</div></div>
+        <div class="terminal-body">
+          <div><span class="output">                Time to fix      Cost / impact</span></div>
+          <div><span class="output">────────────  ─────────────  ─────────────────────────</span></div>
+          <div><span class="output">IDE / commit   ~5 minutes     <span class="info">$10</span></span></div>
+          <div><span class="output">PR review     ~30 minutes     <span class="info">$50</span></span></div>
+          <div><span class="output">CI            ~1 hour         <span class="highlight">$200</span></span></div>
+          <div><span class="output">Staging       ~1 day          <span class="error-color">$1,000</span></span></div>
+          <div><span class="output">Production    ~1 week+        <span class="error-color">$10,000+</span> + reputation damage</span></div>
+          <br>
+          <div><span class="comment"># Where DevSecOps lives in the lifecycle</span></div>
+          <div><span class="output">developer  ─→  pre-commit  ─→  PR  ─→  CI  ─→  CD  ─→  prod  ─→  monitoring</span></div>
+          <div><span class="output">  ↑              ↑           ↑      ↑       ↑        ↑          ↑</span></div>
+          <div><span class="output">  IDE         secrets/   SAST  trivy   policy  WAF       runtime</span></div>
+          <div><span class="output">  hints       gitleaks   review  scan  / OPA   alerts    detection</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⏪</div><div class="kp-title">Shift-left</div><div class="kp-desc">Pre-commit catches faster than CI. CI catches faster than prod. Move it left.</div></div>
+        <div class="key-point"><div class="kp-icon">👥</div><div class="kp-title">Everyone owns security</div><div class="kp-desc">Not "the security team's problem". Every engineer, every PR.</div></div>
+        <div class="key-point"><div class="kp-icon">🤖</div><div class="kp-title">Make it automatic</div><div class="kp-desc">Humans forget. Pipelines don't. Encode every rule as a CI check.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Defense in depth</div><div class="kp-desc">No single layer is foolproof. Stack pre-commit + CI + WAF + monitoring.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Define "shift-left" in security. List two practical examples a DevOps engineer can implement in one afternoon.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Shift-left</strong> = move security checks earlier in the development lifecycle, ideally pre-commit or CI, so issues are caught when they're cheap to fix.<br><br>
+                Two one-afternoon implementations:<br>
+                1. <strong>Add pre-commit hooks</strong> with <code>gitleaks</code> + <code>trufflehog</code> to block AWS keys / API tokens before they hit the repo. Free, ~10 lines of <code>.pre-commit-config.yaml</code>.<br>
+                2. <strong>Add a Trivy step in CI</strong> that scans every Docker image build and fails the pipeline on HIGH/CRITICAL CVEs. Free, ~5 lines of GitHub Actions YAML.<br><br>
+                Both prevent classes of incidents, both work the day they're added, both cost zero.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate says "let's set up DevSecOps when we have time." What's a 10-minute argument for doing one thing today?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain "defense in depth" with a concrete example layered across pre-commit, CI, runtime, and monitoring.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Secrets Management — Stop Putting Keys in .env Files</div>
+        <div class="module-desc">AWS Secrets Manager, SSM Parameter Store, gitleaks — the trio that handles 90% of secret-related incidents</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Three rules, in order of impact: <strong>(1) Never commit a secret to git</strong>, <strong>(2) never bake a secret into a Docker image</strong>, <strong>(3) always rotate</strong>. <code>.env</code> files on a developer laptop are fine; in production, secrets live in <strong>AWS Secrets Manager</strong> or <strong>SSM Parameter Store</strong>, fetched at startup.</p>
+        <p class="explain-text">The first line of defense is a <strong>pre-commit hook</strong> that scans staged files. <code>gitleaks</code> and <code>trufflehog</code> both detect AWS keys, GitHub tokens, Stripe keys, etc. — install once, blocks 99% of accidental commits.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">secrets — prevent, store, rotate</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Pre-commit hook — block secrets at commit time</span></div>
+          <div><span class="comment"># .pre-commit-config.yaml</span></div>
+          <div><span class="cmd">repos:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- repo: https://github.com/gitleaks/gitleaks</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">rev: v8.18.0</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">hooks: [{ id: gitleaks }]</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">pre-commit install</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">git commit -m "test"</span></div>
+          <div><span class="error-color">  gitleaks ✗ — found AWS access key in src/config.ts:12</span></div>
+          <div><span class="error-color">  Commit blocked.</span></div>
+          <br>
+          <div><span class="comment"># 2. Already committed by accident? Rotate FIRST, then clean history</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam delete-access-key --access-key-id AKIA...</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">git filter-repo --path src/config.ts --invert-paths   # nuke from history</span></div>
+          <br>
+          <div><span class="comment"># 3. Production secrets live in Secrets Manager</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws secretsmanager create-secret \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name myapp/prod/db \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--secret-string '{"username":"app","password":"&lt;random-32-char&gt;"}'</span></div>
+          <br>
+          <div><span class="comment"># Read at app startup (Node.js)</span></div>
+          <div><span class="cmd">import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';</span></div>
+          <div><span class="cmd">const sm = new SecretsManagerClient({});</span></div>
+          <div><span class="cmd">const { SecretString } = await sm.send(new GetSecretValueCommand({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">SecretId: 'myapp/prod/db'</span></div>
+          <div><span class="cmd">}));</span></div>
+          <div><span class="cmd">const { username, password } = JSON.parse(SecretString);</span></div>
+          <br>
+          <div><span class="comment"># 4. Auto-rotation (Secrets Manager + Lambda)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws secretsmanager rotate-secret \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--secret-id myapp/prod/db \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--rotation-lambda-arn arn:aws:lambda:eu-west-1:123:function:rotate-pg \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--rotation-rules AutomaticallyAfterDays=30</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🚫</div><div class="kp-title">Never git secrets</div><div class="kp-desc">Pre-commit hooks block them. Every repo gets gitleaks.</div></div>
+        <div class="key-point"><div class="kp-icon">🗝️</div><div class="kp-title">Secrets Manager > .env</div><div class="kp-desc">Encrypted, audited, rotatable. App fetches at startup.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Rotate every 30–90d</div><div class="kp-desc">Limits the blast radius of a stolen secret.</div></div>
+        <div class="key-point"><div class="kp-icon">🚨</div><div class="kp-title">Already leaked?</div><div class="kp-desc">Rotate FIRST. Then git history surgery. Then incident review.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">An engineer pushes a commit with <code>AWS_SECRET_ACCESS_KEY=abc123</code>, force-pushes 30 seconds later. List the right order of operations.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>1. Rotate first.</strong> Delete the leaked key in IAM and create a fresh one. Bots scrape GitHub commits within minutes — assume the key is already in someone's wallet.<br>
+                <strong>2. Audit usage.</strong> CloudTrail → look for any API call from unfamiliar IPs in the last hour. Limit blast radius if any.<br>
+                <strong>3. Then clean git history.</strong> <code>git filter-repo</code> or <code>BFG</code> to scrub the secret from all branches and force-push.<br>
+                <strong>4. Add a pre-commit hook</strong> so it can't happen again.<br>
+                <strong>5. Postmortem.</strong> Fix the process — why was the secret in code at all?<br><br>
+                Force-pushing without rotating first is the #1 mistake. The window between commit and force-push is enough.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">When does it make sense to use AWS Secrets Manager vs SSM Parameter Store? Give one fit for each.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is fetching secrets at <em>app startup</em> better than fetching on every request? Why is fetching at <em>build time</em> the worst option?</div>
+            <div class="pq-hint">💡 Latency vs freshness vs blast radius.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Sketch a GitHub Actions workflow step that scans the diff in each PR for secrets and fails if anything is found.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Container Image Scanning with Trivy</div>
+        <div class="module-desc">Free, fast, fast-fail. The single biggest container-security control you can deploy.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Every Docker image is a stack of <em>"someone else's code"</em> — your base image (Ubuntu, Alpine), your language runtime (Node, Python), your dependencies (npm, pip). Each layer ages and accumulates known vulnerabilities (CVEs). <strong>Trivy</strong> compares the installed packages against a CVE database and reports what's affected.</p>
+        <p class="explain-text">Run Trivy <strong>twice</strong>: once locally before push, once in CI. CI is the gate — fail the build on HIGH/CRITICAL findings. The local run is for fast feedback while iterating.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">trivy — local + CI</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Install (mac)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">brew install trivy</span></div>
+          <br>
+          <div><span class="comment"># Scan an image</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy image --severity HIGH,CRITICAL myapp:1.0.0</span></div>
+          <div><span class="output">myapp:1.0.0 (alpine 3.19)</span></div>
+          <div><span class="output">==========================</span></div>
+          <div><span class="output">Total: 4 (HIGH: 3, CRITICAL: 1)</span></div>
+          <div><span class="output">┌────────────┬────────────────┬──────────┬──────────────────┐</span></div>
+          <div><span class="output">│ Library    │ Vulnerability  │ Severity │ Fixed Version    │</span></div>
+          <div><span class="output">├────────────┼────────────────┼──────────┼──────────────────┤</span></div>
+          <div><span class="output">│ openssl    │ CVE-2024-2511  │ HIGH     │ 3.1.5-r0         │</span></div>
+          <div><span class="output">│ libcrypto3 │ CVE-2024-2511  │ HIGH     │ 3.1.5-r0         │</span></div>
+          <div><span class="output">│ glibc      │ CVE-2024-3596  │ CRITICAL │ no fix yet       │</span></div>
+          <div><span class="output">└────────────┴────────────────┴──────────┴──────────────────┘</span></div>
+          <br>
+          <div><span class="comment"># Scan project files (Dockerfile, terraform, code dependencies)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy fs --severity HIGH,CRITICAL .</span></div>
+          <br>
+          <div><span class="comment"># In GitHub Actions — fail the build on HIGH+ vulns</span></div>
+          <div><span class="cmd">- name: Build image</span></div>
+          <div><span class="cmd">  run: docker build -t myapp:${{ github.sha }} .</span></div>
+          <br>
+          <div><span class="cmd">- name: Trivy scan (fail on HIGH+)</span></div>
+          <div><span class="cmd">  uses: aquasecurity/trivy-action@0.20.0</span></div>
+          <div><span class="cmd">  with:</span></div>
+          <div><span class="cmd">    image-ref: myapp:${{ github.sha }}</span></div>
+          <div><span class="cmd">    severity: HIGH,CRITICAL</span></div>
+          <div><span class="cmd">    exit-code: 1                    # fail build</span></div>
+          <div><span class="cmd">    ignore-unfixed: true            # skip un-patchable CVEs</span></div>
+          <br>
+          <div><span class="comment"># Bonus: generate an SBOM for supply-chain audits</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy image --format cyclonedx --output sbom.json myapp:1.0.0</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">trivy</span>
+        <span class="tag blue">grype</span>
+        <span class="tag blue">snyk</span>
+        <span class="tag yellow">SBOM</span>
+        <span class="tag orange">ignore-unfixed</span>
+        <span class="tag purple">aquasecurity/trivy-action</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your Trivy run reports 8 CRITICAL vulnerabilities, all in transitive deps with no fix yet. Should you ship? What flag changes the picture?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Two questions to answer first:<br>
+                1. <strong>Are the vulnerabilities reachable in your code path?</strong> Many CVEs in transitive deps are in code you never call. Use <code>--reachability</code>-style tools (Snyk, Semgrep Pro) to triage.<br>
+                2. <strong>Is there a workaround?</strong> Pin to an older patched version, swap the dep, sandbox the affected component.<br><br>
+                If genuinely unfixable + reachable, the right call is risk-acceptance with documentation, not silent ignore.<br><br>
+                <strong>The flag:</strong> <code>--ignore-unfixed</code> tells Trivy "skip CVEs with no available fix." Useful for keeping CI green while you wait for upstream patches — but document <em>which</em> ones you're skipping (use <code>.trivyignore</code> with comments and expiry dates).
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why scan with <code>trivy fs</code> in addition to <code>trivy image</code>? What does each find that the other misses?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">An SBOM (Software Bill of Materials) is generated by Trivy. Why are SBOMs increasingly mandatory (e.g. US Executive Order 14028)?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a pre-commit hook that runs <code>trivy fs --severity CRITICAL .</code> before every commit. Sketch the pre-commit config.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">SAST & DAST in Pipelines — Static and Dynamic Code Analysis</div>
+        <div class="module-desc">SAST reads your code. DAST attacks it. You need both.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>SAST (Static Application Security Testing)</strong> = analyse source code without running it. Finds patterns: SQL string-concatenation, unescaped user input, weak crypto. Tools: <strong>Semgrep</strong>, <strong>CodeQL</strong>, language-specific linters (eslint-plugin-security for JS, bandit for Python).</p>
+        <p class="explain-text"><strong>DAST (Dynamic Application Security Testing)</strong> = attack the running app like a black-box pentester would. Sends malformed inputs, tries SQL injection, XSS, auth bypass. Tools: <strong>OWASP ZAP</strong>, <strong>Burp</strong>. Slower than SAST but finds real-world issues SAST misses (e.g. config-level holes).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">sast + dast in CI</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># SAST: Semgrep — runs in seconds, great default rules</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">semgrep scan --config=auto src/</span></div>
+          <div><span class="output">findings: 3</span></div>
+          <div><span class="output">  src/api/login.ts:42 — javascript.express.security.injection.tainted-sql-string</span></div>
+          <div><span class="output">  src/utils/jwt.ts:18 — javascript.lang.security.audit.weak-crypto</span></div>
+          <br>
+          <div><span class="comment"># SAST in GitHub Actions</span></div>
+          <div><span class="cmd">- uses: returntocorp/semgrep-action@v1</span></div>
+          <div><span class="cmd">  with:</span></div>
+          <div><span class="cmd">    config: p/javascript p/owasp-top-ten p/secrets</span></div>
+          <br>
+          <div><span class="comment"># DAST: OWASP ZAP baseline scan against staging</span></div>
+          <div><span class="cmd">- name: Wait for staging</span></div>
+          <div><span class="cmd">  run: ./scripts/wait-for-staging.sh</span></div>
+          <br>
+          <div><span class="cmd">- name: ZAP baseline scan</span></div>
+          <div><span class="cmd">  uses: zaproxy/action-baseline@v0.12.0</span></div>
+          <div><span class="cmd">  with:</span></div>
+          <div><span class="cmd">    target: https://staging.example.com</span></div>
+          <div><span class="cmd">    fail_action: true</span> &nbsp;<span class="comment"># gate the pipeline on findings</span></div>
+          <br>
+          <div><span class="comment"># SAST output sample — typical findings</span></div>
+          <div><span class="error-color">[HIGH] SQL injection — string concat in DB query</span></div>
+          <div><span class="cmd">  const q = `SELECT * FROM users WHERE id = ${userInput}`;  // 👀</span></div>
+          <div><span class="output">  Fix: use parameterised queries</span></div>
+          <div><span class="cmd">  const q = 'SELECT * FROM users WHERE id = $1';</span></div>
+          <div><span class="cmd">  await db.query(q, [userInput]);</span></div>
+          <br>
+          <div><span class="comment"># DAST output sample</span></div>
+          <div><span class="error-color">[MEDIUM] Cookie without Secure flag — /login</span></div>
+          <div><span class="error-color">[HIGH] X-Frame-Options missing — clickjacking risk</span></div>
+          <div><span class="error-color">[INFO] Server header leaks: nginx/1.18.0</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">SAST or DAST? (a) "find SQL string concat in the code", (b) "send malicious payloads to /login", (c) "detect missing Content-Security-Policy header", (d) "find weak crypto.MD5 usage".</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>(a) SAST</strong> — pattern-matches source code; perfect for spotting string concat in queries.<br>
+                <strong>(b) DAST</strong> — actively probes the running app's <code>/login</code> endpoint with malformed inputs.<br>
+                <strong>(c) DAST</strong> — header presence is a runtime/config concern; SAST can't see what your reverse proxy or app emits in actual responses.<br>
+                <strong>(d) SAST</strong> — looks at the import + call site of <code>crypto.MD5</code> in source.<br><br>
+                Rule of thumb: code-level pattern → SAST. Behaviour-level / response-header / config issue → DAST.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does DAST need a deployed app while SAST doesn't? Why is DAST usually run against staging, not prod?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Semgrep has a free + a paid tier. What's the additional value of the paid tier for an enterprise team?</div>
+            <div class="pq-hint">💡 Cross-file taint analysis, custom rules, supply-chain reachability.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">OWASP Top 10 — What Every DevOps Engineer Must Recognise</div>
+        <div class="module-desc">The web's most common bug classes. The DevOps engineer is often the last line of defence against them.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">The <strong>OWASP Top 10</strong> is a regularly-updated list of the most prevalent web vulnerability classes. You don't have to be a pen-tester — but you must <em>recognise</em> these by name and know which DevOps controls mitigate each. <strong>A01 Broken Access Control</strong> is #1 for a reason: nearly every breach involves auth gone wrong.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">owasp-top-10 (2021) + DevOps mitigation</div></div>
+        <div class="terminal-body">
+          <div><span class="output">A01  Broken Access Control            → IAM least-privilege, JWT/RBAC review, integration tests</span></div>
+          <div><span class="output">A02  Cryptographic Failures            → HTTPS everywhere, modern TLS, HSTS, no MD5/SHA1</span></div>
+          <div><span class="output">A03  Injection (SQL, OS, LDAP)         → parameterised queries, input validation, SAST</span></div>
+          <div><span class="output">A04  Insecure Design                   → threat modelling, security review of new features</span></div>
+          <div><span class="output">A05  Security Misconfiguration         → IaC + tfsec/checkov, hardened images, no defaults</span></div>
+          <div><span class="output">A06  Vulnerable + Outdated Components  → Dependabot, Trivy, npm audit in CI</span></div>
+          <div><span class="output">A07  Identification + Auth Failures   → MFA, password policy, lockouts, OIDC over passwords</span></div>
+          <div><span class="output">A08  Software/Data Integrity Failures  → signed commits, signed images, SBOM, verified deploys</span></div>
+          <div><span class="output">A09  Security Logging Failures         → CloudTrail, app audit logs, centralised SIEM</span></div>
+          <div><span class="output">A10  SSRF (Server-Side Request Forgery)→ network egress allow-list, IMDSv2 on EC2</span></div>
+          <br>
+          <div><span class="comment"># Concrete examples in code</span></div>
+          <br>
+          <div><span class="error-color"># A03 Injection — bad</span></div>
+          <div><span class="cmd">db.query(`SELECT * FROM users WHERE email = '${input}'`);</span></div>
+          <div><span class="highlight"># A03 Injection — good (parameterised)</span></div>
+          <div><span class="cmd">db.query('SELECT * FROM users WHERE email = $1', [input]);</span></div>
+          <br>
+          <div><span class="error-color"># A05 Misconfig — bad (S3 bucket policy)</span></div>
+          <div><span class="cmd">"Principal": "*", "Effect": "Allow", "Action": "s3:*"</span></div>
+          <div><span class="highlight"># A05 Misconfig — good</span></div>
+          <div><span class="cmd">"Principal": { "AWS": "arn:aws:iam::123:role/specific-role" }, "Action": ["s3:GetObject"]</span></div>
+          <br>
+          <div><span class="error-color"># A10 SSRF — bad (allow user URL → fetch internal resources)</span></div>
+          <div><span class="cmd">const data = await fetch(req.body.url);</span></div>
+          <div><span class="highlight"># A10 SSRF — good</span></div>
+          <div><span class="cmd">if (!isExternalUrl(req.body.url)) return res.status(400).send('blocked');</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🥇</div><div class="kp-title">A01 is #1</div><div class="kp-desc">Broken access control. Every IAM review and JWT check matters.</div></div>
+        <div class="key-point"><div class="kp-icon">🛠️</div><div class="kp-title">DevOps mitigations</div><div class="kp-desc">IaC tfsec, Trivy, Dependabot, signed images, OIDC. Each maps to an OWASP item.</div></div>
+        <div class="key-point"><div class="kp-icon">📚</div><div class="kp-title">Read the docs</div><div class="kp-desc">owasp.org/Top10 — short, free, reread once a year.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">List evolves</div><div class="kp-desc">2017 → 2021 → 2025. Old "XSS" got merged into A03 Injection.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Map the following to OWASP categories: (a) "user can edit other users' rows by changing the URL ID", (b) "passwords stored as MD5", (c) "S3 bucket policy allows anyone to read".</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">For A06 (vulnerable components) name three concrete DevOps controls that catch issues before they ship.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Three layered controls:<br>
+                1. <strong>Dependabot</strong> (or Renovate) — opens PRs the moment a dependency has a new version with a security fix. Free on GitHub.<br>
+                2. <strong>Trivy / Snyk in CI</strong> — fails the build if HIGH/CRITICAL CVEs land in <code>package.json</code>, <code>requirements.txt</code>, or the Docker image.<br>
+                3. <strong>SBOM generation + storage</strong> — keep a record of every dependency shipped to prod (<code>trivy --format cyclonedx</code>). When a new CVE drops in 6 months, you can answer "are we affected?" in 30 seconds.<br><br>
+                Bonus: <strong>npm audit</strong> / <strong>pip-audit</strong> as a pre-merge gate. Free, fast, catches the common case.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">SSRF (A10) is a top concern on cloud. Why is enabling IMDSv2 on EC2 a critical mitigation?</div>
+            <div class="pq-hint">💡 IMDSv1 lets SSRF leak the EC2 instance role's credentials.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A09 Security Logging — without centralised logs, what specific incident-response capability does a team lose?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Supply-Chain Security — Dependabot, Pinning, Signed Images</div>
+        <div class="module-desc">SolarWinds, log4shell, npm event-stream. The attack surface isn't your code — it's everyone you depend on.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Modern apps depend on hundreds of packages, written by people you've never met, hosted on infra you don't control. <strong>Supply-chain attacks</strong> compromise <em>that</em> chain — a malicious commit in a package that 10,000 apps install. The classic examples: <strong>event-stream</strong> (npm, 2018), <strong>SolarWinds</strong> (2020), <strong>log4shell</strong> (2021). Defending against this is a DevOps responsibility.</p>
+        <p class="explain-text">Three control layers: <strong>(1) Pin versions</strong> in lock files — never use floating ranges in CI. <strong>(2) Auto-update</strong> via Dependabot / Renovate — security patches arrive within hours. <strong>(3) Verify integrity</strong> — signed commits (Sigstore), signed Docker images (Cosign), SBOM diffs in PR review.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">supply-chain — three layers</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Layer 1 — Pin in CI</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">npm ci   # not npm install — exact lock-file install, fails on drift</span></div>
+          <br>
+          <div><span class="comment"># Layer 2 — Dependabot config</span></div>
+          <div><span class="comment"># .github/dependabot.yml</span></div>
+          <div><span class="cmd">version: 2</span></div>
+          <div><span class="cmd">updates:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- package-ecosystem: npm</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">directory: /</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">schedule: { interval: daily }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">groups:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">production: { dependency-type: production, update-types: [patch, minor] }</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">- package-ecosystem: docker</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">directory: /</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">schedule: { interval: weekly }</span></div>
+          <br>
+          <div><span class="comment"># Layer 3 — Sign images with Cosign (keyless via OIDC)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cosign sign --yes 123.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0</span></div>
+          <div><span class="output">Successfully signed. Signature pushed to: ECR registry.</span></div>
+          <br>
+          <div><span class="comment"># Verify before deploy (in GitOps / admission controller)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cosign verify \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--certificate-identity-regexp '^https://github.com/myorg/myrepo' \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--certificate-oidc-issuer https://token.actions.githubusercontent.com \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">123.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0</span></div>
+          <div><span class="output">✓ Signature verified — built by GitHub Actions in myorg/myrepo</span></div>
+          <br>
+          <div><span class="comment"># SBOM — keep around for audits</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">syft myapp:1.0.0 -o spdx-json &gt; sbom.json</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">grype sbom:./sbom.json   # query the SBOM, not the live image</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">Dependabot</span>
+        <span class="tag blue">Renovate</span>
+        <span class="tag yellow">Cosign</span>
+        <span class="tag yellow">Sigstore</span>
+        <span class="tag purple">SBOM</span>
+        <span class="tag orange">log4shell</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is <code>npm ci</code> in CI safer than <code>npm install</code> for supply-chain protection?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Cosign keyless signing relies on OIDC tokens from the CI provider. What does this prevent that long-lived signing keys don't?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Long-lived signing keys must be stored somewhere — typically in secrets manager, attached to a CI runner, or held by a release engineer. Anyone who steals that key can sign images claiming to be your team — indistinguishable from real builds.<br><br>
+                <strong>Keyless Cosign (Sigstore)</strong>: at sign time, the CI runner asks the OIDC provider (e.g. GitHub Actions) for a short-lived token proving "this build ran in repo X on branch main." Sigstore mints a signing certificate bound to that identity, valid for ~10 minutes.<br><br>
+                Result: there is <em>no key to steal</em>. To forge a signature, an attacker would need to compromise GitHub Actions <em>and</em> your repo — both of which have separate audit trails. This is the modern recommended practice.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Walk through what happens after log4shell drops: the affected library is everywhere, your team needs to know "are we vulnerable?". Which artefact answers it in 5 minutes?</div>
+            <div class="pq-hint">💡 SBOM.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 - AI -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI for Threat Modelling & IAM Policy Review</div>
+        <div class="module-desc">AI is great at "find me 5 attack vectors against this design" — and not great at being the only reviewer</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">AI is excellent at <strong>brainstorming attack scenarios</strong> ("here's my architecture, what could go wrong?"), reviewing IAM policies for over-permission, and explaining CVEs in plain language. It is <em>not</em> a substitute for a real security review on safety-critical changes — but it's a great force multiplier on day-to-day work.</p>
+        <p class="explain-text">Trap: AI sometimes invents CVE numbers or claims a non-existent attack works. Verify against MITRE / NVD before quoting a CVE in a postmortem. And never paste real production secrets, customer data, or unfixed-vuln details to a public AI tool.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">AI prompts for security</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight"># ✅ Threat-modelling prompt</span></div>
+          <div><span class="comment">"Here is the architecture (text diagram):</span></div>
+          <div><span class="comment">  Cloudflare → ALB → ECS Fargate Node.js → RDS Postgres</span></div>
+          <div><span class="comment">  + S3 bucket for user uploads, signed URLs only</span></div>
+          <div><span class="comment">  + Cognito for auth</span></div>
+          <div><span class="comment"></span></div>
+          <div><span class="comment">List 5 high-impact attack vectors against this design.</span></div>
+          <div><span class="comment">For each: which OWASP category, what's the worst case,</span></div>
+          <div><span class="comment"> and the cheapest mitigation we can implement this sprint."</span></div>
+          <br>
+          <div><span class="highlight"># ✅ IAM policy review prompt</span></div>
+          <div><span class="comment">"Review this IAM policy for over-permission. Suggest the minimum scope</span></div>
+          <div><span class="comment"> for the use case: 'a Lambda that reads object X from one S3 bucket</span></div>
+          <div><span class="comment"> and writes to one DynamoDB table'.</span></div>
+          <div><span class="comment">[paste policy JSON here]</span></div>
+          <div><span class="comment">Highlight any wildcard actions, broad resources, or missing conditions."</span></div>
+          <br>
+          <div><span class="comment"># Verify any CVE the AI quotes</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-2511"</span></div>
+          <div><span class="output">"vulnStatus": "Awaiting Analysis", "descriptions": [...]</span></div>
+          <br>
+          <div><span class="error-color"># ❌ Never paste:</span></div>
+          <div><span class="comment">- real production secret values (rotate first if you must)</span></div>
+          <div><span class="comment">- customer PII</span></div>
+          <div><span class="comment">- unpatched vulnerability details from a private bug bounty</span></div>
+          <div><span class="comment">- internal architecture diagrams that name customers</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take "is my system secure?" and turn it into a concrete 5-bullet AI prompt for threat modelling.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI tells you a vulnerability "doesn't really matter" because "exploitation requires admin access." Why is this a yellow flag, not a green light?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Two reasons:<br>
+                1. <strong>Defence in depth</strong> — "requires admin" assumes nobody else gets admin. In a real breach, an attacker chains <em>multiple</em> bugs: the SSRF gives them an internal cred → which gives them admin → which lets them exploit "the bug that requires admin." Each layer matters.<br>
+                2. <strong>AI is not your authoritative source.</strong> AI summarises training data; it doesn't have visibility into your specific deployment, threat model, or compliance constraints. Use the AI take as a hypothesis, not a verdict.<br><br>
+                Always cross-check against the actual CVE description (CVSS score, attack vector, complexity) and your team's threat model.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is pasting a production IAM policy (with the account ID + role names) to a public AI tool an unnecessary risk, even though it's not technically a secret?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 - PROJECT -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Add Security Scanning + Secrets Management to Your Pipeline</div>
+        <div class="module-desc">Take the Docker + CI/CD project and harden it end-to-end</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">By this point, students have a Node app + Dockerfile + GitHub Actions pipeline (from earlier modules). Now they bolt on the full DevSecOps layer: pre-commit secret scan, npm audit gate, Trivy scan, Semgrep SAST, OWASP ZAP DAST, Cosign signing, and Secrets Manager for production credentials. The artefact: a hardened pipeline where pushing a known vulnerability is impossible.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">.github/workflows/security.yml</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">name: Security</span></div>
+          <div><span class="cmd">on: [push, pull_request]</span></div>
+          <br>
+          <div><span class="cmd">permissions:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">contents: read</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">id-token: write       # Cosign keyless signing</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">security-events: write # SARIF upload</span></div>
+          <br>
+          <div><span class="cmd">jobs:</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">secrets:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: gitleaks/gitleaks-action@v2</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">deps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: npm audit --audit-level=high</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">sast:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: returntocorp/semgrep-action@v1</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { config: p/javascript p/owasp-top-ten p/secrets }</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">image:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: [secrets, deps, sast]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: actions/checkout@v4</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: docker build -t myapp:${{ github.sha }} .</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: aquasecurity/trivy-action@0.20.0</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { image-ref: myapp:${{ github.sha }}, severity: HIGH,CRITICAL, exit-code: 1 }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: cosign sign --yes myapp:${{ github.sha }}</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">dast:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">needs: image</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">runs-on: ubuntu-latest</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">steps:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- run: docker run -d -p 3000:3000 --name app myapp:${{ github.sha }}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- uses: zaproxy/action-baseline@v0.12.0</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">with: { target: http://localhost:3000, fail_action: true }</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🛂</div><div class="kp-title">5 gates</div><div class="kp-desc">secrets → deps → SAST → image scan → DAST. Each blocks before code goes live.</div></div>
+        <div class="key-point"><div class="kp-icon">🤝</div><div class="kp-title">Parallel where possible</div><div class="kp-desc">secrets/deps/sast run in parallel; image waits for all 3.</div></div>
+        <div class="key-point"><div class="kp-icon">📥</div><div class="kp-title">SARIF upload</div><div class="kp-desc">Findings show in GitHub's Security tab — no external dashboard needed.</div></div>
+        <div class="key-point"><div class="kp-icon">🪪</div><div class="kp-title">Cosign keyless</div><div class="kp-desc">Signs every prod image with no long-lived keys.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - QUIZ + ASSIGNMENT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz + Assignment — Audit & Harden a Real Repo</div>
+        <div class="module-desc">5 MCQs + 2 fill-ins + a graded "find and fix 3 vulns in your own project" exercise</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. The first thing to do after spotting a leaked AWS access key in a public repo:</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> Force-push to delete the commit</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q1','b')"><div class="opt-letter">B</div> Rotate the key in IAM immediately, then clean history</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Open an incident ticket</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> Make the repo private</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. SAST is best at finding:</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> Missing security headers in HTTP responses</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> Unsafe code patterns (SQL string concat, weak crypto)</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Brute-force vulnerable endpoints</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Network-level DDoS exposure</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. Trivy "ignore-unfixed" is appropriate when:</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Always — it's the safer default</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q3','b')"><div class="opt-letter">B</div> CVEs have no upstream patch and you've documented risk acceptance</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Never — always fail on every CVE</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Only in development environments</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. OWASP A01 is:</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q4','a')"><div class="opt-letter">A</div> Broken Access Control</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> SQL Injection</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> XSS</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> CSRF</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. Cosign keyless signing relies on:</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> A long-lived signing key in Secrets Manager</div>
+        <div class="option" onclick="answer('q5','b')"><div class="opt-letter">B</div> A YubiKey</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q5','c')"><div class="opt-letter">C</div> Short-lived OIDC tokens minted by the CI provider</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> A self-signed PKCS#12 cert</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: Trivy command — scan image <code>myapp:1.0</code> and exit non-zero on HIGH or CRITICAL.</div>
+          <input type="text" id="fi1" placeholder="trivy ..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['trivy image --severity HIGH,CRITICAL --exit-code 1 myapp:1.0','trivy image --exit-code 1 --severity HIGH,CRITICAL myapp:1.0'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: Read secret <code>myapp/prod/db</code> from AWS Secrets Manager via the CLI.</div>
+          <input type="text" id="fi2" placeholder="aws secretsmanager ..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['aws secretsmanager get-secret-value --secret-id myapp/prod/db'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+
+      <div class="explain-block" style="margin-top: 20px;"><h3>Assignment</h3></div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Pick one of your earlier projects (Docker, CI/CD, AWS — any with code and a Dockerfile)</li>
+          <li>Add a <code>.pre-commit-config.yaml</code> running gitleaks; commit and verify it blocks a fake AWS key</li>
+          <li>Add a security workflow (<code>.github/workflows/security.yml</code>) with at minimum: gitleaks, npm audit (or pip-audit), Semgrep SAST, Trivy image scan</li>
+          <li>Each step must <strong>fail the build</strong> on findings of HIGH or above — no warnings-only passes</li>
+          <li>Move at least one production secret to AWS Secrets Manager (or SSM Parameter Store), document the rotation policy in the README</li>
+          <li>Add Dependabot config for the relevant ecosystem(s)</li>
+          <li>Run the workflow against a known-bad commit (paste a fake AWS key, install <code>lodash@4.17.10</code>) and screenshot the failed runs</li>
+          <li>Map the controls you added to OWASP categories — write a <code>SECURITY.md</code> table with at least 5 entries</li>
+          <li>Bonus: Add Cosign keyless signing to the image build job</li>
+          <li>Bonus: Add an OWASP ZAP baseline scan against a staging deploy</li>
+          <li>Bonus: Generate + commit an SBOM via Trivy or Syft, document how to query it for a future CVE</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected output of failing run</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color">✗ secrets         (gitleaks found 1 leak)</span></div>
+          <div><span class="error-color">✗ deps            (npm audit: 2 high vulnerabilities)</span></div>
+          <div><span class="error-color">✗ sast            (Semgrep: 1 SQL-injection finding)</span></div>
+          <div><span class="error-color">✗ image           (Trivy: 3 HIGH, 1 CRITICAL)</span></div>
+          <div><span class="output">  PR is BLOCKED. Fix findings + push again.</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Pre-commit gitleaks: 15. CI workflow with 4+ gates: 30. Build fails on real findings: 25. Secrets moved + rotation doc: 15. SECURITY.md OWASP map: 15.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Workflow runs but doesn't fail on findings (warnings-only); gitleaks scoped wrong; secret rotated but old commit still in git history.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Add an OPA/Conftest policy gate on Terraform (block public S3 buckets, missing encryption, etc.).</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>
