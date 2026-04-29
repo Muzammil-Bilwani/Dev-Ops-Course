@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Serverless Computing for DevOps — AWS Lambda + API Gateway Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn serverless on AWS from scratch: when to pick Lambda over ECS, Lambda triggers (HTTP, S3, DynamoDB, EventBridge), building REST APIs with API Gateway, S3 event handlers, the Serverless Framework, and cost comparison vs EC2. Hands-on examples with 30+ practice questions.">
+<meta name="keywords" content="serverless for devops, AWS Lambda tutorial, API Gateway REST API, Lambda triggers, DynamoDB streams, EventBridge cron Lambda, Serverless Framework basics, Lambda vs ECS cost, banoqabil, devops foundations, AWS serverless beginner">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Serverless Computing for DevOps — AWS Lambda + API Gateway Course">
+<meta property="og:description" content="Master AWS serverless with hands-on Lambda, API Gateway, DynamoDB, EventBridge, and a full REST API project. Built for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Serverless for DevOps — AWS Lambda + API Gateway Course">
+<meta name="twitter:description" content="Hands-on serverless: Lambda, API Gateway, DynamoDB, EventBridge, and cost analysis.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Serverless Computing for DevOps — Foundations",
+  "description": "A practical, beginner-friendly serverless course for aspiring DevOps engineers. Covers when to choose Lambda over ECS/EC2, Lambda triggers (HTTP via API Gateway, S3 events, DynamoDB streams, EventBridge schedules), building REST APIs, the Serverless Framework, AI-assisted handler authoring, a Lambda + API Gateway capstone project, and a cost-comparison assignment between S3, EC2, and Lambda for low-volume workloads.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "When to use serverless vs containers vs VMs",
+    "AWS Lambda runtime model and cold starts",
+    "Lambda triggers — HTTP, S3, DynamoDB, EventBridge",
+    "Building REST APIs with API Gateway + Lambda",
+    "Persisting data with DynamoDB",
+    "Scheduled Lambdas via EventBridge cron",
+    "Deploying with the Serverless Framework",
+    "Environments (dev/staging/prod) in serverless apps",
+    "AI-assisted Lambda handler and IAM authoring",
+    "Cost analysis — Lambda vs EC2 vs S3 for low-volume workloads"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT8H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #58a6ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px; pointer-events: none; z-index: 0;
+  }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(88,166,255,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.10s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.20s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.30s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+  .module:nth-child(8) { animation-delay: 0.40s; }
+  .module:nth-child(9) { animation-delay: 0.45s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(88,166,255,0.1); border: 1px solid rgba(88,166,255,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ aws lambda invoke --function-name api</div>
+  <h1>Serverless <span>Computing</span><br>Instructor Guide</h1>
+  <p class="subtitle">AWS Lambda, API Gateway, DynamoDB, EventBridge — pay nothing when nobody's calling, scale infinitely when everyone is.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">What Serverless Is — and When to Pick It Over ECS / EC2</div>
+        <div class="module-desc">"Serverless" doesn't mean no servers. It means you don't manage them — and you only pay for the milliseconds you use.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with: <em>"Imagine renting a server vs renting a taxi. EC2 = your own car (you pay 24/7 even when parked). Lambda = Uber (you pay only the trip)."</em> Both run code. The difference is <strong>billing model</strong> and <strong>operational ownership</strong>.</p>
+        <p class="explain-text">Lambda makes sense when traffic is <strong>spiky, low-volume, or event-driven</strong>: a webhook handler called 100 times a day, a nightly cron job, an S3-upload thumbnailer. It stops making sense when traffic is steady and high — at ~5 million requests/day, EC2 or ECS becomes cheaper. The other big trade-off is <strong>cold starts</strong>: a Lambda that hasn't run in 5 minutes takes 200ms–2s to start.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">when-to-use-serverless</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Decision matrix</span></div>
+          <br>
+          <div><span class="output">                          Lambda            ECS Fargate       EC2</span></div>
+          <div><span class="output">────────────────────────  ────────────────  ───────────────  ───────────────</span></div>
+          <div><span class="output">Idle cost                 <span class="info">$0</span>                $0–$10            $8+</span></div>
+          <div><span class="output">Pay model                 per ms + request  per vCPU-hour     per VM-hour</span></div>
+          <div><span class="output">Scaling                   instant, ∞        manual + min      manual + min</span></div>
+          <div><span class="output">Max execution             15 min            unlimited         unlimited</span></div>
+          <div><span class="output">Cold starts               <span class="error-color">200ms–2s</span>          0                 0</span></div>
+          <div><span class="output">Best for                  spiky / events    steady containers control / state</span></div>
+          <br>
+          <div><span class="comment"># Concrete examples</span></div>
+          <div><span class="output">"Stripe webhook handler called 1k/day"      → Lambda  ($0.00 idle)</span></div>
+          <div><span class="output">"REST API: 10 req/sec, 24/7"                → Fargate ($35/mo, no cold starts)</span></div>
+          <div><span class="output">"GPU video encoder, 5min jobs"              → EC2 spot ($/min, custom AMI)</span></div>
+          <div><span class="output">"Resize image when uploaded to S3"          → Lambda  (event-driven)</span></div>
+          <div><span class="output">"Database that needs to stay up forever"    → RDS / Fargate (state)</span></div>
+          <div><span class="output">"Nightly report at 2am"                     → Lambda + EventBridge</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">💸</div><div class="kp-title">$0 when idle</div><div class="kp-desc">No requests = no bill. Most learners can fit a small project entirely in the free tier.</div></div>
+        <div class="key-point"><div class="kp-icon">⏱️</div><div class="kp-title">15-min ceiling</div><div class="kp-desc">Lambda kills any execution past 15 minutes. Long jobs go elsewhere.</div></div>
+        <div class="key-point"><div class="kp-icon">❄️</div><div class="kp-title">Cold starts</div><div class="kp-desc">First call after idle is slow. Provisioned concurrency or warm pings can fix.</div></div>
+        <div class="key-point"><div class="kp-icon">🪜</div><div class="kp-title">Stateless by design</div><div class="kp-desc">No local disk, no in-memory sessions. State goes to DynamoDB / S3 / Redis.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">For each, pick Lambda or Fargate and justify in one sentence:<br>(a) Stripe webhook (50 events/day), (b) Real-time chat (5k concurrent connections), (c) Image thumbnailer triggered by S3 upload, (d) Steady-traffic REST API at 200 RPS.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>(a) Stripe webhook → Lambda.</strong> 50 events/day = $0/mo on free tier; cold start of 200ms is fine for a webhook.<br>
+                <strong>(b) Real-time chat → Fargate.</strong> WebSockets with 5k connections need long-lived processes; Lambda WebSocket support exists but is unwieldy at this scale.<br>
+                <strong>(c) Image thumbnailer → Lambda.</strong> Classic event-driven workload, S3 trigger, finishes in seconds.<br>
+                <strong>(d) Steady 200 RPS API → Fargate.</strong> 200 × 86,400 = ~17M req/day. Lambda would charge per request and run constantly anyway; Fargate is cheaper at that volume and avoids cold starts.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate says "Serverless means no servers." Correct them in one sentence — what does it actually mean?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is Lambda a poor fit for a long-running ML training job that takes 90 minutes?</div>
+            <div class="pq-hint">💡 Hard timeout limit.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Name two ways to mitigate Lambda cold starts when you can't accept a 1-second first-request delay.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Lambda Triggers — HTTP, S3, DynamoDB, EventBridge</div>
+        <div class="module-desc">A Lambda is just a function. Its real power is the variety of things that can call it.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Mental model: <em>"A Lambda is a vending machine. The trigger is the coin slot — it can be a button (HTTP), a sensor (S3 upload), a timer (cron), or another machine (DynamoDB stream)."</em> The Lambda code doesn't change much. The trigger changes the <strong>event payload</strong> it receives.</p>
+        <p class="explain-text">The four canonical triggers cover 80% of real-world serverless: <strong>API Gateway</strong> (HTTP), <strong>S3</strong> (file uploaded), <strong>DynamoDB Streams</strong> (row changed), <strong>EventBridge</strong> (schedule or cross-service event). Each delivers a typed event to your handler — read the AWS docs for the exact JSON shape.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">handler.js — same function, four triggers</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">// HTTP via API Gateway</span></div>
+          <div><span class="cmd">export const handler = async (event) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const { name } = JSON.parse(event.body);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">return { statusCode: 200, body: JSON.stringify({ hello: name }) };</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="cmd">// S3 trigger — fires on every upload</span></div>
+          <div><span class="cmd">export const handler = async (event) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">for (const record of event.Records) {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">const bucket = record.s3.bucket.name;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">const key = record.s3.object.key;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">await thumbnailize(bucket, key);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="cmd">// DynamoDB stream — fires on row insert/update/delete</span></div>
+          <div><span class="cmd">export const handler = async (event) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">for (const record of event.Records) {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">if (record.eventName === 'INSERT') {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">await sendWelcomeEmail(record.dynamodb.NewImage);</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="cmd">// EventBridge cron — runs on a schedule</span></div>
+          <div><span class="cmd">export const handler = async (event) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">// event has no payload here — just metadata</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">await runNightlyReport();</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="comment"># Wire EventBridge to fire daily at 2am UTC</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws events put-rule --name nightly-report \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--schedule-expression "cron(0 2 * * ? *)"</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws events put-targets --rule nightly-report \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--targets Id=1,Arn=arn:aws:lambda:eu-west-1:123:function:nightly-report</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">API Gateway</div><div class="kp-desc">HTTP/HTTPS in, JSON out. The "REST API" trigger.</div></div>
+        <div class="key-point"><div class="kp-icon">🗄️</div><div class="kp-title">S3 events</div><div class="kp-desc">Upload, delete, multi-part complete. Best for ETL + file processing.</div></div>
+        <div class="key-point"><div class="kp-icon">📡</div><div class="kp-title">DynamoDB streams</div><div class="kp-desc">Row-change events. Send a welcome email on user signup, etc.</div></div>
+        <div class="key-point"><div class="kp-icon">⏰</div><div class="kp-title">EventBridge cron</div><div class="kp-desc">Scheduled triggers. cron syntax. Lambdas as cron jobs.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick the right trigger for each: (a) "send welcome email when user signs up", (b) "generate thumbnail on photo upload", (c) "check if SSL cert expires in 30 days, every Monday".</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does S3 trigger send <em>multiple records</em> per invocation, not just one?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                S3 batches events for performance. If a user uploads 10 files in quick succession, Lambda may receive a single invocation with 10 <code>Records</code> in the event payload — instead of 10 invocations. This is intentional: it reduces cold-start overhead and keeps cost down.<br><br>
+                <strong>Implication:</strong> always loop over <code>event.Records</code> in S3 handlers. Treating <code>event.Records[0]</code> as if it were the only record will silently drop events under load.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write the EventBridge cron expression for "every Monday at 9:00 AM UTC".</div>
+            <div class="pq-hint">💡 EventBridge uses 6-field cron, not standard 5-field.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why use a DynamoDB Stream instead of having the API call <code>sendEmail()</code> directly inside the signup handler?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">REST APIs with API Gateway + Lambda</div>
+        <div class="module-desc">Building a real REST API with paths, methods, validation, and CORS</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text"><strong>API Gateway</strong> sits in front of Lambda and turns HTTP into Lambda invocations. You define routes (<code>POST /items</code>, <code>GET /items/{id}</code>) in API Gateway; each route is wired to a Lambda function. API Gateway handles authentication, rate-limiting, and CORS.</p>
+        <p class="explain-text">Two flavours: <strong>REST API</strong> (the original, more features but more expensive) and <strong>HTTP API</strong> (newer, cheaper, simpler — start here unless you need the REST features). For most learners, HTTP API is the right default.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">items-api — full Lambda + API Gateway</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">// handler.ts — single Lambda routes 3 endpoints</span></div>
+          <div><span class="cmd">import { APIGatewayProxyEventV2 } from 'aws-lambda';</span></div>
+          <br>
+          <div><span class="cmd">export const handler = async (event: APIGatewayProxyEventV2) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const { method, path } = event.requestContext.http;</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const route = `${method} ${path}`;</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">if (route === 'GET /items') return list();</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">if (route === 'POST /items') return create(JSON.parse(event.body!));</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">if (route.startsWith('GET /items/'))</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">return get(event.pathParameters!.id!);</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">return { statusCode: 404, body: JSON.stringify({ error: 'Not Found' }) };</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="comment"># Create the HTTP API in 2 commands</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws apigatewayv2 create-api --name items-api \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--protocol-type HTTP \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--target arn:aws:lambda:eu-west-1:123:function:items-handler</span></div>
+          <div><span class="output">"ApiId": "abc123", "ApiEndpoint": "https://abc123.execute-api.eu-west-1.amazonaws.com"</span></div>
+          <br>
+          <div><span class="comment"># Test it</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -X POST https://abc123.execute-api.eu-west-1.amazonaws.com/items \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-H 'content-type: application/json' \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-d '{"name":"Wireless Mouse","price":2400}'</span></div>
+          <div><span class="output">{"id":"itm_1a2b3c","name":"Wireless Mouse","price":2400}</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">HTTP API</span>
+        <span class="tag blue">REST API</span>
+        <span class="tag yellow">Lambda proxy</span>
+        <span class="tag green">CORS</span>
+        <span class="tag orange">JWT authorizer</span>
+        <span class="tag purple">stages</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A frontend at <code>app.example.com</code> calls your API at <code>api.example.com</code> and gets a CORS error. List the two places the fix can live and the trade-off between them.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Option A — fix in API Gateway</strong> (recommended): configure CORS on the HTTP API itself. API Gateway returns the right <code>Access-Control-Allow-Origin</code> headers; your Lambda doesn't need to know about CORS at all.<br><br>
+                <strong>Option B — fix in Lambda</strong>: return CORS headers from every handler. Works, but easy to miss on a route, and adds CORS logic to every function.<br><br>
+                Trade-off: Option A is centralised + DRY but adds API Gateway-specific config. Option B is portable but bug-prone. Pick A unless you have a specific reason.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">When should you split <code>POST /items</code> and <code>GET /items</code> into two separate Lambdas instead of one with internal routing?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Pick HTTP API or REST API for: (a) a public webhook endpoint, (b) an internal API needing usage plans + API keys per consumer, (c) a JSON CRUD app for a side project.</div>
+            <div class="pq-hint">💡 HTTP API = cheaper + simpler. REST API = more features (usage plans, X-Ray, request/response transformations).</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your API returns 502 Bad Gateway. The Lambda runs fine standalone. Where do you look first?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">DynamoDB & S3 as Storage for Serverless Apps</div>
+        <div class="module-desc">A serverless API needs serverless storage — DynamoDB for structured data, S3 for blobs</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Don't put a Lambda in front of RDS for first projects. RDS = always-on database = 24/7 cost = defeats the serverless free-tier dream. <strong>DynamoDB</strong> is AWS's serverless key-value/document store — pay-per-request, autoscales, never down. Combined with S3 for files, you can build a complete serverless app at $0 idle.</p>
+        <p class="explain-text">DynamoDB has a learning curve — there are no joins, indexing is deliberate, and you design tables around your <em>access patterns</em>, not the data shape. Start with the simplest one-table design.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">dynamodb + s3 — read/write</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Create a DynamoDB table — pay-per-request, no idle cost</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws dynamodb create-table \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--table-name items \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--attribute-definitions AttributeName=id,AttributeType=S \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--key-schema AttributeName=id,KeyType=HASH \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--billing-mode PAY_PER_REQUEST</span></div>
+          <br>
+          <div><span class="comment"># In Lambda — write + read</span></div>
+          <div><span class="cmd">import { DynamoDBClient } from '@aws-sdk/client-dynamodb';</span></div>
+          <div><span class="cmd">import { DynamoDBDocumentClient, PutCommand, GetCommand } from '@aws-sdk/lib-dynamodb';</span></div>
+          <br>
+          <div><span class="cmd">const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));</span></div>
+          <br>
+          <div><span class="cmd">async function create(item) {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const id = `itm_${crypto.randomUUID().slice(0, 8)}`;</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">await ddb.send(new PutCommand({</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">TableName: 'items',</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">Item: { id, ...item, createdAt: Date.now() }</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}));</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">return { statusCode: 201, body: JSON.stringify({ id, ...item }) };</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="comment"># Upload binary to S3 from Lambda</span></div>
+          <div><span class="cmd">import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';</span></div>
+          <div><span class="cmd">const s3 = new S3Client({});</span></div>
+          <div><span class="cmd">await s3.send(new PutObjectCommand({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">Bucket: 'my-uploads', Key: `images/${id}.jpg`, Body: buffer</span></div>
+          <div><span class="cmd">}));</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">💵</div><div class="kp-title">Pay-per-request</div><div class="kp-desc">DynamoDB <code>PAY_PER_REQUEST</code> mode. $0 idle, scales to whatever traffic comes.</div></div>
+        <div class="key-point"><div class="kp-icon">🔑</div><div class="kp-title">Single-table design</div><div class="kp-desc">Advanced pattern: many entity types in one table. Start simple.</div></div>
+        <div class="key-point"><div class="kp-icon">📂</div><div class="kp-title">S3 for blobs</div><div class="kp-desc">Images, files, exports. Don't store binary in DynamoDB.</div></div>
+        <div class="key-point"><div class="kp-icon">🌊</div><div class="kp-title">Streams = events</div><div class="kp-desc">DynamoDB Streams turn every write into an event Lambda can consume.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A student picks RDS Postgres for their serverless side project to "stick with what they know." Why might this destroy their AWS bill?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is "design for your access patterns" the DynamoDB rule, vs the SQL rule of "design around the data"?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                In SQL, you normalise data and write queries (joins, where) at read time. The database does the work.<br><br>
+                DynamoDB has <strong>no joins</strong>. Every query reads at most one partition key + sort key range. So you design the table so the queries you'll run map directly onto a single partition lookup. This often means <em>denormalising</em> — storing the same data in multiple shapes — and pre-computing relationships at write time.<br><br>
+                The mantra: "What questions will I ask of this data?" <em>before</em> you design the table — opposite of SQL where you can usually re-shape queries later.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your handler uploads an image to S3 then writes a row to DynamoDB. What happens if the DynamoDB write fails after the S3 upload succeeds? How do you make this safer?</div>
+            <div class="pq-hint">💡 Two-phase commits don't exist on AWS — but idempotency does.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is putting binary image data inside a DynamoDB row a poor design, even though DynamoDB technically supports binary attributes up to 400 KB?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Serverless Framework — Deploy without Wiring 20 Things by Hand</div>
+        <div class="module-desc">One YAML file describes your Lambdas, triggers, IAM, and env vars. <code>serverless deploy</code> ships it all.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Wiring a Lambda + API Gateway + DynamoDB + IAM by hand takes 20+ AWS CLI commands and is impossible to reproduce. The <strong>Serverless Framework</strong> (or AWS SAM, or AWS CDK) describes everything in one file and generates the underlying CloudFormation. The community-favourite is Serverless Framework — readable YAML, tons of plugins, multi-cloud.</p>
+        <p class="explain-text">It also handles <strong>environments</strong>: a single command can deploy to <code>dev</code> / <code>staging</code> / <code>prod</code> with different env vars, IAM roles, and table names. Critical once your project leaves your laptop.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">serverless.yml — full app in 30 lines</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">service: items-api</span></div>
+          <br>
+          <div><span class="cmd">provider:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">name: aws</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">runtime: nodejs20.x</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">region: eu-west-1</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">stage: ${opt:stage, 'dev'}</span> &nbsp;<span class="comment"># dev / staging / prod</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">environment:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">TABLE_NAME: items-${self:provider.stage}</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">iam:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">role:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">statements:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- Effect: Allow</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:Scan]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">Resource: !GetAtt ItemsTable.Arn</span></div>
+          <br>
+          <div><span class="cmd">functions:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">api:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">handler: src/handler.handler</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">events:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- httpApi: 'GET /items'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- httpApi: 'POST /items'</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- httpApi: 'GET /items/{id}'</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">nightly:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">handler: src/cron.report</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">events:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">- schedule: cron(0 2 * * ? *)</span></div>
+          <br>
+          <div><span class="cmd">resources:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">Resources:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ItemsTable:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">Type: AWS::DynamoDB::Table</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">Properties:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">TableName: items-${self:provider.stage}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">BillingMode: PAY_PER_REQUEST</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">AttributeDefinitions: [{ AttributeName: id, AttributeType: S }]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">KeySchema: [{ AttributeName: id, KeyType: HASH }]</span></div>
+          <br>
+          <div><span class="comment"># Deploy</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">npx serverless deploy --stage dev</span></div>
+          <div><span class="output">✔  Service deployed to stack items-api-dev (38s)</span></div>
+          <div><span class="output">endpoint: https://abc.execute-api.eu-west-1.amazonaws.com</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">serverless deploy</span>
+        <span class="tag green">--stage</span>
+        <span class="tag blue">CloudFormation</span>
+        <span class="tag yellow">SAM</span>
+        <span class="tag purple">CDK</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare Serverless Framework, AWS SAM, and AWS CDK in one line each. Which is closest to "Terraform but for serverless"?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Serverless Framework</strong> — multi-cloud YAML, plugin-rich, community favourite for Lambda apps.<br>
+                <strong>AWS SAM</strong> — AWS-only YAML, thin wrapper over CloudFormation, official AWS support.<br>
+                <strong>AWS CDK</strong> — write infra in TypeScript/Python/Go (real code, not YAML). Compiles to CloudFormation.<br><br>
+                <strong>"Terraform but for serverless"</strong> → AWS CDK is closest in <em>spirit</em> (real code, declarative). But Serverless Framework is closer in <em>scope</em> — both are higher-level abstractions tuned for serverless apps. Terraform itself works fine for serverless too, just with more boilerplate.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is having <code>${self:provider.stage}</code> in the table name <code>items-dev</code> / <code>items-staging</code> / <code>items-prod</code> important?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate runs <code>serverless deploy</code> with no <code>--stage</code> flag and accidentally deploys to prod. How would you prevent this?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI for Serverless — Handlers, IAM, and Cost Estimates</div>
+        <div class="module-desc">Lambda handlers are short, pattern-heavy, and AI-friendly — but verify the IAM</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">AI can produce a high-quality Lambda handler in seconds — these functions are usually 20–50 lines, follow well-known patterns (parse event, do work, return response), and have lots of training data. AI is also strong at IAM policies and serverless.yml YAML.</p>
+        <p class="explain-text">The trap: AI sometimes generates <em>over-permissive</em> IAM (everyone gets <code>"Action": "*"</code>) and forgets edge cases (no input validation, no error handler). Treat the output as a draft and review every IAM statement before deploying.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">AI prompts for serverless</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight"># ✅ Strong handler prompt</span></div>
+          <div><span class="comment">"Write an AWS Lambda handler in TypeScript using Node 20 that:</span></div>
+          <div><span class="comment"> - Reads an S3 upload event</span></div>
+          <div><span class="comment"> - Generates a 200x200 thumbnail using sharp</span></div>
+          <div><span class="comment"> - Writes the thumbnail back to the same bucket under thumbs/&lt;original-key&gt;</span></div>
+          <div><span class="comment"> - Loops over event.Records (S3 batches events)</span></div>
+          <div><span class="comment"> - Skips files larger than 10 MB</span></div>
+          <div><span class="comment"> - Logs structured JSON to CloudWatch</span></div>
+          <div><span class="comment"> - Returns nothing on success, throws on unrecoverable error</span></div>
+          <div><span class="comment">After the handler, list the minimum IAM policy + a serverless.yml snippet."</span></div>
+          <br>
+          <div><span class="comment"># Cost-estimate prompt</span></div>
+          <div><span class="comment">"Estimate the monthly AWS cost for this serverless workload:</span></div>
+          <div><span class="comment"> - 100,000 Lambda invocations/month (avg 200ms, 256 MB memory)</span></div>
+          <div><span class="comment"> - 50,000 DynamoDB writes + 200,000 reads (PAY_PER_REQUEST)</span></div>
+          <div><span class="comment"> - 5 GB S3 storage, 100 GB egress through CloudFront</span></div>
+          <div><span class="comment">Show the math, region eu-west-1, current AWS pricing."</span></div>
+          <br>
+          <div><span class="comment"># Verify AI-generated IAM</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws iam simulate-custom-policy \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--policy-input-list file://generated-policy.json \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--action-names s3:GetObject s3:PutObject \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--resource-arns "arn:aws:s3:::my-bucket/*"</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take "write me a Lambda for image upload" and turn it into a 6-bullet detailed prompt that produces a production-ready handler.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why should you ask AI for IAM policies <em>and</em> verify them with <code>iam simulate-custom-policy</code> instead of just trusting the output?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                AI is statistically right but sometimes silently wrong about IAM. Three failure modes:<br>
+                1. <strong>Hallucinated action names.</strong> <code>s3:GetAllObjects</code>, <code>dynamodb:WriteAll</code> — sound real, don't exist.<br>
+                2. <strong>Over-permissive scopes.</strong> AI defaults to <code>"Resource": "*"</code> when one specific ARN would do. Works, then fails the security review.<br>
+                3. <strong>Wrong resource ARN format.</strong> S3 actions need both <code>arn:aws:s3:::bucket</code> AND <code>arn:aws:s3:::bucket/*</code>. AI sometimes only includes one.<br><br>
+                <code>iam simulate-custom-policy</code> takes the policy + a list of actions + ARNs and tells you which would be allowed/denied. Run it before deploy — it's free and prevents the "policy has no effect, why doesn't this work" debugging session.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI says "your Lambda will cost $0/month on the free tier." Why is this often misleading for production estimates? List two costs the free tier doesn't cover.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 - PROJECT -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Serverless REST API — Lambda + API Gateway + DynamoDB</div>
+        <div class="module-desc">A complete CRUD API deployed end-to-end with the Serverless Framework</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Walk through this on screen first, then have students recreate it for their own domain (todos, bookmarks, notes — anything CRUD-shaped). The artefact: a public REST API at <code>https://&lt;random&gt;.execute-api.eu-west-1.amazonaws.com</code>, talking to DynamoDB, deployed via one command, costing $0/mo idle.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">items-api/ — file layout</div></div>
+        <div class="terminal-body">
+          <div><span class="output">items-api/</span></div>
+          <div><span class="output">├── serverless.yml</span></div>
+          <div><span class="output">├── package.json</span></div>
+          <div><span class="output">├── tsconfig.json</span></div>
+          <div><span class="output">└── src/</span></div>
+          <div><span class="output">    ├── handler.ts       ← all routes</span></div>
+          <div><span class="output">    ├── repo.ts          ← DynamoDB read/write</span></div>
+          <div><span class="output">    └── validate.ts      ← zod schemas</span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">src/handler.ts</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">import type { APIGatewayProxyEventV2 as Event } from 'aws-lambda';</span></div>
+          <div><span class="cmd">import { repo } from './repo.js';</span></div>
+          <div><span class="cmd">import { ItemSchema } from './validate.js';</span></div>
+          <br>
+          <div><span class="cmd">const ok = (body: unknown, status = 200) =&gt; ({</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">statusCode: status,</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">headers: { 'content-type': 'application/json' },</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">body: JSON.stringify(body),</span></div>
+          <div><span class="cmd">});</span></div>
+          <br>
+          <div><span class="cmd">export const handler = async (event: Event) =&gt; {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">const { method, path } = event.requestContext.http;</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">if (method === 'GET' && path === '/items')</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">return ok(await repo.list());</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">if (method === 'POST' && path === '/items') {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">const parsed = ItemSchema.safeParse(JSON.parse(event.body ?? '{}'));</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">if (!parsed.success) return ok({ error: parsed.error }, 400);</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">return ok(await repo.create(parsed.data), 201);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">if (method === 'GET' && path.startsWith('/items/')) {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">const item = await repo.get(event.pathParameters!.id!);</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">return item ? ok(item) : ok({ error: 'Not Found' }, 404);</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">return ok({ error: 'Route not found' }, 404);</span></div>
+          <div><span class="cmd">};</span></div>
+          <br>
+          <div><span class="comment"># Deploy</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">npx serverless deploy --stage dev</span></div>
+          <div><span class="output">endpoint: https://abc.execute-api.eu-west-1.amazonaws.com</span></div>
+          <br>
+          <div><span class="comment"># Smoke test</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -X POST $URL/items -H 'content-type: application/json' \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-d '{"name":"Mouse","price":2400}'</span></div>
+          <div><span class="output">{"id":"itm_a3f1c2","name":"Mouse","price":2400}</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🧪</div><div class="kp-title">zod validation</div><div class="kp-desc">Type-safe runtime input validation. Reject malformed bodies with 400.</div></div>
+        <div class="key-point"><div class="kp-icon">🗄️</div><div class="kp-title">repo pattern</div><div class="kp-desc">Keep DynamoDB calls in one file. Handler stays HTTP-shaped.</div></div>
+        <div class="key-point"><div class="kp-icon">🪜</div><div class="kp-title">stages from day 1</div><div class="kp-desc">--stage dev / --stage prod. Different tables, different env.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Stateless</div><div class="kp-desc">No /tmp persistence, no in-memory cache. Lambda restarts erase both.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 - QUIZ -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Serverless Concepts, Lambda Triggers & Use Cases</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. The Lambda execution time limit is:</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> 30 seconds</div>
+        <div class="option" onclick="answer('q1','b')"><div class="opt-letter">B</div> 5 minutes</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q1','c')"><div class="opt-letter">C</div> 15 minutes</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> Unlimited</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. A Lambda + DynamoDB serverless app costs how much when nobody is calling it?</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q2','a')"><div class="opt-letter">A</div> $0 (pay-per-request)</div>
+        <div class="option" onclick="answer('q2','b')"><div class="opt-letter">B</div> $5/month minimum</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> $30/month minimum</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Same as an EC2 t3.micro</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. The "right" trigger for "send email when row inserted into users table" is:</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> EventBridge cron</div>
+        <div class="option" onclick="answer('q3','b')"><div class="opt-letter">B</div> S3 event</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q3','c')"><div class="opt-letter">C</div> DynamoDB Stream</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> API Gateway</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. For a steady 200 RPS API running 24/7, the cheaper choice is:</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> Lambda + API Gateway</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q4','b')"><div class="opt-letter">B</div> ECS Fargate or EC2</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> Two Lambdas in failover</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> Always Lambda — it's cheaper</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. What does an HTTP API (in API Gateway) give you that a REST API doesn't natively?</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> Usage plans + API keys</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> Lower cost + simpler config</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> X-Ray tracing</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> Request validators</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: Cron expression for "every day at 2:30 AM UTC" in EventBridge.</div>
+          <input type="text" id="fi1" placeholder="cron(...)" />
+          <button class="fi-check" onclick="checkFill('fi1', ['cron(30 2 * * ? *)','cron(30 2 ? * * *)'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: Deploy your serverless project to a stage called <code>prod</code>.</div>
+          <input type="text" id="fi2" placeholder="serverless ..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['serverless deploy --stage prod','npx serverless deploy --stage prod','sls deploy --stage prod'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - ASSIGNMENT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Cost Comparison — S3 vs EC2 vs Lambda for a Low-Volume Service</div>
+        <div class="module-desc">A 1-page write-up that picks the right architecture for a real-world workload</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as a cost-engineering memo: <em>"You've been asked to host the company's contact-form backend (50 submissions/day, mostly business hours). Compare three architectures and recommend one with numbers. Your manager doesn't have time to read more than one page."</em> This forces students to think about cost per request, idle cost, and operational overhead.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Workload spec (use this exactly): <em>"A contact form backend receiving 50 POST requests/day on weekdays (avg 200ms, 256 MB), storing each submission in a database, sending an email via SES on each submission, plus a static HTML status page served at <code>/</code>."</em></li>
+          <li>Compare three architectures: (a) S3 + Lambda + DynamoDB + SES, (b) EC2 t3.micro + nginx + Postgres + SES, (c) Beanstalk + RDS + SES</li>
+          <li>For each architecture: monthly cost breakdown (compute, storage, network, SES) using current AWS pricing</li>
+          <li>Identify the AWS Free Tier coverage for each (be honest — some hide hidden costs after 12 months)</li>
+          <li>Compare on three axes: <strong>cost</strong>, <strong>operational overhead</strong>, <strong>scalability headroom</strong></li>
+          <li>Include a 1-paragraph recommendation. Justify with at least 2 numeric arguments.</li>
+          <li>Include 1 architecture diagram (hand-drawn, draw.io, or Excalidraw) for the recommended option</li>
+          <li>Bonus: Pick a 100×-traffic version (5,000 submissions/day) — does the recommendation change? Why?</li>
+          <li>Bonus: A 1-page tear-down script or reverse architecture diagram showing what to delete to stop billing</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected output — sample table</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1500 invocations/month, 256 MB, 200ms each</span></div>
+          <br>
+          <div><span class="output">                  S3+Lambda      EC2 t3.micro     Beanstalk+RDS</span></div>
+          <div><span class="output">────────────────  ─────────────  ───────────────  ──────────────</span></div>
+          <div><span class="output">Compute           ~$0.00         $7.50            $7.50 (EC2)</span></div>
+          <div><span class="output">Storage           $0.10 (S3)     $1.00 (EBS)      $14.00 (RDS)</span></div>
+          <div><span class="output">DB                $0.00          self-hosted      bundled above</span></div>
+          <div><span class="output">SES (1500 emails) $0.15          $0.15            $0.15</span></div>
+          <div><span class="output">Egress            ~free          ~free            ~free</span></div>
+          <div><span class="output">────────────────  ─────────────  ───────────────  ──────────────</span></div>
+          <div><span class="output">Monthly total     <span class="info">~$0.25</span>         ~$8.65           ~$21.65</span></div>
+          <div><span class="output">Ops overhead      LOW            HIGH (patches)   MED (managed)</span></div>
+          <div><span class="output">Cold start risk   YES            none             none</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Cost numbers correct: 30. Trade-offs explained: 25. Recommendation justified: 20. Diagram clear: 15. Stretch: 10.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Forgetting NAT gateway costs ($32/mo!), missing SES reputation impact, hand-waving "Lambda is cheaper" without numbers.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Add a 4th architecture (App Runner or ECS Fargate Spot). Compare against the same workload.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

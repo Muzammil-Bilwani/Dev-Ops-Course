@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Docker & Containers for DevOps — Beginner to Practical Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn Docker for DevOps from scratch: Dockerfile best practices, image registries (Docker Hub + AWS ECR), networks, volumes, Docker Compose, container security, and deploying containerised apps to AWS. Hands-on terminal examples, interactive quizzes, and 30+ practice questions.">
+<meta name="keywords" content="docker for devops, docker beginner course, dockerfile tutorial, docker compose tutorial, AWS ECR push, container security, multi-stage builds, docker volumes, docker networks, banoqabil, devops foundations, containerise node app">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker & Containers for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master Docker for DevOps with hands-on Dockerfiles, multi-stage builds, Compose stacks, ECR pushes, and a full-stack containerisation project. Built for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Docker & Containers for DevOps — Beginner to Practical Course">
+<meta name="twitter:description" content="Hands-on Docker course for DevOps: Dockerfile, Compose, ECR, volumes, networks, security, and deployment.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Docker & Containers for DevOps — Foundations",
+  "description": "A practical, beginner-friendly Docker course for aspiring DevOps engineers. Covers Docker architecture, Dockerfile best practices, image tagging and registries (Docker Hub + AWS ECR), networks and volumes, Docker Compose for multi-container apps, container security, deploying containerised apps to AWS, AI-assisted Dockerfile authoring, and a graded image-optimisation assignment.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Docker architecture and CLI",
+    "Dockerfile best practices",
+    "Image tagging and registries (Docker Hub, AWS ECR)",
+    "Multi-stage builds and image-size optimisation",
+    "Docker networks and persistent volumes",
+    "Multi-container apps with Docker Compose",
+    "Container security and non-root containers",
+    "Deploying containerised apps to AWS (ECR + ECS + Beanstalk)",
+    "AI-assisted Dockerfile authoring and debugging",
+    "Vulnerability scanning with Trivy"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT8H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #58a6ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--topic); }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--topic); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(88,166,255,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1)  { animation-delay: 0.05s; }
+  .module:nth-child(2)  { animation-delay: 0.10s; }
+  .module:nth-child(3)  { animation-delay: 0.15s; }
+  .module:nth-child(4)  { animation-delay: 0.20s; }
+  .module:nth-child(5)  { animation-delay: 0.25s; }
+  .module:nth-child(6)  { animation-delay: 0.30s; }
+  .module:nth-child(7)  { animation-delay: 0.35s; }
+  .module:nth-child(8)  { animation-delay: 0.40s; }
+  .module:nth-child(9)  { animation-delay: 0.45s; }
+  .module:nth-child(10) { animation-delay: 0.50s; }
+  .module:nth-child(11) { animation-delay: 0.55s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--topic);
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+
+  .quiz-q .option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+
+  .quiz-q .option .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .fill-in {
+    margin-top: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+
+  .fill-in input {
+    background: #010409;
+    border: 1px solid var(--border);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .fill-in input:focus { border-color: var(--green); }
+
+  .fill-in .fi-check {
+    margin-top: 10px;
+    padding: 7px 18px;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before {
+    content: '→';
+    color: var(--cyan);
+    flex-shrink: 0;
+  }
+
+  /* Practice Questions */
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(188,140,255,0.05);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--purple);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(188,140,255,0.12);
+  }
+
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(57,211,83,0.06);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before {
+    content: '▸ ';
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--green);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(57,211,83,0.08);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ docker run -d devops-foundations</div>
+  <h1>Docker &amp; <span>Containers</span><br>Instructor Guide</h1>
+  <p class="subtitle">Build, ship, and run containers — the modern foundation of every DevOps deployment</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Why Docker? Containers vs VMs</div>
+        <div class="module-desc">The shipping-container analogy and why every cloud-native company runs on Docker</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with the question: <em>"Have you ever shipped your laptop's code to a server and watched it break?"</em> That's the problem Docker solves. A container packages the app <strong>plus its OS-level dependencies</strong> into a single portable unit that runs identically on your laptop, your colleague's, and on AWS.</p>
+        <p class="explain-text">Use the analogy: <em>"VMs are houses — full kitchen, plumbing, electricity. Containers are apartments — they share the building's plumbing (the kernel) but each has its own walls."</em> A VM boots a full OS in minutes; a container starts in milliseconds and uses ~10× less RAM.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — first-container</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Your first container — runs nginx in 2 seconds</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run -d -p 8080:80 --name web nginx</span></div>
+          <div><span class="output">Unable to find image 'nginx:latest' locally</span></div>
+          <div><span class="output">latest: Pulling from library/nginx ... <span class="info">Pull complete</span></span></div>
+          <div><span class="output">a3f2e8c91d7a4b5c8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">curl http://localhost:8080</span></div>
+          <div><span class="output">&lt;h1&gt;Welcome to nginx!&lt;/h1&gt;</span></div>
+          <br>
+          <div><span class="comment"># Inspect what's running</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker ps</span></div>
+          <div><span class="output">CONTAINER ID   IMAGE   STATUS         PORTS                  NAMES</span></div>
+          <div><span class="output">a3f2e8c91d7a   nginx   Up 12 seconds  0.0.0.0:8080-&gt;80/tcp   web</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">Portable</div><div class="kp-desc">Build once, run on any Linux host. No "works on my machine" excuses.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">Fast boot</div><div class="kp-desc">Containers start in milliseconds vs minutes for VMs. Critical for autoscaling.</div></div>
+        <div class="key-point"><div class="kp-icon">🪶</div><div class="kp-title">Lightweight</div><div class="kp-desc">No guest OS. A container image is typically 50–500 MB; a VM image is gigabytes.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Reproducible</div><div class="kp-desc">Same image runs identically in dev, staging, and prod. No drift.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">In one sentence each, list three real-world problems Docker solves that you can't easily fix with plain SSH and bash scripts.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A container shares the host's kernel but a VM ships its own. Name one capability VMs have that containers don't, and one DevOps scenario where that matters.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                VMs can run a different OS kernel than the host (e.g. Windows VM on a Linux server, or Linux 4.x VM on a Linux 6.x host). Containers must use the host's kernel.<br><br>
+                <strong>Where it matters:</strong> running legacy software that requires a specific kernel version, kernel-module testing, or hosting Windows workloads on a Linux fleet. For those, VMs (or hybrids like Firecracker) are still the right tool — Docker is not a universal replacement.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Run <code>docker run -d -p 8080:80 nginx</code> on your machine. Open <code>localhost:8080</code> in a browser. What does the <code>-d</code> flag do, and what would change if you removed it?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your team currently deploys via <em>"git pull on the server then restart pm2"</em>. List three concrete things that get easier the day you switch to Docker.</div>
+            <div class="pq-hint">💡 Think about rollback, dependency drift, and onboarding new engineers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Docker Architecture, CLI & Dockerfile Best Practices</div>
+        <div class="module-desc">Engine, daemon, client — and writing Dockerfiles that build fast and stay small</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">There are three pieces: the <strong>Docker daemon</strong> (long-running background process), the <strong>Docker client</strong> (the <code>docker</code> CLI you type into), and a <strong>registry</strong> (like Docker Hub or AWS ECR) that stores images. The CLI talks to the daemon over a socket; the daemon does the actual work of pulling, building, and running.</p>
+        <p class="explain-text">A <code>Dockerfile</code> is a recipe — each instruction creates a <strong>layer</strong>, and Docker caches layers aggressively. If you understand <em>"order your Dockerfile from least-changing to most-changing"</em>, you've already mastered 80% of build performance.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — Dockerfile + build</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># A production-ready Node.js Dockerfile</span></div>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20-alpine</span> &nbsp;<span class="comment"># pinned + slim base = small + secure</span></div>
+          <br>
+          <div><span class="highlight">WORKDIR</span> <span class="cmd">/app</span></div>
+          <br>
+          <div><span class="comment"># Copy ONLY package.json first → cache the npm install layer</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm ci --omit=dev</span> &nbsp;<span class="comment"># reproducible install</span></div>
+          <br>
+          <div><span class="comment"># THEN copy source — changes here don't bust the npm cache</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">. .</span></div>
+          <br>
+          <div><span class="highlight">USER</span> <span class="cmd">node</span> &nbsp;<span class="comment"># 🔒 never run as root in prod</span></div>
+          <div><span class="highlight">EXPOSE</span> <span class="cmd">3000</span></div>
+          <div><span class="highlight">CMD</span> <span class="cmd">["node", "server.js"]</span></div>
+          <br>
+          <div><span class="comment"># Build it</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t myapp:1.0 .</span></div>
+          <div><span class="output">[+] Building 12.4s (10/10) FINISHED</span></div>
+          <div><span class="output"> =&gt; [internal] load build context        0.0s</span></div>
+          <div><span class="output"> =&gt; CACHED [2/6] WORKDIR /app             0.0s</span></div>
+          <div><span class="output"> =&gt; CACHED [3/6] COPY package*.json ./    0.0s</span></div>
+          <div><span class="output"> =&gt; [4/6] RUN npm ci --omit=dev           8.2s</span></div>
+          <div><span class="output"> =&gt; [5/6] COPY . .                        0.1s</span></div>
+          <div><span class="output"> =&gt; exporting layers                      0.4s</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🥡</div><div class="kp-title">Pin your base image</div><div class="kp-desc">Use <code>node:20-alpine</code>, never <code>node:latest</code>. Reproducibility &gt; convenience.</div></div>
+        <div class="key-point"><div class="kp-icon">📚</div><div class="kp-title">Order layers by churn</div><div class="kp-desc">Stable steps (deps) first, volatile steps (source) last. Massive build-time wins.</div></div>
+        <div class="key-point"><div class="kp-icon">🚫</div><div class="kp-title">Use .dockerignore</div><div class="kp-desc">Exclude <code>node_modules</code>, <code>.git</code>, <code>.env</code> — never ship them into the image.</div></div>
+        <div class="key-point"><div class="kp-icon">🪪</div><div class="kp-title">CMD vs ENTRYPOINT</div><div class="kp-desc">CMD is the default args (overridable). ENTRYPOINT is the fixed binary.</div></div>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Multi-stage builds shrink images dramatically</h3>
+        <p class="explain-text">A naive Node image ships the whole toolchain (gcc, npm, build tools). A multi-stage build compiles in a "builder" stage, then copies <em>only the runtime artefacts</em> to a tiny final stage.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">Dockerfile — multi-stage</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># ── Stage 1: build ────────────────────────────</span></div>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20 AS builder</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="cmd">/app</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm ci</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">. .</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm run build</span></div>
+          <br>
+          <div><span class="comment"># ── Stage 2: runtime (tiny) ───────────────────</span></div>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20-alpine</span></div>
+          <div><span class="highlight">WORKDIR</span> <span class="cmd">/app</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">--from=builder /app/dist ./dist</span></div>
+          <div><span class="highlight">COPY</span> <span class="cmd">--from=builder /app/package*.json ./</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">npm ci --omit=dev</span></div>
+          <div><span class="highlight">USER</span> <span class="cmd">node</span></div>
+          <div><span class="highlight">CMD</span> <span class="cmd">["node", "dist/server.js"]</span></div>
+          <br>
+          <div><span class="comment"># Result: 1.2 GB → 180 MB (8× smaller)</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">FROM</span>
+        <span class="tag blue">COPY</span>
+        <span class="tag blue">RUN</span>
+        <span class="tag blue">CMD</span>
+        <span class="tag blue">ENTRYPOINT</span>
+        <span class="tag blue">USER</span>
+        <span class="tag yellow">multi-stage</span>
+        <span class="tag green">.dockerignore</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take a Dockerfile that does <code>COPY . .</code> as its first instruction. Rewrite it so changing a single source file doesn't bust the <code>npm install</code> cache.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What's the difference between <code>CMD ["npm","start"]</code> and <code>ENTRYPOINT ["npm","start"]</code>? Give a scenario where each is the right choice.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>CMD</strong> sets default arguments that the user can override at <code>docker run</code> time. <code>docker run myapp test</code> would replace <code>npm start</code> with <code>test</code>.<br><br>
+                <strong>ENTRYPOINT</strong> sets the fixed executable. Anything passed to <code>docker run</code> becomes <em>arguments</em> to ENTRYPOINT, not a replacement.<br><br>
+                <strong>Use CMD</strong> when the image is a generic runtime someone might invoke differently (e.g. a CLI tool image). <strong>Use ENTRYPOINT</strong> when the image must always run as the same process — typical for application containers. The combo <code>ENTRYPOINT ["node"] CMD ["server.js"]</code> is a clean idiom.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is <code>node:20-alpine</code> typically a better choice than <code>node:20</code> for production images? What's one scenario where Alpine causes problems?</div>
+            <div class="pq-hint">💡 Alpine uses musl libc instead of glibc.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a <code>.dockerignore</code> for a Node.js project that excludes everything that should never end up in the image. List at least six entries.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your team's image is 1.4 GB. Sketch the multi-stage Dockerfile that would bring it under 300 MB while still running a TypeScript Node.js app.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Building, Tagging & Managing Images (Docker Hub + AWS ECR)</div>
+        <div class="module-desc">Image versioning discipline and pushing to public + private registries</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">An <strong>image</strong> is the blueprint; a <strong>container</strong> is a running instance of that blueprint. You can run 100 containers from one image. <strong>Tags</strong> are how you version images — and <code>:latest</code> is a trap, not a version. Use semver (<code>:1.4.2</code>) or git SHAs (<code>:abc123f</code>) so you always know exactly what's running.</p>
+        <p class="explain-text">A <strong>registry</strong> is the warehouse — Docker Hub for public images, AWS ECR for private images you don't want the world to pull. You log in once, then <code>docker push</code> uploads your image and <code>docker pull</code> downloads it on the server.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — push to Docker Hub</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Build with two tags — version + latest pointer</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t myapp:1.0.0 -t myapp:latest .</span></div>
+          <br>
+          <div><span class="comment"># Re-tag for Docker Hub (must be username/repo:tag)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker tag myapp:1.0.0 muzammil/myapp:1.0.0</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker tag myapp:latest muzammil/myapp:latest</span></div>
+          <br>
+          <div><span class="comment"># Authenticate, then push</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker login</span></div>
+          <div><span class="output">Username: muzammil</span></div>
+          <div><span class="output">Password: ********</span></div>
+          <div><span class="output">Login Succeeded</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">docker push muzammil/myapp:1.0.0</span></div>
+          <div><span class="output">The push refers to repository [docker.io/muzammil/myapp]</span></div>
+          <div><span class="output">a3f2e8c9: Pushed</span></div>
+          <div><span class="output">1.0.0: digest: sha256:9f4e2... size: 1782</span></div>
+        </div>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Pushing to AWS ECR (private registry)</h3>
+        <p class="explain-text">ECR is AWS's private registry. The flow has one extra step — get a temporary token from AWS, hand it to docker login. After that, it's just <code>docker push</code> like any registry.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — push to AWS ECR</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Create the ECR repo (one time)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecr create-repository --repository-name myapp --region eu-west-1</span></div>
+          <br>
+          <div><span class="comment"># 2. Authenticate Docker against ECR (token expires in 12h)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecr get-login-password --region eu-west-1 | \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">docker login --username AWS --password-stdin \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">123456789012.dkr.ecr.eu-west-1.amazonaws.com</span></div>
+          <div><span class="output">Login Succeeded</span></div>
+          <br>
+          <div><span class="comment"># 3. Tag with the full ECR URI + push</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker tag myapp:1.0.0 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">123456789012.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker push \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">123456789012.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0</span></div>
+          <div><span class="output">1.0.0: digest: sha256:9f4e2... size: 1782 ✓</span></div>
+          <br>
+          <div><span class="comment"># Pro tip: Use the git SHA as the tag in CI for traceability</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">SHA=$(git rev-parse --short HEAD)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t myapp:$SHA . && docker push ...</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">docker tag</span>
+        <span class="tag green">docker push</span>
+        <span class="tag green">docker pull</span>
+        <span class="tag blue">Docker Hub</span>
+        <span class="tag yellow">AWS ECR</span>
+        <span class="tag orange">⚠️ avoid :latest in prod</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why is deploying <code>:latest</code> to production a recipe for incident? Describe a concrete failure mode.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>:latest</code> is just a pointer; it gets overwritten every time someone pushes. Two problems follow:<br><br>
+                1. <strong>You can't reproduce yesterday's deploy.</strong> If <code>:latest</code> on the server points to image SHA <code>abc</code> but the registry now has <code>:latest</code> pointing to <code>def</code>, a re-pull silently changes what's running.<br>
+                2. <strong>You can't roll back.</strong> "Deploy the previous <code>:latest</code>" is meaningless — the previous image may be unreachable.<br><br>
+                <strong>Fix:</strong> tag with semver (<code>:1.4.2</code>) or the git SHA. Use <code>:latest</code> only as a convenience pointer for local dev.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Re-tag a local image <code>myapp:1.0.0</code> for both Docker Hub (under your username) and an ECR URI. Write the two <code>docker tag</code> commands.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your <code>aws ecr get-login-password | docker login</code> command worked yesterday but fails today with "no basic auth credentials". Why?</div>
+            <div class="pq-hint">💡 ECR auth tokens have a TTL.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">In a CI pipeline, what's the advantage of tagging images with the git SHA over a sequential build number?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare Docker Hub free tier vs AWS ECR for a private startup project: cost, security, integration. Which would you pick and why?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Docker Networks & Volumes</div>
+        <div class="module-desc">How containers talk to each other and how data survives restarts</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">By default, every container gets an isolated network. Containers on the <strong>same custom bridge network</strong> can find each other by <em>name</em> — no IP gymnastics. This is how a web container reaches a database container: <code>postgres://db:5432</code>, where <code>db</code> is just the container name.</p>
+        <p class="explain-text">Containers are <strong>ephemeral</strong> — when one dies, its filesystem dies too. <strong>Volumes</strong> survive restarts and rebuilds. Use a <strong>named volume</strong> for database data, and a <strong>bind mount</strong> only for local development (mapping host code into the container for live reload).</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — networks + volumes</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Create a custom network so containers can find each other by name</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker network create app-net</span></div>
+          <br>
+          <div><span class="comment"># Create a named volume for postgres data</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker volume create pgdata</span></div>
+          <br>
+          <div><span class="comment"># Run postgres — attach the volume + network</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run -d \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name db \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--network app-net \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-v pgdata:/var/lib/postgresql/data \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-e POSTGRES_PASSWORD=secret \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">postgres:16-alpine</span></div>
+          <br>
+          <div><span class="comment"># Run web app on the SAME network — connect by container name</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run -d \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--name web \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">--network app-net \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-e DB_URL=postgres://postgres:secret@db:5432/postgres \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-p 3000:3000 \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">myapp:1.0.0</span></div>
+          <br>
+          <div><span class="comment"># Bind mount for local dev — host code → container, live reload</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --rm -it \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-v $(pwd):/app \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">-w /app \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">node:20-alpine npm run dev</span></div>
+          <br>
+          <div><span class="comment"># Inspect: where do volumes actually live on the host?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker volume inspect pgdata</span></div>
+          <div><span class="output">"Mountpoint": "/var/lib/docker/volumes/pgdata/_data"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">Custom bridge &gt; default</div><div class="kp-desc">Default bridge has no DNS. Custom bridges resolve container names automatically.</div></div>
+        <div class="key-point"><div class="kp-icon">💾</div><div class="kp-title">Named volumes for data</div><div class="kp-desc">Postgres, Redis, anything stateful. Survives <code>docker rm</code>.</div></div>
+        <div class="key-point"><div class="kp-icon">🔗</div><div class="kp-title">Bind mounts for dev</div><div class="kp-desc">Map your source folder into the container. Edit on host, see changes inside.</div></div>
+        <div class="key-point"><div class="kp-icon">⚠️</div><div class="kp-title">Anonymous volumes pile up</div><div class="kp-desc">Run <code>docker volume prune</code> periodically — they leak disk over time.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Two containers on the default bridge can reach each other only by IP, not by name. Explain why, and what one command fixes it.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                The default bridge network (<code>bridge</code>) is the legacy network and does <strong>not</strong> ship Docker's embedded DNS. Custom bridge networks do.<br><br>
+                <strong>Fix:</strong> create a custom network and attach both containers to it.<br>
+                <code>docker network create app-net</code> → then run each container with <code>--network app-net</code>. They can now address each other by container name (<code>http://web:3000</code>, <code>postgres://db:5432</code>).
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A new engineer runs <code>docker rm postgres</code> and the database is gone. What should the original setup have done to prevent this from destroying the data?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare bind mounts and named volumes for: (a) running Postgres in production, (b) developing a Node app locally with hot reload. Which fits which?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Show the <code>docker run</code> flag combination that mounts your current working directory into <code>/app</code> inside a Node container <em>read-only</em>. Why might read-only matter?</div>
+            <div class="pq-hint">💡 The <code>:ro</code> suffix on a volume mount.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Docker Compose for Multi-Container Apps</div>
+        <div class="module-desc">One YAML file describes your whole stack — web, database, cache, all wired together</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Running 4 <code>docker run</code> commands by hand to spin up app + db + cache + queue is fragile and unreproducible. <strong>Docker Compose</strong> describes the whole stack in one <code>compose.yaml</code> file — services, networks, volumes — and brings it up with <code>docker compose up</code>.</p>
+        <p class="explain-text">Compose is the standard for <strong>local development</strong> and small production deploys. For larger scale you graduate to Kubernetes, but every K8s engineer started with Compose.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">compose.yaml — full-stack web app</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">services:</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">web:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">build: .</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">ports: ["3000:3000"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">DB_URL: postgres://postgres:secret@db:5432/app</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">REDIS_URL: redis://cache:6379</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">depends_on: [db, cache]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">restart: unless-stopped</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">db:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: postgres:16-alpine</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">environment:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">POSTGRES_PASSWORD: secret</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">POSTGRES_DB: app</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">volumes: [pgdata:/var/lib/postgresql/data]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">healthcheck:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">test: ["CMD", "pg_isready", "-U", "postgres"]</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">interval: 5s</span></div>
+          <br>
+          <div>&nbsp;&nbsp;<span class="cmd">cache:</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">image: redis:7-alpine</span></div>
+          <br>
+          <div><span class="cmd">volumes:</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">pgdata:</span></div>
+          <br>
+          <div><span class="comment"># Bring it all up — networks are auto-created</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker compose up -d</span></div>
+          <div><span class="output"><span class="info">[+] Running 4/4</span></span></div>
+          <div><span class="output"> ✔ Network app_default      Created</span></div>
+          <div><span class="output"> ✔ Container app-db-1       Started</span></div>
+          <div><span class="output"> ✔ Container app-cache-1    Started</span></div>
+          <div><span class="output"> ✔ Container app-web-1      Started</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">docker compose logs -f web</span></div>
+          <div><span class="output">web-1  | Server listening on port 3000</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">compose up</span>
+        <span class="tag blue">compose down</span>
+        <span class="tag blue">compose logs</span>
+        <span class="tag green">depends_on</span>
+        <span class="tag yellow">healthcheck</span>
+        <span class="tag purple">profiles</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a minimal <code>compose.yaml</code> for a Node web app that depends on a Postgres database. Use environment variables for DB credentials and a named volume for Postgres data.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What's the difference between <code>depends_on</code> and a <code>healthcheck</code>? Why is <code>depends_on</code> alone often not enough?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>depends_on</code> only waits for the dependency container to <strong>start</strong> — not for the service inside to be ready. Postgres takes a few seconds to accept connections after the container starts. The web container can crash trying to connect during that window.<br><br>
+                <strong>Fix:</strong> add a <code>healthcheck</code> on the dependency, then use <code>depends_on</code> with a condition:<br>
+                <code>depends_on: { db: { condition: service_healthy } }</code><br><br>
+                Now the web container only starts once <code>pg_isready</code> succeeds.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">You ran <code>docker compose down</code> and your database data is gone. What did Compose do, and what flag would have saved the data?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a fourth service — a one-off "migration runner" — that runs DB migrations and then exits. How do you keep it from running on every <code>up</code>?</div>
+            <div class="pq-hint">💡 Look up Compose <em>profiles</em>.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate asks: "Why do we use Compose locally but Kubernetes in prod? Can't we just use Compose everywhere?" Give a 3-bullet answer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Container Security Basics</div>
+        <div class="module-desc">Non-root containers, image scanning, and the practical security checklist</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">A container that runs as <strong>root</strong> is a one-line bug away from being root on the host. The single biggest container-security win is to add a <code>USER</code> directive and run as a non-privileged user. Most "Docker is insecure" headlines trace back to this one mistake.</p>
+        <p class="explain-text">After non-root, the next pillars are: <strong>scan images for known vulnerabilities</strong> (Trivy, Grype, Snyk), <strong>use minimal base images</strong> (alpine, distroless), <strong>never bake secrets into images</strong>, and <strong>pin your dependencies</strong>.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — security checklist</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Non-root user in Dockerfile</span></div>
+          <div><span class="highlight">FROM</span> <span class="cmd">node:20-alpine</span></div>
+          <div><span class="highlight">RUN</span> <span class="cmd">addgroup -S app && adduser -S app -G app</span></div>
+          <div><span class="highlight">USER</span> <span class="cmd">app</span></div>
+          <br>
+          <div><span class="comment"># 2. Read-only root filesystem at runtime</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --read-only --tmpfs /tmp myapp:1.0.0</span></div>
+          <br>
+          <div><span class="comment"># 3. Scan images for CVEs (Trivy is open source + free)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy image myapp:1.0.0</span></div>
+          <div><span class="output">myapp:1.0.0 (alpine 3.19)</span></div>
+          <div><span class="output">============================</span></div>
+          <div><span class="output">Total: 3 (UNKNOWN: 0, LOW: 1, MEDIUM: 0, <span class="error-color">HIGH: 2</span>, CRITICAL: 0)</span></div>
+          <div><span class="output">┌─────────┬───────────────┬──────────┬─────────────┐</span></div>
+          <div><span class="output">│ Library │ Vulnerability │ Severity │ Fixed Version │</span></div>
+          <div><span class="output">├─────────┼───────────────┼──────────┼─────────────┤</span></div>
+          <div><span class="output">│ openssl │ CVE-2024-2511 │ HIGH     │ 3.1.5-r0    │</span></div>
+          <div><span class="output">└─────────┴───────────────┴──────────┴─────────────┘</span></div>
+          <br>
+          <div><span class="comment"># 4. Never bake secrets — pass at runtime</span></div>
+          <div><span class="error-color"># ❌ NEVER do this:</span></div>
+          <div><span class="error-color">ENV API_KEY=sk-live-abc123</span></div>
+          <div><span class="highlight"># ✅ Pass at runtime instead:</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run -e API_KEY="$API_KEY" myapp</span></div>
+          <br>
+          <div><span class="comment"># 5. Drop unnecessary Linux capabilities</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --cap-drop=ALL --cap-add=NET_BIND_SERVICE myapp</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">👤</div><div class="kp-title">USER non-root</div><div class="kp-desc">Single biggest win. Add it to every Dockerfile.</div></div>
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">Scan in CI</div><div class="kp-desc">Run Trivy on every PR. Fail the build on HIGH/CRITICAL.</div></div>
+        <div class="key-point"><div class="kp-icon">🤐</div><div class="kp-title">No secrets in images</div><div class="kp-desc">Use <code>--env-file</code>, Docker secrets, or AWS Secrets Manager at runtime.</div></div>
+        <div class="key-point"><div class="kp-icon">📐</div><div class="kp-title">Minimal base images</div><div class="kp-desc">Alpine, distroless, or scratch. Less surface = fewer CVEs.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A Dockerfile ends with <code>CMD ["node", "server.js"]</code> and no <code>USER</code> directive. Explain in one sentence what the running container's UID is, and why that's a security problem.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Without a <code>USER</code> directive, the container runs as <strong>UID 0 (root)</strong> by default. If the Node process is exploited (RCE in a dependency, mounted volume escape), the attacker gets root inside the container — and depending on host setup, can pivot to the host (e.g. via mounted Docker socket, host-shared volumes, or a kernel exploit).<br><br>
+                <strong>Fix:</strong> add <code>RUN addgroup -S app &amp;&amp; adduser -S app -G app</code> then <code>USER app</code> in the Dockerfile.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add a Trivy step to a CI pipeline that fails the build on any HIGH or CRITICAL vulnerability in the freshly-built image. Sketch the command.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">An engineer puts <code>ENV STRIPE_KEY=sk_live_…</code> in the Dockerfile so deploys are simpler. Three things now go wrong — list them.</div>
+            <div class="pq-hint">💡 Think about layer history, image registry, and rotation.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What does <code>docker run --read-only --tmpfs /tmp myapp</code> actually prevent? Name one app type where this isn't realistic.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Deploying Containerised Apps to AWS</div>
+        <div class="module-desc">From local Compose to ECR + ECS Fargate (or Elastic Beanstalk for the easy path)</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Once your image is in <strong>ECR</strong>, AWS gives you several ways to run it: <strong>ECS Fargate</strong> (serverless containers, you don't manage servers), <strong>ECS on EC2</strong> (you manage the EC2 fleet), or <strong>Elastic Beanstalk</strong> (the simplest — paste your image URI and click deploy). For first projects, Beanstalk's "Docker single-container" platform is the lowest-friction path.</p>
+        <p class="explain-text">Whichever you pick, the core flow is the same: <em>(1) push image to ECR, (2) describe how to run it (task definition / Beanstalk config), (3) tell AWS to deploy it</em>. Logs go to CloudWatch by default; you'll need an IAM role attached to the running task.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — deploy to ECS Fargate</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># task-definition.json — tells ECS how to run the container</span></div>
+          <div><span class="cmd">{</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"family": "myapp",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"networkMode": "awsvpc",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"requiresCompatibilities": ["FARGATE"],</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"cpu": "256", "memory": "512",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"executionRoleArn": "arn:aws:iam::123:role/ecsTaskExecutionRole",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"containerDefinitions": [{</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"name": "web",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"image": "123.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"portMappings": [{ "containerPort": 3000 }],</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"logConfiguration": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"logDriver": "awslogs",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"options": { "awslogs-group": "/ecs/myapp" }</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">}</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">}]</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecs register-task-definition --cli-input-json file://task-definition.json</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">aws ecs update-service --cluster prod --service myapp --task-definition myapp:5</span></div>
+          <div><span class="output"><span class="info">"deployments": [{ "status": "PRIMARY", "rolloutState": "IN_PROGRESS" }]</span></span></div>
+        </div>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: The lazy-but-fine path — Elastic Beanstalk</h3>
+        <p class="explain-text">For a first deploy, Beanstalk's Docker platform is hard to beat. You provide a <code>Dockerrun.aws.json</code> pointing to your ECR image; Beanstalk handles the EC2, load balancer, autoscaling, and CloudWatch logs.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — deploy via EB CLI</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">// Dockerrun.aws.json</span></div>
+          <div><span class="cmd">{</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"AWSEBDockerrunVersion": "1",</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Image": {</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Name": "123.dkr.ecr.eu-west-1.amazonaws.com/myapp:1.0.0",</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">"Update": "true"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">},</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">"Ports": [{ "ContainerPort": 3000 }]</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">eb init -p docker myapp --region eu-west-1</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb create myapp-prod --instance-type t3.small</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb deploy</span></div>
+          <div><span class="output">Environment update completed successfully.</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">eb open</span> &nbsp;<span class="comment"># opens https://myapp-prod.eu-west-1.elasticbeanstalk.com</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag yellow">ECR</span>
+        <span class="tag yellow">ECS Fargate</span>
+        <span class="tag yellow">Elastic Beanstalk</span>
+        <span class="tag green">CloudWatch logs</span>
+        <span class="tag blue">awslogs driver</span>
+        <span class="tag orange">IAM task role</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Compare ECS Fargate vs Elastic Beanstalk for a 2-engineer startup that just learned Docker. Which would you recommend and why?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>Beanstalk</strong> for the first deploy. It abstracts the EC2, load balancer, and autoscaling away — the team gets HTTPS, logs, and rolling deploys with three CLI commands.<br><br>
+                <strong>Move to ECS Fargate</strong> when you need: multiple containers per service, finer task-role IAM, custom networking, or autoscaling on container metrics. The mental model is heavier (clusters, services, task definitions) but the control is worth it at scale.<br><br>
+                Skip self-managed ECS-on-EC2 unless you have specific GPU/CPU constraints — Fargate's per-vCPU pricing is fine for early-stage workloads.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your Fargate task starts, runs for 10 seconds, then ECS keeps replacing it. Where do you look first to debug?</div>
+            <div class="pq-hint">💡 The <em>awslogs</em> driver writes container stdout/stderr where?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does an ECS task definition specify <em>two</em> IAM roles (executionRoleArn + taskRoleArn)? What's each used for?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your image works locally with <code>docker compose up</code> but crashes in Fargate. List four common reasons (hint: networking, env vars, ports, IAM).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 8 -->
+  <div class="module" id="m8">
+    <div class="module-header" onclick="toggle('m8')">
+      <div class="module-num">08</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI to Write & Debug Dockerfiles</div>
+        <div class="module-desc">AI as a force multiplier — and the verification workflow that keeps it safe</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Dockerfiles are the <em>perfect</em> task for AI assistance: small files, well-defined patterns, lots of training data. But the same is true for AI's failure modes — it'll happily generate a Dockerfile that runs as root, exposes secrets, or pulls a vulnerable base image. The skill is in the prompt and the verification.</p>
+        <p class="explain-text">Treat AI output like a pull request from a smart-but-junior engineer: <strong>read it line by line, build it, scan it</strong>, then ship it.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — AI prompt examples</div></div>
+        <div class="terminal-body">
+          <div><span class="error-color"># ❌ Weak prompt → generic, insecure result</span></div>
+          <div><span class="comment">"Write a Dockerfile for my Node app"</span></div>
+          <br>
+          <div><span class="highlight"># ✅ Strong prompt → production-ready</span></div>
+          <div><span class="comment">"Write a multi-stage Dockerfile for a TypeScript Node 20 API:</span></div>
+          <div><span class="comment"> - Build stage compiles src/ to dist/</span></div>
+          <div><span class="comment"> - Final stage uses node:20-alpine, runs as non-root user</span></div>
+          <div><span class="comment"> - Only production deps in final image (npm ci --omit=dev)</span></div>
+          <div><span class="comment"> - HEALTHCHECK that hits /healthz every 30s</span></div>
+          <div><span class="comment"> - Final image must be under 200 MB</span></div>
+          <div><span class="comment"> - Include a .dockerignore for node_modules, .git, .env</span></div>
+          <div><span class="comment">After the Dockerfile, list what could still go wrong in production."</span></div>
+          <br>
+          <div><span class="comment"># Debug-by-AI: paste the build error with full context</span></div>
+          <div><span class="error-color">ERROR [4/6] RUN npm ci  --  exit code: 1</span></div>
+          <div><span class="error-color">npm ERR! Missing: typescript@5.0.0 from lock file</span></div>
+          <div><span class="comment">→ AI prompt: "What does this npm ci error mean inside Docker,</span></div>
+          <div><span class="comment"> and what's the most common Dockerfile-level cause?"</span></div>
+          <br>
+          <div><span class="comment"># Verify the AI's output before merging:</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t test . && docker images test --format "{{.Size}}"</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">trivy image test</span> &nbsp;<span class="comment"># scan for CVEs</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --rm test id</span> &nbsp;<span class="comment"># check it's not root</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag purple">ChatGPT</span>
+        <span class="tag purple">Claude</span>
+        <span class="tag purple">GitHub Copilot</span>
+        <span class="tag orange">Always scan AI output</span>
+        <span class="tag green">Verify before shipping</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take the prompt <em>"write a Dockerfile for my Python app"</em> and rewrite it as a 6-bullet detailed prompt that produces a production-ready, non-root, slim, multi-stage Dockerfile.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI generates a Dockerfile that uses <code>FROM ubuntu:latest</code> and ends with <code>CMD bash</code>. List three concrete red flags before you run it.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                1. <strong><code>:latest</code> tag</strong> — non-reproducible. Should be <code>ubuntu:22.04</code> or similar pinned version.<br>
+                2. <strong>Ubuntu base</strong> — heavy (~70 MB before any app). Alpine, distroless, or <code>ubuntu:22.04-slim</code> are slimmer + smaller attack surface.<br>
+                3. <strong>No <code>USER</code> directive</strong> — runs as root. <strong>No <code>HEALTHCHECK</code></strong>, <strong>no <code>.dockerignore</code> mentioned</strong>, and <strong><code>CMD bash</code></strong> isn't an application — it's an interactive shell, useless as a service entrypoint.<br><br>
+                Fix: pin the base, switch to slim/distroless, add a non-root user, replace the CMD with the actual app's entrypoint.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a 3-step verification routine you'll run on <em>every</em> AI-generated Dockerfile before merging the PR.</div>
+            <div class="pq-hint">💡 Build, scan, run.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 9 - PROJECT -->
+  <div class="module" id="m9">
+    <div class="module-header" onclick="toggle('m9')">
+      <div class="module-num">09</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Dockerise a Full-Stack App with Compose, Push to ECR</div>
+        <div class="module-desc">Real-world capstone — Node API + Postgres + Redis, containerised end-to-end</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">This pulls the whole module together. Walk through it line by line on screen first, then ask students to recreate it from memory. The artefacts they leave with — a working multi-stage Dockerfile, a Compose stack, an ECR push — are exactly what a junior DevOps role expects.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">project — file layout</div></div>
+        <div class="terminal-body">
+          <div><span class="output">myapp/</span></div>
+          <div><span class="output">├── Dockerfile         ← multi-stage, non-root</span></div>
+          <div><span class="output">├── .dockerignore</span></div>
+          <div><span class="output">├── compose.yaml       ← web + db + cache</span></div>
+          <div><span class="output">├── package.json</span></div>
+          <div><span class="output">├── src/</span></div>
+          <div><span class="output">│   └── server.ts</span></div>
+          <div><span class="output">└── deploy.sh          ← build + tag + push to ECR</span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">deploy.sh — build + push pipeline</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">#!/bin/bash</span></div>
+          <div><span class="cmd">set -euo pipefail</span></div>
+          <br>
+          <div><span class="cmd">REGION="eu-west-1"</span></div>
+          <div><span class="cmd">ACCOUNT="123456789012"</span></div>
+          <div><span class="cmd">REPO="myapp"</span></div>
+          <div><span class="cmd">TAG=$(git rev-parse --short HEAD)</span></div>
+          <div><span class="cmd">ECR="$ACCOUNT.dkr.ecr.$REGION.amazonaws.com/$REPO"</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Building $REPO:$TAG"</span></div>
+          <div><span class="cmd">docker build -t "$REPO:$TAG" -t "$REPO:latest" .</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Scanning for HIGH/CRITICAL CVEs"</span></div>
+          <div><span class="cmd">trivy image --severity HIGH,CRITICAL --exit-code 1 "$REPO:$TAG"</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Authenticating to ECR"</span></div>
+          <div><span class="cmd">aws ecr get-login-password --region "$REGION" | \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">docker login --username AWS --password-stdin "$ECR"</span></div>
+          <br>
+          <div><span class="cmd">docker tag "$REPO:$TAG" "$ECR:$TAG"</span></div>
+          <div><span class="cmd">docker tag "$REPO:latest" "$ECR:latest"</span></div>
+          <div><span class="cmd">docker push "$ECR:$TAG"</span></div>
+          <div><span class="cmd">docker push "$ECR:latest"</span></div>
+          <br>
+          <div><span class="cmd">echo "✅ Pushed $ECR:$TAG"</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🧱</div><div class="kp-title">Multi-stage build</div><div class="kp-desc">Builder + runtime stages — final image under 200 MB.</div></div>
+        <div class="key-point"><div class="kp-icon">🩺</div><div class="kp-title">Healthcheck inside</div><div class="kp-desc">Add <code>HEALTHCHECK</code> in the Dockerfile so orchestrators know when it's ready.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">Trivy in the script</div><div class="kp-desc">Pipeline fails the build if HIGH/CRITICAL CVEs found.</div></div>
+        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">Tag with git SHA</div><div class="kp-desc">Every deploy traceable to a specific commit.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 10 - QUIZ -->
+  <div class="module" id="m10">
+    <div class="module-header" onclick="toggle('m10')">
+      <div class="module-num">10</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: Docker Concepts + Compose Syntax</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Sample quiz questions (interactive)</h3>
+      </div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. Which Dockerfile instruction sets the default command but allows it to be overridden at <code>docker run</code> time?</div>
+        <div class="option" onclick="answer('q1','a')"><div class="opt-letter">A</div> ENTRYPOINT</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q1','b')"><div class="opt-letter">B</div> CMD</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> RUN</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> EXEC</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. You change a single source file. What's the fastest Dockerfile design that <em>doesn't</em> re-run <code>npm install</code>?</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> COPY . . then RUN npm install</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q2','b')"><div class="opt-letter">B</div> COPY package*.json ./ → RUN npm ci → COPY . .</div>
+        <div class="option" onclick="answer('q2','c')"><div class="opt-letter">C</div> Always rebuild from scratch</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Use --no-cache</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. Two Compose services need to talk to each other by name. What's required?</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Add <code>links:</code> entries</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q3','b')"><div class="opt-letter">B</div> Nothing — Compose creates a default network with DNS</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Hard-code the IPs</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> Use <code>--link</code> on docker run</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. Which command pushes a tagged image to AWS ECR?</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> docker upload &lt;ecr-uri&gt;</div>
+        <div class="option" onclick="answer('q4','b')"><div class="opt-letter">B</div> aws ecr push myapp:1.0</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q4','c')"><div class="opt-letter">C</div> docker push &lt;account&gt;.dkr.ecr.&lt;region&gt;.amazonaws.com/myapp:1.0</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> aws s3 cp myapp.tar s3://ecr/...</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. The single biggest container-security improvement for a typical Node.js Dockerfile is:</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> Use <code>--cap-drop=ALL</code></div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> Add a <code>USER</code> directive (run as non-root)</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> Use a private registry</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> Encrypt the image</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: What command builds an image and tags it as <code>myapp:1.0</code>?</div>
+          <input type="text" id="fi1" placeholder="type your answer here..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['docker build -t myapp:1.0 .','docker build -t myapp:1.0 ./'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: What single command brings up a Compose stack in detached mode?</div>
+          <input type="text" id="fi2" placeholder="type your answer..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['docker compose up -d','docker-compose up -d'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 11 - ASSIGNMENT -->
+  <div class="module" id="m11">
+    <div class="module-header" onclick="toggle('m11')">
+      <div class="module-num">11</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Optimise an Existing Dockerfile (≥ 50% Smaller)</div>
+        <div class="module-desc">Take a bloated 1+ GB image and shrink it to under 300 MB without breaking functionality</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as a real on-call task: <em>"Our nightly ECS deploys are slow because our images are 1.4 GB. Cut them in half by Friday — without changing app behaviour."</em> This forces students to apply <strong>multi-stage builds</strong>, <strong>slim base images</strong>, <strong>layer ordering</strong>, and <strong>.dockerignore</strong> all at once.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Start from the provided "naive" Dockerfile (single stage, <code>node:20</code>, <code>COPY . .</code> first)</li>
+          <li>Refactor to a multi-stage build (builder + runtime)</li>
+          <li>Switch to a slim base image (<code>alpine</code>, <code>slim</code>, or <code>distroless</code>) where viable</li>
+          <li>Add a <code>.dockerignore</code> excluding <code>node_modules</code>, <code>.git</code>, <code>.env</code>, tests, and docs</li>
+          <li>Add a <code>USER</code> directive — final container must NOT run as root</li>
+          <li>Add a <code>HEALTHCHECK</code> hitting <code>/healthz</code></li>
+          <li>Result must be <strong>≥ 50% smaller</strong> than the starting image (proven with <code>docker images</code>)</li>
+          <li>Functional test: <code>curl localhost:3000/healthz</code> still returns 200</li>
+          <li>Bonus: Add a Trivy scan to your local build script that fails on HIGH/CRITICAL</li>
+          <li>Bonus: Push the optimised image to a free-tier Docker Hub account, share the link</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — expected output when grading</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">docker images myapp</span></div>
+          <div><span class="output">REPOSITORY   TAG       SIZE</span></div>
+          <div><span class="output">myapp        before    1.42GB</span></div>
+          <div><span class="output">myapp        after     <span class="info">187MB</span>   ← 87% reduction ✓</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --rm myapp:after id</span></div>
+          <div><span class="output">uid=1001(app) gid=1001(app) groups=1001(app)</span> &nbsp;<span class="comment"># non-root ✓</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">docker run --rm -d -p 3000:3000 myapp:after && sleep 2 && curl -s localhost:3000/healthz</span></div>
+          <div><span class="output">{"status":"ok"}</span> &nbsp;<span class="comment"># app still works ✓</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Size reduction: 30pts. Multi-stage: 20pts. Non-root: 15pts. Healthcheck: 10pts. .dockerignore: 10pts. Bonus Trivy: +15.</div></div>
+          <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Forgot to copy <code>--from=builder</code>, missed <code>--omit=dev</code>, ran as root, broke healthcheck path.</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch challenge</div><div class="kp-desc">Get the image under 100 MB with distroless or scratch + static binary.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => {
+      opt.classList.remove('correct', 'wrong');
+    });
+    const opts = q.querySelectorAll('.option');
+    const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) {
+        opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      }
+      if (letters[i] === correct && chosen !== correct) {
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect
+      ? '✅ Correct!'
+      : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

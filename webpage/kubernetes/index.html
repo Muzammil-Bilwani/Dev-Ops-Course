@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kubernetes for DevOps — Pods, Deployments & kubectl Essentials | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Bonus stretch module: learn Kubernetes fundamentals for DevOps engineers. Covers Pods, Deployments, Services, ConfigMaps, Secrets, kubectl CLI, and local K8s with minikube. Deploy your Docker capstone app to a real cluster.">
+<meta name="keywords" content="kubernetes for devops, kubectl tutorial, kubernetes pods deployments, kubernetes services configmaps, minikube local kubernetes, k8s beginner course, devops kubernetes, banoqabil devops, kubernetes vs docker compose">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes for DevOps — Pods, Deployments & kubectl Essentials">
+<meta property="og:description" content="Bonus stretch module: Kubernetes fundamentals for DevOps engineers — Pods, Deployments, Services, kubectl, and deploying your capstone app to minikube.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kubernetes for DevOps — BanoQabil Bonus Module">
+<meta name="twitter:description" content="Learn Kubernetes: Pods, Deployments, Services, ConfigMaps, kubectl, and deploy your Docker app to minikube or kind.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Kubernetes for DevOps — Bonus Stretch Module",
+  "description": "A practical bonus module on Kubernetes fundamentals for DevOps engineers who want to go beyond Docker Compose. Covers the core building blocks (Pods, Deployments, Services, ConfigMaps, Secrets), the kubectl CLI, local development with minikube, and deploying a real containerised application to a K8s cluster.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Intermediate",
+  "inLanguage": "en",
+  "teaches": [
+    "Kubernetes architecture and why it replaces Docker Compose at scale",
+    "Pods and how containers run inside them",
+    "Deployments for declarative rollouts and rollbacks",
+    "Services for stable network access to Pods",
+    "ConfigMaps and Secrets for configuration management",
+    "kubectl CLI for cluster management",
+    "Local Kubernetes development with minikube and kind",
+    "Deploying a containerised app to Kubernetes"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT6H"
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --green: #39d353;
+    --cyan: #58a6ff;
+    --orange: #f78166;
+    --yellow: #e3b341;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --prompt: #39d353;
+    --topic: #58a6ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header {
+    padding: 60px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .back-link {
+    display: inline-block;
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 16px;
+    transition: color 0.2s;
+  }
+
+  .back-link:hover { color: var(--topic); }
+
+  .badge {
+    display: inline-block;
+    background: rgba(57,211,83,0.1);
+    border: 1px solid rgba(57,211,83,0.3);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .bonus-pill {
+    display: inline-block;
+    background: rgba(227,179,65,0.08);
+    border: 1px solid rgba(227,179,65,0.4);
+    color: var(--yellow);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+
+  h1 span { color: var(--topic); }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+    font-weight: 400;
+  }
+
+  .progress-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .progress-seg {
+    height: 4px;
+    flex: 1;
+    min-width: 30px;
+    background: var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .module {
+    margin-bottom: 48px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    transition: border-color 0.3s;
+    animation: fadeIn 0.5s ease both;
+  }
+
+  .module:hover { border-color: rgba(88,166,255,0.4); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.1s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.2s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.3s; }
+
+  .module-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+    cursor: pointer;
+    user-select: none;
+    background: var(--surface);
+  }
+
+  .module-header:hover { background: var(--surface2); }
+
+  .module-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--topic);
+    background: rgba(88,166,255,0.1);
+    border: 1px solid rgba(88,166,255,0.2);
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+  .module-title-wrap { flex: 1; }
+
+  .module-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .module-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .module-arrow {
+    color: var(--muted);
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    margin-top: 2px;
+  }
+
+  .module.open .module-arrow { transform: rotate(180deg); }
+
+  .module-body {
+    display: none;
+    padding: 0 24px 28px;
+    border-top: 1px solid var(--border);
+  }
+
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+
+  .explain-block h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .explain-text {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #c9d1d9;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .terminal {
+    background: #010409;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .terminal-bar {
+    background: #1c2128;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; }
+  .dot.yellow { background: #febc2e; }
+  .dot.green { background: #28c840; }
+
+  .terminal-label {
+    margin-left: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+
+  .prompt { color: var(--prompt); }
+  .cmd { color: var(--text); }
+  .comment { color: var(--muted); }
+  .output { color: #8b949e; }
+  .highlight { color: var(--yellow); }
+  .error-color { color: var(--orange); }
+  .info { color: var(--cyan); }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .key-point {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+  }
+
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .assignment-box {
+    background: rgba(88,166,255,0.05);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+
+  .assignment-box h4 {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .assignment-box ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .assignment-box ul li {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #c9d1d9;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(188,140,255,0.05);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--purple);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(188,140,255,0.12);
+  }
+
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(57,211,83,0.06);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--green);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(57,211,83,0.08);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  @media (max-width: 600px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    .module-header { flex-wrap: wrap; }
+    .key-points { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="back-link" href="../index.html">← Back to all topics</a>
+  <div class="badge">$ kubectl get pods -A</div>
+  <h1><span>Kubernetes</span> for DevOps <span class="bonus-pill">BONUS</span></h1>
+  <p class="subtitle">Beyond the official syllabus — the container orchestrator that runs the world's largest systems</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Why Kubernetes? — Beyond Docker Compose</div>
+        <div class="module-desc">When Docker Compose breaks down and what K8s solves that Compose cannot</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>The problem Docker Compose doesn't solve</h3>
+        <p class="explain-text">Docker Compose is excellent for running a multi-container app on a <em>single</em> machine. But what happens when that one machine's CPU hits 100%? Or when you need to run 10 replicas of your API across 5 servers? Or when a container crashes at 3am and needs to be automatically restarted on a healthy node? Compose has no answer. Kubernetes does.</p>
+        <p class="explain-text">Kubernetes (K8s) is a container orchestrator: it schedules containers across a cluster of machines, self-heals crashed pods, rolls out updates without downtime, and scales workloads up or down based on CPU/memory demand. Every major cloud provider (AWS EKS, GCP GKE, Azure AKS) offers managed K8s — it's the industry standard for running containerised production workloads at scale.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — compose-vs-k8s.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### DOCKER COMPOSE — what it does well</span></div>
+          <div><span class="output">✅ Local development — one command for entire stack</span></div>
+          <div><span class="output">✅ Small teams, single server deployments</span></div>
+          <div><span class="output">✅ Simple mental model — services, volumes, networks</span></div>
+          <br>
+          <div><span class="comment">### DOCKER COMPOSE — where it breaks down</span></div>
+          <div><span class="error-color">❌ No automatic scaling across multiple machines</span></div>
+          <div><span class="error-color">❌ No self-healing (crashed container stays down until manual restart)</span></div>
+          <div><span class="error-color">❌ No zero-downtime rolling updates built-in</span></div>
+          <div><span class="error-color">❌ No load balancing across replicas on different hosts</span></div>
+          <br>
+          <div><span class="comment">### KUBERNETES — what it adds</span></div>
+          <div><span class="highlight">✅ Schedules containers across a cluster of nodes</span></div>
+          <div><span class="highlight">✅ Restarts crashed pods automatically (self-healing)</span></div>
+          <div><span class="highlight">✅ Rolling updates — new pods up before old pods down</span></div>
+          <div><span class="highlight">✅ Horizontal autoscaling on CPU/memory</span></div>
+          <div><span class="highlight">✅ Built-in service discovery and load balancing</span></div>
+          <br>
+          <div><span class="comment"># WHEN to use K8s vs Compose</span></div>
+          <div><span class="info">Compose: ≤ 3 services, 1 server, hobby/small-team, capstone dev</span></div>
+          <div><span class="info">K8s:     multi-node, auto-scaling, production SLA, &gt;5 services</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Self-healing</div><div class="kp-desc">If a Pod crashes, the Deployment controller notices and schedules a replacement — no human required.</div></div>
+        <div class="key-point"><div class="kp-icon">📈</div><div class="kp-title">Horizontal scaling</div><div class="kp-desc">Scale from 2 → 20 replicas with one command or automatically via HPA (Horizontal Pod Autoscaler).</div></div>
+        <div class="key-point"><div class="kp-icon">🔀</div><div class="kp-title">Rolling updates</div><div class="kp-desc">New version rolls out one Pod at a time — zero downtime, automatic rollback on failure.</div></div>
+        <div class="key-point"><div class="kp-icon">☁️</div><div class="kp-title">Cloud-native</div><div class="kp-desc">AWS EKS, GKE, AKS — every major cloud offers managed K8s. CNCF-standard, no vendor lock-in.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">kubernetes</span>
+        <span class="tag green">orchestration</span>
+        <span class="tag orange">scaling</span>
+        <span class="tag yellow">self-healing</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your capstone app is running on a single EC2 with Docker Compose and starts getting 10× the traffic during a product launch. What specific limitations of Docker Compose will you hit? Name 3 and explain what breaks.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">1. <strong>No horizontal scaling</strong>: Compose can run multiple replicas on one host, but they all compete for the same CPU/RAM. You cannot spread load across multiple EC2 instances automatically. 2. <strong>No automatic failover</strong>: If the single EC2 goes down (hardware failure, OOM), the app is fully down — Compose has no concept of rescheduling to another host. 3. <strong>No zero-downtime deploys</strong>: <code>docker compose up -d --no-deps app</code> causes a brief window where the old container is stopped before the new one is ready — at 10× traffic, this is noticeable.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between a "container" and a "Pod" in Kubernetes? Can a Pod contain more than one container? Give a real-world example of when it should.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A startup asks: "We have 3 microservices on one EC2, should we move to Kubernetes?" What questions do you ask before recommending K8s? What's the cost/complexity trade-off?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Pods, Deployments & Services</div>
+        <div class="module-desc">The three core building blocks you'll use in every Kubernetes workload</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>The K8s building blocks</h3>
+        <p class="explain-text">Everything in Kubernetes is declared in YAML manifests. The three objects you'll use constantly: <strong>Pod</strong> — the smallest deployable unit, wraps one or more containers; <strong>Deployment</strong> — manages a set of identical Pods, handles rolling updates and rollbacks; <strong>Service</strong> — gives Pods a stable DNS name and IP so other services can reach them even as Pods are replaced.</p>
+        <p class="explain-text">You almost never create a bare Pod. You create a Deployment (which creates a ReplicaSet, which creates Pods). Then you expose it via a Service.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">yaml — deployment.yaml</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">apiVersion:</span> <span class="output">apps/v1</span></div>
+          <div><span class="highlight">kind:</span> <span class="output">Deployment</span></div>
+          <div><span class="highlight">metadata:</span></div>
+          <div><span class="output">  name: capstone-api</span></div>
+          <div><span class="highlight">spec:</span></div>
+          <div><span class="output">  replicas: 3</span></div>
+          <div><span class="output">  selector:</span></div>
+          <div><span class="output">    matchLabels:</span></div>
+          <div><span class="output">      app: capstone-api</span></div>
+          <div><span class="output">  template:</span></div>
+          <div><span class="output">    metadata:</span></div>
+          <div><span class="output">      labels:</span></div>
+          <div><span class="output">        app: capstone-api</span></div>
+          <div><span class="output">    spec:</span></div>
+          <div><span class="output">      containers:</span></div>
+          <div><span class="output">      - name: api</span></div>
+          <div><span class="output">        image: 123456789.dkr.ecr.ap-southeast-1.amazonaws.com/capstone:v1.2.0</span></div>
+          <div><span class="output">        ports:</span></div>
+          <div><span class="output">        - containerPort: 3000</span></div>
+          <div><span class="output">        resources:</span></div>
+          <div><span class="output">          requests: { cpu: "100m", memory: "128Mi" }</span></div>
+          <div><span class="output">          limits:   { cpu: "250m", memory: "256Mi" }</span></div>
+          <br>
+          <div><span class="comment">--- # separator between documents in one file</span></div>
+          <br>
+          <div><span class="highlight">apiVersion:</span> <span class="output">v1</span></div>
+          <div><span class="highlight">kind:</span> <span class="output">Service</span></div>
+          <div><span class="highlight">metadata:</span></div>
+          <div><span class="output">  name: capstone-api-svc</span></div>
+          <div><span class="highlight">spec:</span></div>
+          <div><span class="output">  selector:</span></div>
+          <div><span class="output">    app: capstone-api          <span class="comment"># matches Deployment label</span></span></div>
+          <div><span class="output">  ports:</span></div>
+          <div><span class="output">  - port: 80                  <span class="comment"># Service port</span></span></div>
+          <div><span class="output">    targetPort: 3000           <span class="comment"># container port</span></span></div>
+          <div><span class="output">  type: ClusterIP             <span class="comment"># internal only (use LoadBalancer for public)</span></span></div>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — apply-and-check.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$ </span><span class="cmd">kubectl apply -f deployment.yaml</span></div>
+          <div><span class="output">deployment.apps/capstone-api created</span></div>
+          <div><span class="output">service/capstone-api-svc created</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get pods</span></div>
+          <div><span class="output">NAME                           READY   STATUS    RESTARTS   AGE</span></div>
+          <div><span class="output">capstone-api-7d4b9f8c5-4xkpq   1/1     Running   0          12s</span></div>
+          <div><span class="output">capstone-api-7d4b9f8c5-l9mnr   1/1     Running   0          12s</span></div>
+          <div><span class="output">capstone-api-7d4b9f8c5-zqwvt   1/1     Running   0          12s</span></div>
+          <br>
+          <div><span class="comment"># Scale up to 5 replicas live</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl scale deployment capstone-api --replicas=5</span></div>
+          <div><span class="output"><span class="highlight">deployment.apps/capstone-api scaled</span></span></div>
+          <br>
+          <div><span class="comment"># Rolling update — new image version</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl set image deployment/capstone-api api=$ECR_URL:v1.3.0</span></div>
+          <div><span class="output">deployment.apps/capstone-api image updated</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl rollout status deployment/capstone-api</span></div>
+          <div><span class="output"><span class="highlight">Waiting for deployment "capstone-api" rollout to finish: 2 out of 5 new replicas updated...</span></span></div>
+          <div><span class="output"><span class="highlight">deployment "capstone-api" successfully rolled out</span></span></div>
+          <br>
+          <div><span class="comment"># Rollback if the new version is broken</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl rollout undo deployment/capstone-api</span></div>
+          <div><span class="output">deployment.apps/capstone-api rolled back</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">Pod</div><div class="kp-desc">Smallest unit. Wraps 1+ containers that share a network namespace and storage. Ephemeral — Pods come and go.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">Deployment</div><div class="kp-desc">Manages replicas. Handles rolling updates + rollbacks. The object you interact with — not bare Pods.</div></div>
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">Service</div><div class="kp-desc">Stable DNS + IP for a group of Pods. ClusterIP (internal), NodePort (port on each node), LoadBalancer (cloud LB).</div></div>
+        <div class="key-point"><div class="kp-icon">🏷️</div><div class="kp-title">Labels & Selectors</div><div class="kp-desc">Labels on Pods; selectors on Services/Deployments. The glue that connects K8s objects to each other.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">pods</span>
+        <span class="tag green">deployments</span>
+        <span class="tag cyan">services</span>
+        <span class="tag purple">yaml-manifests</span>
+        <span class="tag yellow">rolling-update</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a Deployment manifest for a Python Flask app running on port 5000 with 2 replicas. Include resource requests/limits of 100m CPU and 64Mi memory.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body"><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-api
+  template:
+    metadata:
+      labels:
+        app: flask-api
+    spec:
+      containers:
+      - name: flask
+        image: your-ecr-url/flask-app:latest
+        ports:
+        - containerPort: 5000
+        resources:
+          requests: { cpu: "100m", memory: "64Mi" }
+          limits:   { cpu: "200m", memory: "128Mi" }</code></div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between <code>kubectl apply</code> and <code>kubectl create</code>? Which should you use in a CI/CD pipeline and why?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Run <code>kubectl rollout undo deployment/capstone-api</code> after a bad deploy. What does K8s actually do under the hood — which object does it modify?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What happens to traffic when a Deployment rolls out a new version? Does the Service stop routing requests during the rollout? Explain the relationship between readiness probes and rolling updates.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">ConfigMaps & Secrets</div>
+        <div class="module-desc">Separating configuration from container images — the Kubernetes way</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Configuration management in K8s</h3>
+        <p class="explain-text"><strong>ConfigMaps</strong> store non-sensitive configuration: environment variables, config files, feature flags. <strong>Secrets</strong> store sensitive data: passwords, API keys, TLS certificates — stored base64-encoded in etcd (and encrypted at rest if the cluster is configured correctly). Both are injected into Pods as environment variables or mounted as files.</p>
+        <p class="explain-text">Important caveat: base64 is not encryption. Kubernetes Secrets require proper RBAC + encryption at rest + external secret management (AWS Secrets Manager via External Secrets Operator) for production. For learning purposes, Secrets + RBAC is the standard starting point.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">yaml — config-and-secrets.yaml</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># ConfigMap — non-sensitive config</span></div>
+          <div><span class="highlight">apiVersion:</span> <span class="output">v1</span></div>
+          <div><span class="highlight">kind:</span> <span class="output">ConfigMap</span></div>
+          <div><span class="highlight">metadata:</span></div>
+          <div><span class="output">  name: capstone-config</span></div>
+          <div><span class="highlight">data:</span></div>
+          <div><span class="output">  NODE_ENV: production</span></div>
+          <div><span class="output">  PORT: "3000"</span></div>
+          <div><span class="output">  LOG_LEVEL: info</span></div>
+          <br>
+          <div><span class="comment">---</span></div>
+          <div><span class="comment"># Secret — sensitive data (base64 encoded)</span></div>
+          <div><span class="highlight">apiVersion:</span> <span class="output">v1</span></div>
+          <div><span class="highlight">kind:</span> <span class="output">Secret</span></div>
+          <div><span class="highlight">metadata:</span></div>
+          <div><span class="output">  name: capstone-secrets</span></div>
+          <div><span class="highlight">type:</span> <span class="output">Opaque</span></div>
+          <div><span class="highlight">data:</span></div>
+          <div><span class="output">  DB_PASSWORD: <span class="highlight">bXlzZWNyZXRwYXNz</span>   <span class="comment"># base64: mysecretpass</span></span></div>
+          <div><span class="output">  JWT_SECRET: <span class="highlight">c3VwZXJzZWNyZXQ=</span>    <span class="comment"># base64: supersecret</span></span></div>
+          <br>
+          <div><span class="comment"># Reference in Deployment — envFrom injects all keys</span></div>
+          <div><span class="output">      containers:</span></div>
+          <div><span class="output">      - name: api</span></div>
+          <div><span class="output">        image: capstone:latest</span></div>
+          <div><span class="output">        envFrom:</span></div>
+          <div><span class="output">        - configMapRef:</span></div>
+          <div><span class="output">            name: capstone-config</span></div>
+          <div><span class="output">        - secretRef:</span></div>
+          <div><span class="output">            name: capstone-secrets</span></div>
+          <br>
+          <div><span class="comment"># Create secret imperatively (never in YAML for real passwords)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl create secret generic capstone-secrets \</span></div>
+          <div><span class="output">    --from-literal=DB_PASSWORD=mysecretpass \</span></div>
+          <div><span class="output">    --from-literal=JWT_SECRET=supersecret</span></div>
+          <div><span class="output">secret/capstone-secrets created</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚙️</div><div class="kp-title">ConfigMap</div><div class="kp-desc">Non-sensitive config. Version-controlled in YAML. Change it without rebuilding the image.</div></div>
+        <div class="key-point"><div class="kp-icon">🔐</div><div class="kp-title">Secret</div><div class="kp-desc">base64-encoded, not encrypted. Never commit Secret YAML to git. Use <code>kubectl create secret</code> imperatively.</div></div>
+        <div class="key-point"><div class="kp-icon">💉</div><div class="kp-title">envFrom</div><div class="kp-desc">Injects all keys from a ConfigMap or Secret as environment variables — cleaner than listing each one separately.</div></div>
+        <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Production secrets</div><div class="kp-desc">For real production: use External Secrets Operator + AWS Secrets Manager to sync secrets into K8s automatically.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">configmaps</span>
+        <span class="tag orange">secrets</span>
+        <span class="tag green">env-vars</span>
+        <span class="tag purple">security</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Encode the string <code>my-db-password</code> in base64 using the terminal. Then decode it back. Explain why this demonstrates that Kubernetes Secrets are NOT encrypted by default.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body"><code>$ echo -n "my-db-password" | base64
+bXktZGItcGFzc3dvcmQ=
+
+$ echo "bXktZGItcGFzc3dvcmQ=" | base64 -d
+my-db-password</code><br><br>This shows that base64 is reversible encoding, not encryption. Anyone with access to the Secret object in etcd (or via <code>kubectl get secret -o yaml</code>) can decode the value in one command. Encryption at rest + strict RBAC on the <code>secrets</code> resource is required for production.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between <code>envFrom: secretRef</code> and <code>env: valueFrom: secretKeyRef</code>? When would you use each?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">You update a ConfigMap. Do running Pods automatically see the new values? What must you do to apply the updated config to a running Deployment?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">kubectl Essentials</div>
+        <div class="module-desc">The 15 kubectl commands you'll use every day as a DevOps engineer</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Your K8s toolbelt</h3>
+        <p class="explain-text"><code>kubectl</code> is the CLI for all Kubernetes interactions — the equivalent of <code>docker</code> but for clusters. You'll use a core set of commands for 90% of day-to-day work: get, describe, logs, exec, apply, delete, scale, rollout. The rest you look up when needed.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — kubectl-cheatsheet.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># INSPECT</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get pods -A</span>                          <span class="comment"># all pods, all namespaces</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get pods -n production -o wide</span>         <span class="comment"># with node + IP</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl describe pod capstone-api-7d4b-xyz</span>     <span class="comment"># events, limits, probes</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get events --sort-by=.lastTimestamp</span>    <span class="comment"># recent cluster events</span></div>
+          <br>
+          <div><span class="comment"># LOGS</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl logs capstone-api-7d4b-xyz</span>             <span class="comment"># pod logs</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl logs -f deploy/capstone-api</span>            <span class="comment"># follow (tail -f)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl logs -l app=capstone-api --tail=50</span>     <span class="comment"># all pods by label</span></div>
+          <br>
+          <div><span class="comment"># EXEC — run commands inside a pod</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl exec -it capstone-api-7d4b-xyz -- sh</span>  <span class="comment"># interactive shell</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl exec deploy/capstone-api -- node --version</span></div>
+          <br>
+          <div><span class="comment"># APPLY / DELETE</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl apply -f k8s/</span>                          <span class="comment"># apply whole directory</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl delete -f k8s/deployment.yaml</span></div>
+          <br>
+          <div><span class="comment"># SCALE / ROLLOUT</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl scale deployment capstone-api --replicas=0</span>  <span class="comment"># stop all pods</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl rollout restart deployment/capstone-api</span>      <span class="comment"># restart all pods</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl rollout history deployment/capstone-api</span>       <span class="comment"># revision history</span></div>
+          <br>
+          <div><span class="comment"># PORT FORWARD — access a pod locally without a Service</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl port-forward pod/capstone-api-7d4b-xyz 3000:3000</span></div>
+          <div><span class="output"><span class="highlight">Forwarding from 127.0.0.1:3000 -> 3000</span></span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔍</div><div class="kp-title">describe &gt; get</div><div class="kp-desc"><code>kubectl describe pod X</code> shows Events — which is where 90% of "why is my pod not starting" answers live.</div></div>
+        <div class="key-point"><div class="kp-icon">📋</div><span class="kp-title">logs -l (by label)</span><div class="kp-desc">Stream logs from all replicas at once with <code>-l app=name</code> — much better than picking one pod by name.</div></div>
+        <div class="key-point"><div class="kp-icon">🔌</div><div class="kp-title">port-forward</div><div class="kp-desc">Debug any pod locally without changing its Service. Works for databases, Prometheus, Grafana — anything.</div></div>
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">rollout restart</div><div class="kp-desc">The K8s equivalent of "restart the container" — triggers a rolling restart of all Pods in a Deployment.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">kubectl</span>
+        <span class="tag green">cli</span>
+        <span class="tag yellow">debugging</span>
+        <span class="tag orange">logs</span>
+        <span class="tag purple">port-forward</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A Pod is stuck in <code>CrashLoopBackOff</code>. List the exact kubectl commands you'd run (in order) to diagnose why it's crashing.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">1. <code>kubectl get pods</code> — confirm status and how many restarts<br>2. <code>kubectl describe pod &lt;pod-name&gt;</code> — check Events section for OOMKilled, image pull errors, liveness probe failures<br>3. <code>kubectl logs &lt;pod-name&gt;</code> — see the last stdout/stderr before crash<br>4. <code>kubectl logs &lt;pod-name&gt; --previous</code> — logs from the previous (crashed) container instance<br>5. If you can't tell from logs: <code>kubectl exec -it &lt;pod-name&gt; -- sh</code> to inspect the container environment (may not work if it's crashing too fast)</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What does <code>kubectl get pods -o wide</code> show that <code>kubectl get pods</code> doesn't? Give a real debugging scenario where the extra columns matter.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Use <code>kubectl port-forward</code> to access the Prometheus metrics endpoint of your capstone app running inside minikube. Write the exact command and explain the port numbers.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Local K8s with minikube & kind</div>
+        <div class="module-desc">Run a real Kubernetes cluster on your laptop — zero cloud cost, full kubectl experience</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Local cluster options</h3>
+        <p class="explain-text"><strong>minikube</strong> is the most popular tool for running a single-node K8s cluster locally — it starts a VM (or Docker container) with a full K8s control plane. <strong>kind</strong> (Kubernetes in Docker) runs K8s nodes as Docker containers — faster startup, great for CI testing, supports multi-node clusters on one machine. Both give you a real <code>kubectl</code> experience without any cloud cost.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — local-k8s-setup.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment">### MINIKUBE SETUP (macOS / Linux)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">brew install minikube</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">minikube start --cpus=2 --memory=4096 --driver=docker</span></div>
+          <div><span class="output"><span class="highlight">Done! kubectl is now configured to use "minikube" cluster</span></span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get nodes</span></div>
+          <div><span class="output">NAME       STATUS   ROLES           AGE   VERSION</span></div>
+          <div><span class="output">minikube   Ready    control-plane   30s   v1.29.0</span></div>
+          <br>
+          <div><span class="comment"># Load local Docker image into minikube (skip ECR for local dev)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker build -t capstone:local .</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">minikube image load capstone:local</span></div>
+          <br>
+          <div><span class="comment"># Apply your manifests</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl apply -f k8s/</span></div>
+          <div><span class="output">deployment.apps/capstone-api created</span></div>
+          <div><span class="output">service/capstone-api-svc created</span></div>
+          <br>
+          <div><span class="comment"># Open the app in browser (minikube creates a tunnel)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">minikube service capstone-api-svc</span></div>
+          <div><span class="output"><span class="highlight">Opening service default/capstone-api-svc in default browser...</span></span></div>
+          <br>
+          <div><span class="comment">### KIND — alternative (faster, no VM overhead)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">brew install kind</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kind create cluster --name capstone</span></div>
+          <div><span class="output"><span class="highlight">Cluster "capstone" created.</span></span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kind load docker-image capstone:local --name capstone</span></div>
+          <br>
+          <div><span class="comment"># Cleanup</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">minikube delete   # or: kind delete cluster --name capstone</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🖥️</div><div class="kp-title">minikube</div><div class="kp-desc">Runs a single-node cluster in Docker or a VM. Has addons (ingress, dashboard, metrics-server). Best for beginners.</div></div>
+        <div class="key-point"><div class="kp-icon">⚡</div><div class="kp-title">kind</div><div class="kp-desc">Fastest startup. Nodes are Docker containers. Supports multi-node clusters for testing node affinity/taints.</div></div>
+        <div class="key-point"><div class="kp-icon">📦</div><div class="kp-title">Load local images</div><div class="kp-desc">Use <code>minikube image load</code> or <code>kind load docker-image</code> to avoid needing ECR for local testing.</div></div>
+        <div class="key-point"><div class="kp-icon">🎛️</div><div class="kp-title">minikube addons</div><div class="kp-desc"><code>minikube addons enable ingress</code> adds NGINX Ingress; <code>metrics-server</code> enables HPA — real cluster features locally.</div></div>
+      </div>
+      <div class="tags">
+        <span class="tag blue">minikube</span>
+        <span class="tag green">kind</span>
+        <span class="tag yellow">local-dev</span>
+        <span class="tag orange">kubectl</span>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Start a minikube cluster, deploy your capstone app using the Deployment + Service YAML from Module 2, and access it in a browser. Record each command you ran and confirm the app responds correctly.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Enable the <code>metrics-server</code> addon in minikube (<code>minikube addons enable metrics-server</code>). Then run <code>kubectl top pods</code>. What does this output show and how is it related to the HPA (Horizontal Pod Autoscaler)?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the key difference between using <code>imagePullPolicy: Never</code> in your Deployment YAML when testing locally with minikube vs. using the default policy? When does this matter?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 — PROJECT -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Deploy Your Capstone App to K8s</div>
+        <div class="module-desc">Migrate your Docker Compose capstone app to a full Kubernetes deployment on minikube</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>Project overview</h3>
+        <p class="explain-text">Take the Docker Compose stack from your capstone project and re-deploy it to a local minikube cluster using Kubernetes manifests. This is the same mental shift that happens in industry when teams move from Compose-based dev to a production K8s cluster — the containers don't change, the orchestration layer does.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — k8s-project-structure.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Target directory layout</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">tree k8s/</span></div>
+          <div><span class="output">k8s/</span></div>
+          <div><span class="output">├── namespace.yaml         <span class="comment"># isolate in 'capstone' namespace</span></span></div>
+          <div><span class="output">├── configmap.yaml         <span class="comment"># NODE_ENV, PORT, LOG_LEVEL</span></span></div>
+          <div><span class="output">├── secret.yaml            <span class="comment"># DB_PASSWORD (created imperatively, not committed)</span></span></div>
+          <div><span class="output">├── api-deployment.yaml    <span class="comment"># 2 replicas, resource limits, envFrom</span></span></div>
+          <div><span class="output">├── api-service.yaml       <span class="comment"># ClusterIP for internal, NodePort for minikube access</span></span></div>
+          <div><span class="output">└── postgres-deployment.yaml  <span class="comment"># StatefulSet + PersistentVolumeClaim</span></span></div>
+          <br>
+          <div><span class="comment"># Deploy everything</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl apply -f k8s/namespace.yaml</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl create secret generic capstone-secrets -n capstone --from-literal=DB_PASSWORD=devpass</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl apply -f k8s/ -n capstone</span></div>
+          <div><span class="output">configmap/capstone-config created</span></div>
+          <div><span class="output">deployment.apps/capstone-api created</span></div>
+          <div><span class="output">service/capstone-api-svc created</span></div>
+          <div><span class="output">statefulset.apps/postgres created</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl get all -n capstone</span></div>
+          <div><span class="output">NAME                               READY   STATUS    RESTARTS</span></div>
+          <div><span class="output">pod/capstone-api-7d4b-abc           1/1     Running   0</span></div>
+          <div><span class="output">pod/capstone-api-7d4b-def           1/1     Running   0</span></div>
+          <div><span class="output">pod/postgres-0                      1/1     Running   0</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">minikube service capstone-api-svc -n capstone</span></div>
+          <div><span class="output"><span class="highlight">Opening http://127.0.0.1:62348 in your browser...</span></span></div>
+          <br>
+          <div><span class="comment"># Trigger a rolling update</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl set image deployment/capstone-api api=capstone:v2 -n capstone</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">kubectl rollout status deployment/capstone-api -n capstone</span></div>
+          <div><span class="output"><span class="highlight">deployment "capstone-api" successfully rolled out</span></span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">📁</div><div class="kp-title">Namespace isolation</div><div class="kp-desc">Run everything in a <code>capstone</code> namespace — keeps your work separate from kube-system and easy to delete cleanly.</div></div>
+        <div class="key-point"><div class="kp-icon">💾</div><div class="kp-title">StatefulSet for Postgres</div><div class="kp-desc">Databases need stable pod names and persistent storage — StatefulSet gives both. Don't use a plain Deployment for DBs.</div></div>
+        <div class="key-point"><div class="kp-icon">🔄</div><div class="kp-title">Same containers, new orchestrator</div><div class="kp-desc">Your Docker images don't change — only the YAML manifests that describe how to run them change.</div></div>
+        <div class="key-point"><div class="kp-icon">✅</div><div class="kp-title">kubectl get all</div><div class="kp-desc">One command to see Pods, Deployments, ReplicaSets, Services in a namespace. Good "is everything running?" check.</div></div>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Project Deliverables</h4>
+        <ul>
+          <li>A <code>k8s/</code> directory in your capstone repo containing: namespace.yaml, configmap.yaml, api-deployment.yaml (2 replicas, resource limits), api-service.yaml (NodePort for minikube access)</li>
+          <li>Screenshot of <code>kubectl get all -n capstone</code> with all Pods in Running state</li>
+          <li>Demonstrate a rolling update: change the image tag, run <code>kubectl rollout status</code>, and show the app still responding during the rollout (use <code>curl</code> in a loop)</li>
+          <li>Demonstrate a rollback: <code>kubectl rollout undo</code> and confirm the previous version is serving traffic</li>
+          <li>Update your capstone README with a "Kubernetes deployment" section documenting the commands to spin up the K8s stack from scratch</li>
+        </ul>
+      </div>
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why should you use a StatefulSet for PostgreSQL instead of a regular Deployment? What specific guarantees does StatefulSet provide that Deployment does not?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">StatefulSet provides: (1) <strong>Stable pod names</strong> — <code>postgres-0</code>, <code>postgres-1</code> instead of random hashes — so the app can connect to a known hostname. (2) <strong>Ordered startup/shutdown</strong> — pod-0 starts before pod-1 (important for primary/replica replication). (3) <strong>Stable persistent storage</strong> — each pod gets its own PersistentVolumeClaim that survives pod rescheduling. A Deployment would give a new random PVC on every reschedule, losing all data.</div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">After you've deployed the capstone to minikube, run <code>curl http://$(minikube ip):&lt;nodePort&gt;/health</code> in a loop while triggering a rolling update. Observe whether any requests fail. What would you add to your Deployment to prevent failures during rollout?</div>
+            <div class="pq-hint">💡 Hint: look up readinessProbe and minReadySeconds in Deployment spec.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">What's the difference between Kubernetes and AWS EKS? If you wanted to move your minikube deployment to production, what additional steps would be required?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) {
+    const mod = document.getElementById(id);
+    mod.classList.toggle('open');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    mods.forEach((m, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : '');
+      seg.title = `Module ${i+1}`;
+      seg.onclick = () => toggle(m.id);
+      bar.appendChild(seg);
+    });
+  }
+
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>

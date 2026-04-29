@@ -3,7 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Linux for DevOps — Course Guide</title>
+
+<title>Linux for DevOps — Beginner to Practical Course | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Learn Linux for DevOps from scratch: terminal navigation, file permissions, SSH keys, package management, bash scripting, and a complete disk-monitoring project. Hands-on terminal examples, interactive quizzes, and 30+ practice questions.">
+<meta name="keywords" content="linux for devops, linux beginner course, bash scripting tutorial, ssh key setup, chmod permissions, apt package manager, linux commands, devops foundations, banoqabil, cron jobs, shell scripting, sysadmin">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux for DevOps — Beginner to Practical Course">
+<meta property="og:description" content="Master Linux for DevOps with hands-on terminal examples, real bash scripts, SSH workflows, and a graded backup-script assignment. Perfect for aspiring DevOps engineers.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linux for DevOps — Beginner to Practical Course">
+<meta name="twitter:description" content="Hands-on Linux course for DevOps: terminal, permissions, SSH, bash scripts, and real automation projects.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "Linux for DevOps — Foundations",
+  "description": "A practical, beginner-friendly Linux course for aspiring DevOps engineers. Covers terminal navigation, file permissions, users and groups, SSH keys, package management, bash scripting, AI-assisted scripting, and a complete disk-monitoring project with quizzes and a graded backup-script assignment.",
+  "provider": {
+    "@type": "EducationalOrganization",
+    "name": "BanoQabil"
+  },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "Linux command line navigation",
+    "File and directory permissions (chmod, chown)",
+    "User and group management",
+    "SSH key authentication",
+    "Package management with apt and yum/dnf",
+    "Bash scripting for automation",
+    "AI-assisted DevOps scripting",
+    "Cron scheduling and log rotation",
+    "Production-grade disk monitoring",
+    "Backup automation"
+  ],
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT8H"
+  }
+}
+</script>
+
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -431,6 +480,119 @@
     flex-shrink: 0;
   }
 
+  /* Practice Questions */
+  .practice-block {
+    margin-top: 24px;
+    background: rgba(188,140,255,0.05);
+    border: 1px solid rgba(188,140,255,0.2);
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .practice-block h4 {
+    color: var(--purple);
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .practice-q {
+    display: flex;
+    gap: 12px;
+    padding: 14px 0;
+    border-top: 1px solid rgba(188,140,255,0.12);
+  }
+
+  .practice-q:first-of-type {
+    border-top: none;
+    padding-top: 4px;
+  }
+
+  .pq-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--purple);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 32px;
+    padding-top: 2px;
+  }
+
+  .pq-content { flex: 1; }
+
+  .pq-text {
+    font-size: 0.9rem;
+    color: #c9d1d9;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  .pq-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--yellow);
+  }
+
+  .pq-answer {
+    margin-top: 10px;
+    background: rgba(57,211,83,0.06);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .pq-answer summary {
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--green);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    user-select: none;
+    list-style: none;
+  }
+
+  .pq-answer summary::before {
+    content: '▸ ';
+    display: inline-block;
+    transition: transform 0.2s;
+  }
+
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+
+  .pq-answer-body {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    background: #010409;
+    padding: 12px 14px;
+    border-radius: 4px;
+    border-left: 2px solid var(--green);
+  }
+
+  .pq-answer-body code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    background: rgba(57,211,83,0.08);
+    color: var(--green);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pq-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
   /* Responsive */
   @media (max-width: 600px) {
     header, main { padding-left: 20px; padding-right: 20px; }
@@ -487,6 +649,78 @@
         <div class="key-point"><div class="kp-icon">🔧</div><div class="kp-title">Customizable</div><div class="kp-desc">Every part of the OS can be tweaked, scripted, or automated.</div></div>
         <div class="key-point"><div class="kp-icon">🔒</div><div class="kp-title">Secure by design</div><div class="kp-desc">Permissions, users, and groups are first-class citizens.</div></div>
       </div>
+
+      <div class="explain-block">
+        <h3>Practical: Inspecting a real server</h3>
+        <p class="explain-text">When you SSH into a fresh cloud VM (AWS EC2, DigitalOcean, GCP), these are the first commands every DevOps engineer runs to <em>"check the vitals"</em>.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — server-vitals.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Which Linux distribution is this?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cat /etc/os-release</span></div>
+          <div><span class="output">NAME="Ubuntu"</span></div>
+          <div><span class="output">VERSION="22.04.3 LTS (Jammy Jellyfish)"</span></div>
+          <br>
+          <div><span class="comment"># How much CPU and memory do we have?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">lscpu | grep -E 'Model name|CPU\(s\)'</span></div>
+          <div><span class="output">CPU(s):              4</span></div>
+          <div><span class="output">Model name:          Intel(R) Xeon(R) Platinum 8175M</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">free -h</span></div>
+          <div><span class="output">              total   used   free  available</span></div>
+          <div><span class="output">Mem:           7.6Gi  1.2Gi  3.4Gi   <span class="highlight">6.0Gi</span></span></div>
+          <br>
+          <div><span class="comment"># How much disk is available?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">df -h /</span></div>
+          <div><span class="output">Filesystem      Size  Used Avail Use% Mounted on</span></div>
+          <div><span class="output">/dev/nvme0n1p1   30G  6.4G   23G  <span class="info">22%</span> /</span></div>
+          <br>
+          <div><span class="comment"># Who am I and what's the hostname?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">whoami && hostname && uptime</span></div>
+          <div><span class="output">ubuntu</span></div>
+          <div><span class="output">ip-10-0-1-42</span></div>
+          <div><span class="output"> 10:24:07 up 14 days,  3:12,  1 user,  load average: 0.08, 0.12, 0.10</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Name three SaaS products you use daily that almost certainly run on Linux servers. For one of them, explain <em>why</em> the team likely chose Linux over Windows Server.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Run <code>uname -a</code> on your machine. Identify the kernel version, machine hardware architecture, and operating system from the single line of output.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Which file holds the Linux distribution name and version? Show the command to print only the <code>PRETTY_NAME</code> line from it.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                The file is <code>/etc/os-release</code>. To extract just the pretty name:<br><br>
+                <code>grep PRETTY_NAME /etc/os-release</code><br><br>
+                Or to strip the variable name and quotes:<br>
+                <code>. /etc/os-release && echo "$PRETTY_NAME"</code>
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain the difference between a Linux <em>distribution</em> (Ubuntu, Fedora, Alpine) and the Linux <em>kernel</em> itself. Why do containers usually pick Alpine over Ubuntu?</div>
+            <div class="pq-hint">💡 Think about image size and attack surface.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -532,6 +766,86 @@
         <span class="tag green">mkdir -p</span>
         <span class="tag green">cp / mv / rm</span>
         <span class="tag orange">⚠️ rm -rf is permanent</span>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Finding and inspecting files like a DevOps engineer</h3>
+        <p class="explain-text">In production you almost never <code>cd</code> blindly — you <code>find</code>, <code>grep</code>, and <code>tail</code> your way to the answer. These four commands solve 80% of "where is X?" and "what's happening right now?" questions.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — search-and-inspect</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Find every nginx config file under /etc</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">find /etc -name "*.conf" -path "*nginx*"</span></div>
+          <div><span class="output">/etc/nginx/nginx.conf</span></div>
+          <div><span class="output">/etc/nginx/conf.d/default.conf</span></div>
+          <br>
+          <div><span class="comment"># Find files modified in the last 24 hours</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">find /var/log -type f -mtime -1</span></div>
+          <br>
+          <div><span class="comment"># Search inside files for a string (recursive, with line numbers)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">grep -rn "ERROR" /var/log/app/</span></div>
+          <div><span class="output">/var/log/app/api.log:142:ERROR connection refused</span></div>
+          <br>
+          <div><span class="comment"># Watch a log live (Ctrl+C to stop) — every DevOps engineer's bread and butter</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">tail -n 50 -f /var/log/syslog</span></div>
+          <br>
+          <div><span class="comment"># Where does this binary live? Is it even installed?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">which docker && whereis docker</span></div>
+          <div><span class="output">/usr/bin/docker</span></div>
+          <div><span class="output">docker: /usr/bin/docker /etc/docker /usr/share/man/man1/docker.1.gz</span></div>
+          <br>
+          <div><span class="comment"># Disk hog hunt: top 10 biggest files in /var</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">du -ah /var | sort -rh | head -n 10</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Use <code>find</code> to locate every <code>.conf</code> file under <code>/etc</code> that was modified in the last 7 days. Show the command.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What does <code>cd -</code> do? Try it after navigating between two different directories — describe what you observe.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Print the last 50 lines of <code>/var/log/syslog</code> and follow new lines as they arrive. Write the exact one-line command.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>tail -n 50 -f /var/log/syslog</code><br><br>
+                <code>-n 50</code> sets how many existing lines to print first; <code>-f</code> ("follow") keeps the file open and streams new lines as they're appended. Press <code>Ctrl+C</code> to stop.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Create the directory tree <code>project/{src,test,docs,config}</code> in a <em>single</em> <code>mkdir</code> command (no loops, no semicolons).</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">Move all <code>.log</code> files from the current directory into an <code>archive/</code> folder while preserving their original modification timestamps. Why might preserving timestamps matter for an audit log?</div>
+            <div class="pq-hint">💡 Plain <code>mv</code> already preserves <code>mtime</code> — but think about what changes if you used <code>cp</code> instead.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q6.</div>
+          <div class="pq-content">
+            <div class="pq-text">You SSH into a server and the disk is full. Write a one-liner that finds the 5 largest files in <code>/var</code>, sorted from biggest to smallest, in human-readable form.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -583,6 +897,86 @@
         <div class="key-point"><div class="kp-icon">👥</div><div class="kp-title">useradd / usermod</div><div class="kp-desc">Create users and add them to groups like <code>sudo</code> or <code>docker</code>.</div></div>
         <div class="key-point"><div class="kp-icon">🛡️</div><div class="kp-title">sudo vs su</div><div class="kp-desc"><code>sudo</code> = one command as root. <code>su</code> = switch user entirely. Prefer sudo.</div></div>
       </div>
+
+      <div class="explain-block">
+        <h3>Practical: Real EC2 SSH workflow + troubleshooting</h3>
+        <p class="explain-text">This is the exact sequence used to connect to an AWS EC2 instance — including the <em>most common error</em> beginners hit and how to fix it.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — ec2-ssh-workflow</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Download the .pem key from AWS Console and try to connect</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ssh -i ~/Downloads/my-key.pem ubuntu@ec2-3-15-220-1.compute.amazonaws.com</span></div>
+          <div><span class="error-color">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</span></div>
+          <div><span class="error-color">@   WARNING: UNPROTECTED PRIVATE KEY FILE!                @</span></div>
+          <div><span class="error-color">Permissions 0644 for 'my-key.pem' are too open.</span></div>
+          <div><span class="error-color">It is required that your private key files are NOT accessible by others.</span></div>
+          <br>
+          <div><span class="comment"># Fix: tighten permissions to 0600 (owner read/write only)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">chmod 600 ~/Downloads/my-key.pem</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">ls -l ~/Downloads/my-key.pem</span></div>
+          <div><span class="output">-rw------- 1 student student 1675 Apr 25 my-key.pem</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">ssh -i ~/Downloads/my-key.pem ubuntu@ec2-3-15-220-1.compute.amazonaws.com</span></div>
+          <div><span class="output">Welcome to Ubuntu 22.04.3 LTS (GNU/Linux 6.2.0-1017-aws x86_64)</span></div>
+          <br>
+          <div><span class="comment"># Better: store it in ~/.ssh/config so you never type the long command again</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">cat &gt;&gt; ~/.ssh/config &lt;&lt;'EOF'</span></div>
+          <div><span class="cmd">Host prod-api</span></div>
+          <div><span class="cmd">  HostName ec2-3-15-220-1.compute.amazonaws.com</span></div>
+          <div><span class="cmd">  User ubuntu</span></div>
+          <div><span class="cmd">  IdentityFile ~/.ssh/my-key.pem</span></div>
+          <div><span class="cmd">EOF</span></div>
+          <br>
+          <div><span class="prompt">$ </span><span class="cmd">ssh prod-api</span> &nbsp;<span class="comment"># Now this is all you need!</span></div>
+          <br>
+          <div><span class="comment"># Bonus: change file ownership when copying app files</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo chown -R www-data:www-data /var/www/html</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo chmod -R 755 /var/www/html</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Set <code>deploy.sh</code> so the owner can read/write/execute, the group can read/execute, and others have <em>no</em> access. What is the numeric permission and the <code>chmod</code> command?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does SSH refuse to use a private key when its permissions are <code>0644</code>? What is the minimum fix?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                SSH enforces strict permissions on private keys to prevent other users on the same machine from reading them. <code>0644</code> is "world-readable" — anyone can copy the key. SSH refuses to load it as a security measure.<br><br>
+                Fix: <code>chmod 600 ~/.ssh/id_ed25519</code> (owner read/write only). The parent <code>~/.ssh</code> folder must also be <code>700</code>.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add the user <code>deploy</code> to the <code>docker</code> group so they can run docker without sudo, then verify the change. What two commands do you run?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Explain what the sticky bit (the <code>t</code> in <code>drwxrwxrwt</code> on <code>/tmp</code>) does. What problem would exist on a multi-user server <em>without</em> it?</div>
+            <div class="pq-hint">💡 Think about what happens when two users both have write access to the same directory.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">A teammate ran <code>chmod -R 777 /var/www/html</code> "to fix a permissions error." List three concrete reasons this is dangerous in production.</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -628,6 +1022,84 @@
         <span class="tag blue">apt install</span>
         <span class="tag purple">yum / dnf</span>
         <span class="tag green">systemctl</span>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Installing Docker from the official repository</h3>
+        <p class="explain-text">Most production tools (Docker, Node.js, Postgres, Kubernetes) are <em>not</em> in the default Ubuntu repos — or the version there is too old. The standard pattern is: <strong>add GPG key → add repo → update → install</strong>. Memorise this flow once and you can install almost anything.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — install-docker-official.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># 1. Install prerequisites for adding HTTPS-based repos</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt update</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt install -y ca-certificates curl gnupg</span></div>
+          <br>
+          <div><span class="comment"># 2. Add Docker's official GPG key (proves the packages are authentic)</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo install -m 0755 -d /etc/apt/keyrings</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg</span></div>
+          <br>
+          <div><span class="comment"># 3. Add the Docker repo to apt's source list</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">echo "deb [signed-by=/etc/apt/keyrings/docker.gpg] \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">sudo tee /etc/apt/sources.list.d/docker.list</span></div>
+          <br>
+          <div><span class="comment"># 4. Refresh and install</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt update</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo apt install -y docker-ce docker-ce-cli containerd.io</span></div>
+          <br>
+          <div><span class="comment"># 5. Verify it actually works</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">docker --version</span></div>
+          <div><span class="output">Docker version 26.0.0, build 2ae903e</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">sudo systemctl enable --now docker</span> &nbsp;<span class="comment"># Start now + auto-start on boot</span></div>
+          <br>
+          <div><span class="comment"># Bonus: which package owns the `dig` command?</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">apt-file search bin/dig</span></div>
+          <div><span class="output"><span class="highlight">dnsutils</span>: /usr/bin/dig</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Install Node.js 20 LTS on Ubuntu using the NodeSource repository. Outline the GPG-key + repo-add + install steps without copying from the Docker example above.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why must you run <code>apt update</code> before <code>apt install</code>? What concretely goes wrong if you skip it?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>apt update</code> refreshes the local package <em>index</em> — the list of "what packages and what versions exist in each configured repo."<br><br>
+                If you skip it: apt may try to install a version that has since been removed from the mirror (404), or quietly install an older, vulnerable version because it doesn't know a newer one is available. After <em>adding a new repo</em> (like Docker's), <code>apt update</code> is mandatory — without it, apt has no idea the new repo's packages exist.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">On a fresh Ubuntu install, the <code>dig</code> command is missing. Find which package provides it (without Googling).</div>
+            <div class="pq-hint">💡 The package <code>apt-file</code> or the command <code>apt search</code> can both help.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between <code>apt remove pkg</code> and <code>apt purge pkg</code>? Give a real scenario where you'd choose each.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">After upgrading a server, <code>/boot</code> fills up because old kernels keep accumulating. Which single command removes packages that are no longer needed?</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -677,6 +1149,96 @@
         <div class="key-point"><div class="kp-icon">🧪</div><div class="kp-title">Test with set -x</div><div class="kp-desc">Add <code>set -x</code> at the top to print each command as it runs — great for debugging.</div></div>
         <div class="key-point"><div class="kp-icon">🚨</div><div class="kp-title">Exit on error</div><div class="kp-desc">Add <code>set -e</code> to stop the script immediately if any command fails.</div></div>
       </div>
+
+      <div class="explain-block">
+        <h3>Practical: A real "git pull and restart" deploy script</h3>
+        <p class="explain-text">Many startups still deploy to a single VM with a script like this. It's small, real, and battle-tested — it pulls the latest code, installs dependencies, restarts the service, and reports status.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — deploy.sh</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight">#!/bin/bash</span></div>
+          <div><span class="cmd">set -euo pipefail</span> &nbsp;<span class="comment"># strict mode</span></div>
+          <br>
+          <div><span class="cmd">APP_DIR="/srv/myapp"</span></div>
+          <div><span class="cmd">SERVICE="myapp"</span></div>
+          <div><span class="cmd">BRANCH="${1:-main}"</span> &nbsp;<span class="comment"># Default to main, override: ./deploy.sh staging</span></div>
+          <br>
+          <div><span class="cmd">echo "→ Deploying $SERVICE on branch $BRANCH..."</span></div>
+          <div><span class="cmd">cd "$APP_DIR"</span></div>
+          <br>
+          <div><span class="cmd">git fetch --all --prune</span></div>
+          <div><span class="cmd">git checkout "$BRANCH"</span></div>
+          <div><span class="cmd">git pull origin "$BRANCH"</span></div>
+          <br>
+          <div><span class="cmd">npm ci --omit=dev</span> &nbsp;<span class="comment"># reproducible install, no devDeps</span></div>
+          <div><span class="cmd">npm run build</span></div>
+          <br>
+          <div><span class="cmd">sudo systemctl restart "$SERVICE"</span></div>
+          <div><span class="cmd">sleep 2</span></div>
+          <br>
+          <div><span class="cmd">if systemctl is-active --quiet "$SERVICE"; then</span></div>
+          <div>&nbsp;&nbsp;<span class="output">echo "✅ $SERVICE deployed successfully ($(git rev-parse --short HEAD))"</span></div>
+          <div><span class="cmd">else</span></div>
+          <div>&nbsp;&nbsp;<span class="error-color">echo "❌ $SERVICE failed to start — rolling back"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">git reset --hard HEAD~1 && sudo systemctl restart "$SERVICE"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">exit 1</span></div>
+          <div><span class="cmd">fi</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a one-liner that counts how many <code>.log</code> files exist under <code>/var/log</code> recursively (including subdirectories).</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">What is the difference between <code>"$@"</code> and <code>"$*"</code> in a bash script? Show a 3-line script that demonstrates the difference.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a script that prints every argument passed to it, one per line, prefixed with its 1-based index. Example: <code>./args.sh foo bar</code> prints <code>1: foo</code> and <code>2: bar</code>.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>#!/bin/bash</code><br>
+                <code>i=1</code><br>
+                <code>for arg in "$@"; do</code><br>
+                &nbsp;&nbsp;<code>echo "$i: $arg"</code><br>
+                &nbsp;&nbsp;<code>((i++))</code><br>
+                <code>done</code><br><br>
+                The quoting <code>"$@"</code> matters — it preserves arguments that contain spaces. <code>$@</code> without quotes would split <code>"hello world"</code> into two iterations.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Convert a script you've written to use <code>set -euo pipefail</code>. Explain in one line each what <code>-e</code>, <code>-u</code>, and <code>-o pipefail</code> protect against.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a function <code>log()</code> that prefixes every message with the current ISO-8601 timestamp <em>and</em> writes to both stdout and <code>/var/log/myscript.log</code> in a single call.</div>
+            <div class="pq-hint">💡 The <code>tee -a</code> command can split a stream to a file <em>and</em> the terminal at the same time.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q6.</div>
+          <div class="pq-content">
+            <div class="pq-text">The deploy script above uses <code>npm ci --omit=dev</code>. Why <code>npm ci</code> instead of <code>npm install</code> in a deployment context?</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -721,6 +1283,72 @@
         <span class="tag purple">GitHub Copilot</span>
         <span class="tag orange">Always review AI output</span>
         <span class="tag green">Understand before running</span>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Using AI to analyse a real log file</h3>
+        <p class="explain-text">A common DevOps task: <em>"Why did the API spike at 2am last night?"</em> Instead of grepping by hand, you can paste a log snippet to AI and ask it to summarise. The trick is in the framing.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — ai-log-analysis prompt</div></div>
+        <div class="terminal-body">
+          <div><span class="highlight"># ✅ A great prompt for log analysis</span></div>
+          <div><span class="comment">"You are a senior SRE. Below is a 200-line nginx access log from a production</span></div>
+          <div><span class="comment"> API server during a 5-minute window. Identify:</span></div>
+          <div><span class="comment"> 1. The top 5 IPs by request count</span></div>
+          <div><span class="comment"> 2. Any 5xx error patterns and which endpoints failed</span></div>
+          <div><span class="comment"> 3. Suspicious activity (unusual user agents, scraping, brute-force)</span></div>
+          <div><span class="comment"> 4. Suggest 3 mitigations I can apply with nginx or fail2ban</span></div>
+          <div><span class="comment">Format as a markdown table where helpful. Skip generic advice."</span></div>
+          <br>
+          <div><span class="comment"># Then provide actual log lines:</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">tail -n 200 /var/log/nginx/access.log | pbcopy</span></div>
+          <br>
+          <div><span class="comment"># Even better: extract structured data first, then ask AI to interpret</span></div>
+          <div><span class="prompt">$ </span><span class="cmd">awk '{print $1}' /var/log/nginx/access.log | sort | uniq -c | sort -rn | head</span></div>
+          <div><span class="output">  4218 198.51.100.42</span></div>
+          <div><span class="output">   873 203.0.113.7</span></div>
+          <div><span class="output">   642 198.51.100.99</span></div>
+          <br>
+          <div><span class="error-color"># ⚠️ Never paste real production credentials, customer PII, or API keys</span></div>
+          <div><span class="comment"># Replace them with &lt;PLACEHOLDER&gt; before sending to any AI tool.</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Take the vague prompt <em>"write a backup script"</em> and rewrite it as a 5-bullet detailed prompt that would produce a production-ready result. Each bullet should remove a specific ambiguity.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why should you never paste production database URLs or API keys into an AI tool, even a "secure" one?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Most AI tools log conversations for safety review, abuse detection, and (depending on the plan) model improvement. Your secret may be retained, accessible to support staff, or replayed via prompt-leakage attacks against another user. Even self-hosted tools persist conversations to disk — and that disk gets backed up.<br><br>
+                <strong>Rule:</strong> always replace secrets with placeholders like <code>&lt;DB_URL&gt;</code> or <code>&lt;API_KEY&gt;</code> in your prompt, then substitute the real value locally before running the script.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Write a prompt that asks the AI to <em>explain</em> a bash error message rather than fix it. Why is asking for an explanation often more useful than asking for a fix?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">An AI gives you a script that uses <code>eval $USER_INPUT</code>. Should you ship it? Why or why not?</div>
+            <div class="pq-hint">💡 Search for "bash eval security" if you're unsure — this is a classic vulnerability.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -779,6 +1407,86 @@
         <div class="key-point"><div class="kp-icon">📅</div><div class="kp-title">Add to cron</div><div class="kp-desc">Run <code>crontab -e</code> and schedule this script every 5 minutes automatically.</div></div>
         <div class="key-point"><div class="kp-icon">📂</div><div class="kp-title">Log rotation</div><div class="kp-desc">Mention <code>logrotate</code> — logs need to be rotated or they fill the disk you're monitoring!</div></div>
         <div class="key-point"><div class="kp-icon">🧩</div><div class="kp-title">Extend it</div><div class="kp-desc">Challenge: add monitoring for CPU, memory, or check multiple mount points.</div></div>
+      </div>
+
+      <div class="explain-block">
+        <h3>Practical: Extending the monitor with CPU + memory checks</h3>
+        <p class="explain-text">Once disk monitoring works, students should layer on CPU and memory checks. Same shape, different commands. This is the modular pattern real observability scripts use — one function per metric.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">bash — system_monitor.sh (extended)</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">check_memory() {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">local USED_PCT</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">USED_PCT=$(free | awk '/Mem:/ {printf "%.0f", $3/$2 * 100}')</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">log "Memory: ${USED_PCT}% used"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">[[ "$USED_PCT" -ge 90 ]] &amp;&amp; log "🚨 Memory critical: ${USED_PCT}%"</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="cmd">check_cpu() {</span></div>
+          <div>&nbsp;&nbsp;<span class="comment"># 1-min load average vs CPU count</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">local LOAD CORES</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">LOAD=$(awk '{print $1}' /proc/loadavg)</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">CORES=$(nproc)</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">log "Load avg (1m): $LOAD on $CORES cores"</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">awk -v l="$LOAD" -v c="$CORES" 'BEGIN{exit !(l/c &gt; 0.8)}' \</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">&amp;&amp; log "🚨 CPU pressure: load $LOAD on $CORES cores"</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="cmd">check_services() {</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">for svc in nginx docker; do</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">if systemctl is-active --quiet "$svc"; then</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="output">log "✅ $svc is active"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">else</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="error-color">log "❌ $svc is DOWN"</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">fi</span></div>
+          <div>&nbsp;&nbsp;<span class="cmd">done</span></div>
+          <div><span class="cmd">}</span></div>
+          <br>
+          <div><span class="cmd">check_disk; check_memory; check_cpu; check_services</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Extend <code>disk_monitor.sh</code> to also report which mount point is the culprit when usage is over the threshold. <code>df</code> can show <em>all</em> mounts — adapt the parsing.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">In the script, why use <code>tee -a "$LOG_FILE"</code> instead of <code>&gt;&gt; "$LOG_FILE"</code>? Both append. What does <code>tee</code> give you that <code>&gt;&gt;</code> doesn't?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Convert this cron schedule to run only on weekdays (Mon–Fri) at 9 AM: <code>*/5 * * * *</code>. Write the new cron expression.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <code>0 9 * * 1-5 /usr/local/bin/disk_monitor.sh</code><br><br>
+                Field-by-field: <code>0</code> minute, <code>9</code> hour, <code>*</code> any day-of-month, <code>*</code> any month, <code>1-5</code> Monday through Friday. Use <a href="https://crontab.guru" target="_blank" rel="noopener">crontab.guru</a> to sanity-check expressions.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Add log rotation for <code>/var/log/disk_monitor.log</code> using <code>logrotate</code>. Where does the config file live, and what's the minimum set of directives you need (rotate count, frequency, compression)?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">The cron job runs but the script silently does nothing. List three of the most common reasons (cron-specific gotchas).</div>
+            <div class="pq-hint">💡 Hint: <code>$PATH</code>, the working directory, and where stdout goes when there's no terminal.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -902,6 +1610,49 @@
         <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">Script runs: 30pts. Logging works: 25pts. Error handling: 25pts. Code quality: 20pts.</div></div>
         <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Hardcoded paths, no quotes around variables, missing shebang, no error checking.</div></div>
         <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Extend challenge</div><div class="kp-desc">Add the cron job that runs this script automatically at 2 AM every night.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions (Stretch)</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">Extend the assignment to support <em>incremental</em> backups using <code>rsync --link-dest</code>. Why is this dramatically more space-efficient than full <code>.tar.gz</code> snapshots?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Modify the script so it uploads every backup to an S3 bucket using the AWS CLI (<code>aws s3 cp</code>). What permissions must the EC2 instance role have?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Schedule the backup to run nightly at 2:00 AM using <code>cron</code>. Write the full crontab line and the path you'd put it under.</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Edit the user's crontab with <code>crontab -e</code> and add:<br><br>
+                <code>0 2 * * * /usr/local/bin/backup.sh /var/www/html &gt;&gt; /var/log/backup-cron.log 2&gt;&amp;1</code><br><br>
+                Or for a system-wide schedule, drop a file at <code>/etc/cron.d/backup</code> with the same line plus a username field: <code>0 2 * * * root /usr/local/bin/backup.sh /var/www/html</code>. Always redirect stdout+stderr to a log so silent failures are catchable.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your script suddenly fails because <code>/backups</code> is full. Make the script <em>self-healing</em> — before creating a new backup, ensure there's at least 1 GB free, deleting the oldest backups until there is.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q5.</div>
+          <div class="pq-content">
+            <div class="pq-text">A backup that never gets restored is worthless. Write a companion <code>verify.sh</code> that picks the latest backup, untars it into a temporary directory, and confirms the file count matches the source.</div>
+            <div class="pq-hint">💡 <code>find … | wc -l</code> on both sides + <code>mktemp -d</code> for the temp folder.</div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

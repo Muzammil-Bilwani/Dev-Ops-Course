@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>DevOps Mindset & Career — Pakistan + Remote Markets | BanoQabil DevOps Foundations</title>
+<meta name="description" content="Start a DevOps career — what DevOps actually is, the roles + career paths in Pakistan and remote markets, the tools ecosystem in concrete terms, and how to build a portfolio that gets interviews. With salary research, roadmap project, and 25+ practice questions.">
+<meta name="keywords" content="devops mindset, devops career pakistan, devops remote jobs, sre vs devops, platform engineer, devops salary pakistan, devops roadmap 2026, devops portfolio github readme, banoqabil, devops foundations, what is devops">
+<meta name="author" content="BanoQabil DevOps Foundations">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#0d1117">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="DevOps Mindset & Career — Pakistan + Remote Markets">
+<meta property="og:description" content="Start a DevOps career: what the role really is, what employers look for in Pakistan and remote markets, and how to build a portfolio that converts.">
+<meta property="og:site_name" content="BanoQabil DevOps Foundations">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DevOps Mindset & Career — Course">
+<meta name="twitter:description" content="DevOps roles, salaries, tools, and the roadmap to your first job.">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "DevOps Mindset & Career — Foundations",
+  "description": "A practical, beginner-friendly intro to DevOps culture and careers, especially relevant for Pakistan and remote markets. Covers what DevOps actually is (vs the buzzword), the four big role families (DevOps engineer, SRE, platform engineer, cloud engineer), the tools ecosystem (CI/CD, IaC, Containers, Monitoring) in concrete terms, AI/Copilot in daily practice, building a personal DevOps roadmap + GitHub README, and a graded job-research assignment with salary data.",
+  "provider": { "@type": "EducationalOrganization", "name": "BanoQabil" },
+  "educationalLevel": "Beginner",
+  "inLanguage": "en",
+  "teaches": [
+    "What DevOps actually is — the loop, not the title",
+    "DevOps roles: SRE, Platform Engineer, Cloud Engineer, DevOps Engineer",
+    "Career paths in Pakistan + remote markets",
+    "The DevOps tools ecosystem — CI/CD, IaC, containers, monitoring",
+    "AI / GitHub Copilot in daily DevOps practice",
+    "Reading job descriptions to pick what to learn next",
+    "Building a personal DevOps roadmap and GitHub portfolio"
+  ],
+  "hasCourseInstance": { "@type": "CourseInstance", "courseMode": "online", "courseWorkload": "PT4H" }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --surface2: #1c2128; --border: #30363d;
+    --green: #39d353; --cyan: #58a6ff; --orange: #f78166; --yellow: #e3b341; --purple: #bc8cff;
+    --text: #e6edf3; --muted: #8b949e; --prompt: #39d353; --topic: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body::before { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(57,211,83,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(57,211,83,0.03) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
+
+  header { padding: 60px 40px 40px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+  .back-link { display: inline-block; color: var(--muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 16px; transition: color 0.2s; }
+  .back-link:hover { color: var(--topic); }
+  .badge { display: inline-block; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 12px; }
+  h1 span { color: var(--topic); }
+  .subtitle { color: var(--muted); font-size: 1.1rem; font-weight: 400; }
+  .progress-bar { display: flex; gap: 4px; margin-top: 30px; flex-wrap: wrap; }
+  .progress-seg { height: 4px; flex: 1; min-width: 30px; background: var(--border); border-radius: 2px; cursor: pointer; transition: background 0.2s; }
+  .progress-seg.done { background: var(--topic); }
+  .progress-seg:hover { background: var(--green); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 0 40px 80px; position: relative; z-index: 1; }
+  .module { margin-bottom: 48px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); transition: border-color 0.3s; animation: fadeIn 0.5s ease both; }
+  .module:hover { border-color: rgba(227,179,65,0.4); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .module:nth-child(1) { animation-delay: 0.05s; }
+  .module:nth-child(2) { animation-delay: 0.10s; }
+  .module:nth-child(3) { animation-delay: 0.15s; }
+  .module:nth-child(4) { animation-delay: 0.20s; }
+  .module:nth-child(5) { animation-delay: 0.25s; }
+  .module:nth-child(6) { animation-delay: 0.30s; }
+  .module:nth-child(7) { animation-delay: 0.35s; }
+
+  .module-header { display: flex; align-items: flex-start; gap: 16px; padding: 24px; cursor: pointer; user-select: none; background: var(--surface); }
+  .module-header:hover { background: var(--surface2); }
+  .module-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--topic); background: rgba(227,179,65,0.1); border: 1px solid rgba(227,179,65,0.2); padding: 4px 8px; border-radius: 6px; white-space: nowrap; margin-top: 2px; }
+  .module-title-wrap { flex: 1; }
+  .module-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .module-desc { font-size: 0.85rem; color: var(--muted); font-weight: 400; }
+  .module-arrow { color: var(--muted); font-size: 1.2rem; transition: transform 0.3s; margin-top: 2px; }
+  .module.open .module-arrow { transform: rotate(180deg); }
+  .module-body { display: none; padding: 0 24px 28px; border-top: 1px solid var(--border); }
+  .module.open .module-body { display: block; }
+
+  .explain-block { margin-top: 20px; }
+  .explain-block h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+  .explain-text { font-size: 0.95rem; line-height: 1.75; color: #c9d1d9; font-weight: 400; margin-bottom: 16px; }
+
+  .terminal { background: #010409; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .terminal-bar { background: #1c2128; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.red { background: #ff5f57; } .dot.yellow { background: #febc2e; } .dot.green { background: #28c840; }
+  .terminal-label { margin-left: 8px; font-size: 11px; color: var(--muted); }
+  .terminal-body { padding: 18px 20px; line-height: 1.8; }
+  .prompt { color: var(--prompt); } .cmd { color: var(--text); } .comment { color: var(--muted); }
+  .output { color: #8b949e; } .highlight { color: var(--yellow); } .error-color { color: var(--orange); } .info { color: var(--cyan); }
+
+  .key-points { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+  .key-point { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .key-point .kp-icon { font-size: 1.2rem; margin-bottom: 8px; }
+  .key-point .kp-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .key-point .kp-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 400; }
+
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.green { color: var(--green); border-color: rgba(57,211,83,0.3); background: rgba(57,211,83,0.07); }
+  .tag.blue { color: var(--cyan); border-color: rgba(88,166,255,0.3); background: rgba(88,166,255,0.07); }
+  .tag.orange { color: var(--orange); border-color: rgba(247,129,102,0.3); background: rgba(247,129,102,0.07); }
+  .tag.purple { color: var(--purple); border-color: rgba(188,140,255,0.3); background: rgba(188,140,255,0.07); }
+  .tag.yellow { color: var(--yellow); border-color: rgba(227,179,65,0.3); background: rgba(227,179,65,0.07); }
+
+  .quiz-q { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .quiz-q .q-text { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .quiz-q .option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 6px; font-size: 0.83rem; cursor: pointer; transition: background 0.15s; font-weight: 400; color: var(--muted); }
+  .quiz-q .option:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .quiz-q .option.correct { background: rgba(57,211,83,0.12); color: var(--green); }
+  .quiz-q .option.wrong { background: rgba(247,129,102,0.1); color: var(--orange); }
+  .quiz-q .option .opt-letter { font-family: 'JetBrains Mono', monospace; font-size: 11px; width: 22px; height: 22px; border-radius: 4px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  .fill-in { margin-top: 16px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fill-in .fi-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; }
+  .fill-in input { background: #010409; border: 1px solid var(--border); color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 8px 14px; border-radius: 6px; outline: none; width: 100%; max-width: 400px; }
+  .fill-in input:focus { border-color: var(--green); }
+  .fill-in .fi-check { margin-top: 10px; padding: 7px 18px; background: rgba(57,211,83,0.1); border: 1px solid rgba(57,211,83,0.3); color: var(--green); border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; cursor: pointer; transition: background 0.2s; }
+  .fill-in .fi-check:hover { background: rgba(57,211,83,0.2); }
+  .fill-in .fi-result { margin-top: 8px; font-size: 0.83rem; }
+
+  .assignment-box { background: rgba(88,166,255,0.05); border: 1px solid rgba(88,166,255,0.2); border-radius: 10px; padding: 20px; margin-top: 16px; }
+  .assignment-box h4 { color: var(--cyan); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .assignment-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .assignment-box ul li { display: flex; gap: 10px; font-size: 0.88rem; color: #c9d1d9; font-weight: 400; line-height: 1.5; }
+  .assignment-box ul li::before { content: '→'; color: var(--cyan); flex-shrink: 0; }
+
+  .practice-block { margin-top: 24px; background: rgba(188,140,255,0.05); border: 1px solid rgba(188,140,255,0.2); border-radius: 10px; padding: 20px; }
+  .practice-block h4 { color: var(--purple); font-size: 0.85rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .practice-q { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid rgba(188,140,255,0.12); }
+  .practice-q:first-of-type { border-top: none; padding-top: 4px; }
+  .pq-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--purple); font-weight: 700; flex-shrink: 0; min-width: 32px; padding-top: 2px; }
+  .pq-content { flex: 1; }
+  .pq-text { font-size: 0.9rem; color: #c9d1d9; line-height: 1.65; font-weight: 400; }
+  .pq-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; background: rgba(255,255,255,0.05); padding: 1px 6px; border-radius: 4px; color: var(--yellow); }
+  .pq-answer { margin-top: 10px; background: rgba(57,211,83,0.06); border: 1px solid rgba(57,211,83,0.2); border-radius: 6px; padding: 10px 14px; }
+  .pq-answer summary { cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.06em; user-select: none; list-style: none; }
+  .pq-answer summary::before { content: '▸ '; display: inline-block; transition: transform 0.2s; }
+  .pq-answer[open] summary::before { transform: rotate(90deg); }
+  .pq-answer[open] summary { margin-bottom: 10px; }
+  .pq-answer-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; background: #010409; padding: 12px 14px; border-radius: 4px; border-left: 2px solid var(--green); }
+  .pq-answer-body code { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; background: rgba(57,211,83,0.08); color: var(--green); padding: 1px 6px; border-radius: 4px; }
+  .pq-hint { font-size: 0.75rem; color: var(--muted); margin-top: 8px; font-style: italic; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 600px) { header, main { padding-left: 20px; padding-right: 20px; } .module-header { flex-wrap: wrap; } .key-points { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="../index.html" class="back-link">← Back to all topics</a>
+  <div class="badge">$ whoami --career devops</div>
+  <h1>DevOps Mindset &amp; <span>Career</span><br>Instructor Guide</h1>
+  <p class="subtitle">What DevOps actually is, the roles, the salaries, the tools, and the roadmap to your first job in Pakistan or remote markets.</p>
+  <div class="progress-bar" id="progressBar"></div>
+</header>
+
+<main>
+
+  <!-- MODULE 1 -->
+  <div class="module" id="m1">
+    <div class="module-header" onclick="toggle('m1')">
+      <div class="module-num">01</div>
+      <div class="module-title-wrap">
+        <div class="module-title">What DevOps Is — and What It Isn't</div>
+        <div class="module-desc">A culture loop, not a job title. CALMS, the three ways, and why Netflix can deploy 1000× a day.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Open with the original sin: <em>"In 2008, devs threw code over a wall to ops, ops blamed devs when it broke at 3am, devs blamed ops for slow deploys. DevOps was the answer — break the wall, share ownership."</em> Today, the term has expanded — but the core idea is the same: <strong>shorten the loop between writing code and the user feeling it</strong>.</p>
+        <p class="explain-text"><strong>CALMS</strong> is the canonical framing: <strong>Culture, Automation, Lean, Measurement, Sharing.</strong> It's not a tool, it's a way of working. The tools (Docker, Terraform, GitHub Actions) are the <em>output</em>, not the input. <em>"Doing DevOps"</em> without changing how teams collaborate is just buying expensive software.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">devops-loop.txt</div></div>
+        <div class="terminal-body">
+          <div><span class="output">                  ┌──── plan ─────┐</span></div>
+          <div><span class="output">                  │               │</span></div>
+          <div><span class="output">           operate ─                ─ code</span></div>
+          <div><span class="output">              │                       │</span></div>
+          <div><span class="output">           monitor                    build</span></div>
+          <div><span class="output">              │                       │</span></div>
+          <div><span class="output">             deploy ─               ─ test</span></div>
+          <div><span class="output">                  │               │</span></div>
+          <div><span class="output">                  └──── release ──┘</span></div>
+          <br>
+          <div><span class="comment"># CALMS — the cultural framing</span></div>
+          <div><span class="output">C ulture       — devs + ops + security + product, one team, shared on-call</span></div>
+          <div><span class="output">A utomation    — anything done twice gets a script, anything in prod gets a pipeline</span></div>
+          <div><span class="output">L ean          — small batches, fast feedback, blameless postmortems</span></div>
+          <div><span class="output">M easurement   — DORA metrics, SLOs, cost dashboards</span></div>
+          <div><span class="output">S haring       — runbooks, internal blogs, pair programming, paid OSS contributions</span></div>
+          <br>
+          <div><span class="comment"># The 4 DORA metrics — research-backed signal of team health</span></div>
+          <div><span class="output">- Deploy frequency        (low: monthly  | elite: multi-daily)</span></div>
+          <div><span class="output">- Lead time for changes   (low: months   | elite: &lt; 1 hour)</span></div>
+          <div><span class="output">- Change-failure rate     (low: 30–45%   | elite: 0–15%)</span></div>
+          <div><span class="output">- Mean time to recover    (low: weeks    | elite: &lt; 1 hour)</span></div>
+          <br>
+          <div><span class="comment"># Common myths to debunk</span></div>
+          <div><span class="error-color">❌ "DevOps = ops engineers who learned Docker"</span></div>
+          <div><span class="error-color">❌ "Hire a DevOps engineer to do DevOps for us"</span></div>
+          <div><span class="error-color">❌ "DevOps is a tool we install"</span></div>
+          <div><span class="highlight">✅ DevOps is a working pattern that produces a job title</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🔁</div><div class="kp-title">It's a loop</div><div class="kp-desc">Plan → code → build → test → deploy → operate → measure → plan again.</div></div>
+        <div class="key-point"><div class="kp-icon">📏</div><div class="kp-title">Measured by DORA</div><div class="kp-desc">Deploy frequency, lead time, failure rate, MTTR. Hire-relevant numbers.</div></div>
+        <div class="key-point"><div class="kp-icon">🤝</div><div class="kp-title">Culture first</div><div class="kp-desc">Tools without shared ownership = expensive theatre.</div></div>
+        <div class="key-point"><div class="kp-icon">💀</div><div class="kp-title">Blameless postmortems</div><div class="kp-desc">"What broke" not "who broke it" — or no one shares info next time.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">In one sentence each, define the 5 letters of CALMS. Which of these would survive if every DevOps tool you knew was deleted tomorrow?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>C — Culture:</strong> shared ownership of code + production; on-call rotations include developers.<br>
+                <strong>A — Automation:</strong> repeatable tasks become pipelines; one-shots become scripts.<br>
+                <strong>L — Lean:</strong> small batches, fast feedback, blameless postmortems, continuous improvement.<br>
+                <strong>M — Measurement:</strong> DORA metrics, SLOs, cost dashboards — decisions backed by data.<br>
+                <strong>S — Sharing:</strong> runbooks, internal blogs, retrospectives, OSS contributions.<br><br>
+                <strong>Culture, Lean, and Sharing</strong> all survive without tools. Automation and Measurement need tools but the <em>practice</em> outlasts any specific tool. The lesson: tools change every 5 years; the working pattern doesn't.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">A startup's CTO says "let's hire a DevOps engineer to do DevOps." What's the polite version of why this won't work?</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A team has a 30% change-failure rate and a 2-week lead time. Which DORA quartile are they in? Which lever do you pull first to improve?</div>
+            <div class="pq-hint">💡 Lead time → smaller batches.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A blameless postmortem — what concretely is + isn't said in one? Give one example sentence of each.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="module" id="m2">
+    <div class="module-header" onclick="toggle('m2')">
+      <div class="module-num">02</div>
+      <div class="module-title-wrap">
+        <div class="module-title">DevOps Roles — DevOps Engineer, SRE, Platform Engineer, Cloud Engineer</div>
+        <div class="module-desc">Four job titles, overlapping skills, very different day-to-days. How to pick which one to chase.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Job titles in this space are messy — what one company calls "DevOps Engineer" another calls "Platform Engineer" or "SRE". The skills overlap heavily. The <em>day-to-day</em> differs.</p>
+        <p class="explain-text">Rough mental model: <strong>DevOps Engineer</strong> works alongside one product team to build their CI/CD + infra. <strong>SRE</strong> is reliability-focused — owns the SLOs, error budgets, on-call. <strong>Platform Engineer</strong> builds the <em>internal tooling</em> other teams use (the "golden path"). <strong>Cloud Engineer</strong> is more infra-focused, often AWS/Azure-cert-heavy.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">role-comparison</div></div>
+        <div class="terminal-body">
+          <div><span class="output">                      DevOps Eng    SRE             Platform Eng    Cloud Eng</span></div>
+          <div><span class="output">────────────────  ─────────────  ───────────────  ──────────────  ──────────────</span></div>
+          <div><span class="output">Reports to        product team   reliability/eng  platform/infra  cloud/infra</span></div>
+          <div><span class="output">Customer          devs in a team  the service     all dev teams   all dev teams</span></div>
+          <div><span class="output">Owns SLOs?        sometimes      always           sometimes       rarely</span></div>
+          <div><span class="output">On-call?          often          definitely       usually         sometimes</span></div>
+          <div><span class="output">Code daily?       yes (CI/IaC)   yes (tooling)    yes (platform)  some (IaC)</span></div>
+          <div><span class="output">AWS depth         medium         medium-high      medium          high</span></div>
+          <div><span class="output">Software-eng      medium         high             high            medium</span></div>
+          <br>
+          <div><span class="comment"># Salary bands (Pakistan, 2026, PKR / month — rough ranges)</span></div>
+          <div><span class="output">Junior  (0–1 yr)     local: 60k–120k   ·  remote (USD): $1k–2k</span></div>
+          <div><span class="output">Mid     (2–4 yrs)    local: 150k–300k  ·  remote (USD): $2k–5k</span></div>
+          <div><span class="output">Senior  (5+ yrs)     local: 350k–700k  ·  remote (USD): $5k–10k+</span></div>
+          <div><span class="output">Staff   (US-FAANG)   not common locally ·  remote: $150k–250k+</span></div>
+          <br>
+          <div><span class="comment"># Title evolves with experience</span></div>
+          <div><span class="output">Junior DevOps → DevOps Eng → Senior DevOps / SRE / Platform Eng → Staff / Principal</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">⚙️</div><div class="kp-title">DevOps Engineer</div><div class="kp-desc">Embedded with a product team. CI/CD + IaC + on-call rotation. Common entry point.</div></div>
+        <div class="key-point"><div class="kp-icon">📈</div><div class="kp-title">SRE</div><div class="kp-desc">Reliability-first. SLOs, error budgets, deep production. More software-eng heavy.</div></div>
+        <div class="key-point"><div class="kp-icon">🏗️</div><div class="kp-title">Platform Engineer</div><div class="kp-desc">Builds internal tooling other teams consume. "Golden paths". Hot title in 2026.</div></div>
+        <div class="key-point"><div class="kp-icon">☁️</div><div class="kp-title">Cloud Engineer</div><div class="kp-desc">Heavier on networking + AWS-specific architecture. Often migration-focused.</div></div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A startup of 3 engineers wants their first "DevOps" hire. Which role title should they post for, and why?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                <strong>DevOps Engineer.</strong> At 3 engineers, the team needs someone who pairs with developers, sets up CI/CD, picks the cloud architecture, handles on-call — generalist work. SRE / Platform Engineer titles imply specialisation that hasn't formed yet.<br><br>
+                The role title also affects the talent pool: "SRE" attracts people expecting strong software-engineering practice and explicit SLOs; "DevOps Engineer" attracts a wider, more pragmatic pool fitting an early-stage team. Once the company is 30+ engineers, splitting into SRE + Platform Engineer pays off.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">An SRE friend says "platform engineers don't really do anything different from us." Counter-argument in 2 sentences with a concrete example of platform-eng work.</div>
+            <div class="pq-hint">💡 "Golden path" tooling — internal developer portals, Backstage, opinionated templates.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">For a Pakistan-based learner targeting remote work in 12 months, which 3 skill investments compound fastest? Justify briefly.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A junior is choosing between a local Lahore role at PKR 180k vs a US remote role at $3k/month. Beyond pay, list two non-financial factors that should swing the decision.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="module" id="m3">
+    <div class="module-header" onclick="toggle('m3')">
+      <div class="module-num">03</div>
+      <div class="module-title-wrap">
+        <div class="module-title">The DevOps Tools Ecosystem in Concrete Terms</div>
+        <div class="module-desc">CI/CD, IaC, containers, monitoring — what each is, what it solves, the dominant tool you should know first</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">There are <em>thousands</em> of DevOps tools. Job descriptions list 30+ logos and it scares people. The truth: <strong>10–12 tools cover 95% of jobs</strong>. Pick one tool per category, learn it deeply, then add adjacent ones. The categories — and the tool I'd start with in 2026 — below.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">the-12-tool-stack</div></div>
+        <div class="terminal-body">
+          <div><span class="output">Category               Pick first       Adjacent ones to know</span></div>
+          <div><span class="output">─────────────────────  ────────────────  ─────────────────────────────────</span></div>
+          <div><span class="output">OS / shell             Linux + bash      Powershell (Windows shops only)</span></div>
+          <div><span class="output">Version control        Git + GitHub      GitLab, Bitbucket</span></div>
+          <div><span class="output">CI/CD                  GitHub Actions    GitLab CI, CircleCI, Jenkins</span></div>
+          <div><span class="output">Containers             Docker            Podman, Buildah</span></div>
+          <div><span class="output">Container orchestration K8s (later)      ECS Fargate (start here)</span></div>
+          <div><span class="output">IaC                    Terraform         AWS CDK, Pulumi, CloudFormation</span></div>
+          <div><span class="output">Cloud                  AWS               GCP, Azure</span></div>
+          <div><span class="output">Monitoring (metrics)   Prometheus        CloudWatch, DataDog</span></div>
+          <div><span class="output">Monitoring (logs)      Loki / CloudWatch  ELK stack, Splunk</span></div>
+          <div><span class="output">Visualization          Grafana           Kibana, DataDog</span></div>
+          <div><span class="output">Secrets                AWS Secrets Mgr   Vault, SSM Parameter Store</span></div>
+          <div><span class="output">Security scanning      Trivy + Semgrep   Snyk, Aqua, Checkmarx</span></div>
+          <br>
+          <div><span class="comment"># Order to learn — fastest path to job-ready</span></div>
+          <div><span class="output">1. Linux + bash            (week 1–2)</span></div>
+          <div><span class="output">2. Git + GitHub            (week 3)</span></div>
+          <div><span class="output">3. AWS basics + IAM        (week 4–5)</span></div>
+          <div><span class="output">4. Docker + Compose        (week 6–7)</span></div>
+          <div><span class="output">5. CI/CD (GitHub Actions)  (week 8)</span></div>
+          <div><span class="output">6. Terraform               (week 9–10)</span></div>
+          <div><span class="output">7. Monitoring (Prom+Graf)  (week 11)</span></div>
+          <div><span class="output">8. DevSecOps basics        (week 12)</span></div>
+          <div><span class="output">→ now you can interview for junior DevOps anywhere</span></div>
+          <br>
+          <div><span class="error-color"># Skip these as a beginner — overhyped or specialised</span></div>
+          <div><span class="error-color">- Service meshes (Istio, Linkerd) — don't need until you have 20+ services</span></div>
+          <div><span class="error-color">- ArgoCD / Flux — needs K8s mastery first</span></div>
+          <div><span class="error-color">- ChatOps bots — tooling on top, not foundation</span></div>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag green">Linux</span>
+        <span class="tag orange">Git</span>
+        <span class="tag yellow">AWS</span>
+        <span class="tag blue">Docker</span>
+        <span class="tag purple">GitHub Actions</span>
+        <span class="tag purple">Terraform</span>
+        <span class="tag orange">Prometheus</span>
+        <span class="tag orange">Grafana</span>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A learner is overwhelmed by a 30-tool job description for a junior role. Cut it down to the 6 they should learn first, in priority order.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">Why does this guide recommend "ECS Fargate before Kubernetes" for first deployments?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Kubernetes has a steep learning curve — pods, services, deployments, ingress, RBAC, network policies, persistent volumes, operators, helm. <strong>Roughly 2–3 weeks to be productive, 6+ months to be confident</strong>.<br><br>
+                ECS Fargate gives you 90% of the value — containers running in the cloud with auto-scaling, load balancing, IAM — for 10% of the conceptual overhead. A junior can ship to Fargate in a week. By the time you graduate to K8s, you've already mastered containers, networking, secrets, and load balancers — and K8s feels like the natural next step.<br><br>
+                The exception: a job description specifically says "Kubernetes operator experience required." Then you go straight to K8s. Otherwise, build velocity first.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">Your team uses GitLab CI but a job posting wants GitHub Actions. How transferable is the knowledge? Pick the right framing for your CV.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q4.</div>
+          <div class="pq-content">
+            <div class="pq-text">A friend wants to skip Linux + bash and go straight to Terraform + Kubernetes "because that's what jobs ask for." What breaks first?</div>
+            <div class="pq-hint">💡 Debugging a failing K8s pod requires <code>kubectl exec</code> and Linux skills.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="module" id="m4">
+    <div class="module-header" onclick="toggle('m4')">
+      <div class="module-num">04</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Using AI / Copilot in DevOps Practice</div>
+        <div class="module-desc">In 2026, AI is a co-pilot, not a replacement. The engineer who uses it well ships 3× faster.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Every DevOps page in this course has an "AI module" because <em>AI is now part of the workflow</em>, not a separate skill. The pattern: <strong>(1) describe the task in detail, (2) ask AI to draft, (3) read + understand every line, (4) verify with the tool's own output</strong>. Skip step 3, ship a Dockerfile that runs as root.</p>
+        <p class="explain-text">DevOps tasks are <em>especially</em> well-suited for AI: they're text-heavy (YAML, HCL, bash), pattern-rich, with massive training data. The cost: it's also easy for AI to invent — wrong CVE numbers, fake AWS actions, deprecated arguments. Verify everything.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">ai-in-the-loop</div></div>
+        <div class="terminal-body">
+          <div><span class="comment"># Where AI is great</span></div>
+          <div><span class="output">✓ Scaffolding YAML / HCL / Dockerfiles from a description</span></div>
+          <div><span class="output">✓ Translating cryptic error messages into "what's broken"</span></div>
+          <div><span class="output">✓ Writing one-shot bash + awk + jq pipelines</span></div>
+          <div><span class="output">✓ IAM policy review for over-permission</span></div>
+          <div><span class="output">✓ Brainstorming attack vectors on your design</span></div>
+          <div><span class="output">✓ Explaining a CVE in plain language</span></div>
+          <br>
+          <div><span class="comment"># Where AI is dangerous</span></div>
+          <div><span class="error-color">✗ Confidently inventing IAM action names that don't exist</span></div>
+          <div><span class="error-color">✗ Quoting CVE IDs that don't match the description</span></div>
+          <div><span class="error-color">✗ Generating policies with "Action: *" because it works for the demo</span></div>
+          <div><span class="error-color">✗ Skipping edge cases (no input validation, no error handler)</span></div>
+          <div><span class="error-color">✗ Suggesting deprecated provider arguments</span></div>
+          <br>
+          <div><span class="comment"># The verification habit</span></div>
+          <div><span class="output">After every AI generation:</span></div>
+          <div><span class="output">  1. Read every line. Understand each.</span></div>
+          <div><span class="output">  2. Run the tool's own validator (terraform validate, docker build, semgrep)</span></div>
+          <div><span class="output">  3. Search for any unfamiliar action / resource / argument</span></div>
+          <div><span class="output">  4. Treat it like a PR from a smart-but-junior engineer</span></div>
+          <br>
+          <div><span class="comment"># Tools to know in 2026</span></div>
+          <div><span class="output">- ChatGPT / Claude         — general assist, prompt-and-iterate</span></div>
+          <div><span class="output">- GitHub Copilot           — IDE inline suggestions</span></div>
+          <div><span class="output">- Cursor / Claude Code     — agentic, edit-many-files-at-once IDE</span></div>
+          <div><span class="output">- Amazon Q Developer       — AWS-aware, knows IAM + CloudFormation</span></div>
+          <div><span class="output">- Aider / Continue         — open-source CLI assistants</span></div>
+        </div>
+      </div>
+
+      <div class="practice-block">
+        <h4>🎯 Practice Questions</h4>
+        <div class="practice-q">
+          <div class="pq-num">Q1.</div>
+          <div class="pq-content">
+            <div class="pq-text">A junior pastes their entire AWS Secrets Manager output to ChatGPT to "ask why my Lambda can't read it." What's wrong?</div>
+            <details class="pq-answer">
+              <summary>Show Answer</summary>
+              <div class="pq-answer-body">
+                Three layers of wrong:<br>
+                1. <strong>Real production secrets are now in the AI vendor's logs.</strong> Even if not used for training, they're stored, possibly accessible to vendor staff, and a target for abuse.<br>
+                2. <strong>Account IDs and role ARNs leak organisational context</strong> useful for an attacker (which AWS account, which roles exist).<br>
+                3. <strong>The AI doesn't need the actual secret to help</strong> — it needs the IAM policy attached to the Lambda's role and the error message. Replace secret values with <code>&lt;PLACEHOLDER&gt;</code>.<br><br>
+                Workflow: rotate the secret immediately (assume compromised), then ask the question again with redacted versions.
+              </div>
+            </details>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q2.</div>
+          <div class="pq-content">
+            <div class="pq-text">List 3 DevOps tasks AI is great at and 3 it's bad at, with 1-line reasoning each.</div>
+          </div>
+        </div>
+        <div class="practice-q">
+          <div class="pq-num">Q3.</div>
+          <div class="pq-content">
+            <div class="pq-text">A friend says "I don't use AI because real engineers don't need it." Why is this position about to be a career problem?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 - PROJECT -->
+  <div class="module" id="m5">
+    <div class="module-header" onclick="toggle('m5')">
+      <div class="module-num">05</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Project: Build a Personal DevOps Roadmap + GitHub README</div>
+        <div class="module-desc">A public document that says "I am a junior DevOps engineer" — the artefact recruiters Google before they call</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Every student leaves this module with two artefacts: <strong>(1) a personal DevOps roadmap</strong> — a 6-month plan listing what to learn and in what order, with target outcomes; <strong>(2) a polished GitHub profile README</strong> showcasing projects, tools, and a TL;DR for recruiters. Both are public. Both are recruiter-magnets.</p>
+      </div>
+      <div class="terminal">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">github.com/&lt;you&gt;/&lt;you&gt;/README.md</div></div>
+        <div class="terminal-body">
+          <div><span class="cmd">## Hi, I'm Muzammil 👋</span></div>
+          <div><span class="cmd">### Aspiring DevOps Engineer · Karachi, Pakistan · Open to Remote</span></div>
+          <br>
+          <div><span class="cmd">I'm working through the [BanoQabil DevOps Foundations](https://...) curriculum.</span></div>
+          <div><span class="cmd">Currently building infrastructure with Terraform + AWS + GitHub Actions.</span></div>
+          <br>
+          <div><span class="cmd">### 🛠️ What I work with</span></div>
+          <div><span class="cmd">![Linux](shield) ![Docker](shield) ![AWS](shield) ![Terraform](shield)</span></div>
+          <div><span class="cmd">![GitHub Actions](shield) ![Prometheus](shield) ![Grafana](shield)</span></div>
+          <br>
+          <div><span class="cmd">### 🚀 Featured projects</span></div>
+          <div><span class="cmd">- [**portfolio-iac**](link) — S3 + CloudFront + Route 53 deployed entirely via Terraform</span></div>
+          <div><span class="cmd">- [**ci-pipeline-demo**](link) — Node API with full GitHub Actions: test → build → ECR → ECS</span></div>
+          <div><span class="cmd">- [**system-monitor**](link) — Bash script + cron, alerts to Slack on disk &gt; 85%</span></div>
+          <div><span class="cmd">- [**serverless-todo-api**](link) — Lambda + API Gateway + DynamoDB, deployed via Serverless Framework</span></div>
+          <br>
+          <div><span class="cmd">### 📈 Currently learning</span></div>
+          <div><span class="cmd">- Kubernetes essentials (week 13–14)</span></div>
+          <div><span class="cmd">- Cosign image signing for supply-chain</span></div>
+          <br>
+          <div><span class="cmd">### 📊 GitHub stats</span></div>
+          <div><span class="cmd">![Streak](streak.svg) ![Top langs](langs.svg)</span></div>
+          <br>
+          <div><span class="cmd">### 📫 Reach me</span></div>
+          <div><span class="cmd">- 💼 [LinkedIn](link) · 📨 muzammil@example.com · 🌐 [muzammilbilwani.com](link)</span></div>
+          <br>
+          <div><span class="comment"># Roadmap.md (6 months)</span></div>
+          <div><span class="output">| Month | Goal              | Outcome / artefact                       |</span></div>
+          <div><span class="output">|-------|-------------------|------------------------------------------|</span></div>
+          <div><span class="output">| 1     | Linux + Git       | Daily-tip script in cron, repo + README  |</span></div>
+          <div><span class="output">| 2     | AWS + IAM         | EC2 + Beanstalk Node deploy, https       |</span></div>
+          <div><span class="output">| 3     | Docker + Compose  | Multi-service stack on ECS Fargate       |</span></div>
+          <div><span class="output">| 4     | GitHub Actions CI | OIDC AWS deploy on every main push       |</span></div>
+          <div><span class="output">| 5     | Terraform         | Replicate AWS stack via terraform apply  |</span></div>
+          <div><span class="output">| 6     | Monitoring + Sec  | Prom+Graf+Loki + Trivy + Cosign          |</span></div>
+          <div><span class="output">→ Apply for first remote junior DevOps role</span></div>
+        </div>
+      </div>
+      <div class="key-points">
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Public roadmap</div><div class="kp-desc">Commits the plan. Forces honesty. Shows momentum to recruiters.</div></div>
+        <div class="key-point"><div class="kp-icon">📌</div><div class="kp-title">4 pinned projects</div><div class="kp-desc">Each demonstrates a different tool. Not 17 abandoned demos.</div></div>
+        <div class="key-point"><div class="kp-icon">🌐</div><div class="kp-title">Real domain in profile</div><div class="kp-desc">https://&lt;your-name&gt;.com signals seriousness — covered in the AWS module.</div></div>
+        <div class="key-point"><div class="kp-icon">📅</div><div class="kp-title">Date-stamped progress</div><div class="kp-desc">"Currently learning" updated monthly. Stale READMEs hurt.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 - QUIZ -->
+  <div class="module" id="m6">
+    <div class="module-header" onclick="toggle('m6')">
+      <div class="module-num">06</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Quiz: DevOps Concepts</div>
+        <div class="module-desc">5 MCQs + 2 fill-in-the-command questions</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block"><h3>Sample quiz questions (interactive)</h3></div>
+
+      <div class="quiz-q" id="q1">
+        <div class="q-text">Q1. The 5 letters in CALMS stand for:</div>
+        <div class="option correct-opt" data-correct="a" onclick="answer('q1','a')"><div class="opt-letter">A</div> Culture, Automation, Lean, Measurement, Sharing</div>
+        <div class="option" onclick="answer('q1','b')"><div class="opt-letter">B</div> Code, Automation, Linting, Monitoring, Security</div>
+        <div class="option" onclick="answer('q1','c')"><div class="opt-letter">C</div> Containers, AWS, Linux, Microservices, Security</div>
+        <div class="option" onclick="answer('q1','d')"><div class="opt-letter">D</div> Cloud, Agile, Lean, Microservices, SRE</div>
+      </div>
+
+      <div class="quiz-q" id="q2">
+        <div class="q-text">Q2. Which is NOT one of the 4 DORA metrics?</div>
+        <div class="option" onclick="answer('q2','a')"><div class="opt-letter">A</div> Deploy frequency</div>
+        <div class="option" onclick="answer('q2','b')"><div class="opt-letter">B</div> Mean time to recover</div>
+        <div class="option correct-opt" data-correct="c" onclick="answer('q2','c')"><div class="opt-letter">C</div> Lines of code per developer</div>
+        <div class="option" onclick="answer('q2','d')"><div class="opt-letter">D</div> Change failure rate</div>
+      </div>
+
+      <div class="quiz-q" id="q3">
+        <div class="q-text">Q3. The role most likely to own SLOs and error budgets:</div>
+        <div class="option" onclick="answer('q3','a')"><div class="opt-letter">A</div> Cloud Engineer</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q3','b')"><div class="opt-letter">B</div> SRE</div>
+        <div class="option" onclick="answer('q3','c')"><div class="opt-letter">C</div> Platform Engineer</div>
+        <div class="option" onclick="answer('q3','d')"><div class="opt-letter">D</div> All of the above equally</div>
+      </div>
+
+      <div class="quiz-q" id="q4">
+        <div class="q-text">Q4. Which is a "yellow flag" when AI generates infrastructure code?</div>
+        <div class="option" onclick="answer('q4','a')"><div class="opt-letter">A</div> Pinned versions</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q4','b')"><div class="opt-letter">B</div> "Action": "*" or "Resource": "*"</div>
+        <div class="option" onclick="answer('q4','c')"><div class="opt-letter">C</div> Tagged resources</div>
+        <div class="option" onclick="answer('q4','d')"><div class="opt-letter">D</div> Healthchecks</div>
+      </div>
+
+      <div class="quiz-q" id="q5">
+        <div class="q-text">Q5. The fastest-compounding skill investment for a Pakistan-based junior aiming at remote work is:</div>
+        <div class="option" onclick="answer('q5','a')"><div class="opt-letter">A</div> Memorising 50 AWS services</div>
+        <div class="option correct-opt" data-correct="b" onclick="answer('q5','b')"><div class="opt-letter">B</div> Linux + Git + AWS basics + 1 deployable project on a custom domain</div>
+        <div class="option" onclick="answer('q5','c')"><div class="opt-letter">C</div> Becoming a Kubernetes expert before everything else</div>
+        <div class="option" onclick="answer('q5','d')"><div class="opt-letter">D</div> Getting 5 AWS certifications</div>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <div class="explain-block"><h3>Fill-in-the-command</h3></div>
+        <div class="fill-in">
+          <div class="fi-q">Fill 1: The acronym for the 4 metrics by the team that authored "Accelerate".</div>
+          <input type="text" id="fi1" placeholder="acronym..." />
+          <button class="fi-check" onclick="checkFill('fi1', ['DORA','dora'])">Check Answer</button>
+          <div class="fi-result" id="fi1-result"></div>
+        </div>
+        <div class="fill-in" style="margin-top:12px;">
+          <div class="fi-q">Fill 2: The role title that builds internal "golden path" tooling for other dev teams.</div>
+          <input type="text" id="fi2" placeholder="role title..." />
+          <button class="fi-check" onclick="checkFill('fi2', ['platform engineer','platform engineering','platform-engineer'])">Check Answer</button>
+          <div class="fi-result" id="fi2-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 7 - ASSIGNMENT -->
+  <div class="module" id="m7">
+    <div class="module-header" onclick="toggle('m7')">
+      <div class="module-num">07</div>
+      <div class="module-title-wrap">
+        <div class="module-title">Assignment: Research 5 DevOps Job Postings — Skills + Salary Map</div>
+        <div class="module-desc">Stop guessing what to learn. Read what employers actually ask for and build a data-driven plan.</div>
+      </div>
+      <div class="module-arrow">▾</div>
+    </div>
+    <div class="module-body">
+      <div class="explain-block">
+        <h3>How to explain to students</h3>
+        <p class="explain-text">Frame as career calibration: <em>"You can't optimise for a job market you haven't read. Pick 5 real postings — 3 local, 2 remote — and extract the truth."</em> By the end, students have a personal skills-gap report, salary range, and a defensible "why I'm learning X next" answer for any interview.</p>
+      </div>
+      <div class="assignment-box">
+        <h4>📋 Assignment Requirements</h4>
+        <ul>
+          <li>Find 5 active DevOps job postings: 3 Pakistan-based (Rozee, LinkedIn Pakistan, Mustakbil), 2 international remote (LinkedIn, Wellfound, Otta, RemoteOK)</li>
+          <li>Mix at least 2 different titles (DevOps Engineer, SRE, Platform Engineer, Cloud Engineer)</li>
+          <li>For each: title, company, link, posted date, level (junior/mid/senior), salary range if listed</li>
+          <li>Extract the <strong>required</strong> skills (must-haves) and <strong>nice-to-haves</strong> for each</li>
+          <li>Build a frequency table: which skills appear in 4–5 postings? 2–3? only 1?</li>
+          <li>Identify your top 3 skill gaps — pick from the 4–5 frequency bucket</li>
+          <li>For salary, list the median / range; if not listed, estimate using levels.fyi, Glassdoor, or LinkedIn salary insights</li>
+          <li>Compare local vs remote: pay differential, expected English level, time-zone overlap, hiring bar</li>
+          <li>Produce a <strong>1-page write-up</strong> in markdown: top 3 gaps + a 12-week plan to close them, with concrete artefacts</li>
+          <li>Bonus: Reach out to one person on LinkedIn currently in one of those roles. Ask one specific question. Document the response (or non-response) in the write-up.</li>
+          <li>Bonus: Cross-reference 2 remote postings against your current portfolio — what would you put on your CV today vs in 3 months?</li>
+        </ul>
+      </div>
+      <div class="terminal" style="margin-top: 16px;">
+        <div class="terminal-bar"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div><div class="terminal-label">expected output sample</div></div>
+        <div class="terminal-body">
+          <div><span class="output"># Skills frequency across 5 postings</span></div>
+          <div><span class="output">─────────────────────────────────────</span></div>
+          <div><span class="output">AWS              5/5    ← must-have</span></div>
+          <div><span class="output">Linux            5/5    ← must-have</span></div>
+          <div><span class="output">Docker           5/5    ← must-have</span></div>
+          <div><span class="output">CI/CD (GHA)      4/5</span></div>
+          <div><span class="output">Terraform        4/5    ← my biggest gap</span></div>
+          <div><span class="output">Kubernetes       3/5</span></div>
+          <div><span class="output">Python           3/5</span></div>
+          <div><span class="output">Monitoring       3/5</span></div>
+          <div><span class="output">Helm             1/5    ← skip for now</span></div>
+          <br>
+          <div><span class="output"># 12-week plan</span></div>
+          <div><span class="output">Weeks 1–4: Terraform deep-dive — recreate AWS portfolio in HCL</span></div>
+          <div><span class="output">Weeks 5–8: Kubernetes essentials on minikube + EKS</span></div>
+          <div><span class="output">Weeks 9–12: Apply, mock interviews, polish portfolio</span></div>
+        </div>
+      </div>
+      <div class="key-points" style="margin-top: 16px;">
+        <div class="key-point"><div class="kp-icon">📊</div><div class="kp-title">Grading rubric</div><div class="kp-desc">5 real postings: 25. Frequency table: 25. Salary research: 15. Plan with dates + artefacts: 25. Reflective tone: 10.</div></div>
+        <div class="key-point"><div class="kp-icon">🎯</div><div class="kp-title">Common mistakes</div><div class="kp-desc">Cherry-picking only senior postings, copying skills lists verbatim, no frequency analysis, plan with vague verbs ("learn AWS").</div></div>
+        <div class="key-point"><div class="kp-icon">💡</div><div class="kp-title">Stretch</div><div class="kp-desc">Repeat the exercise in 6 months. Compare drift — some "nice-to-haves" become must-haves, vice versa.</div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  function toggle(id) { document.getElementById(id).classList.toggle('open'); updateProgress(); }
+  function updateProgress() {
+    const mods = document.querySelectorAll('.module');
+    const bar = document.getElementById('progressBar'); bar.innerHTML = '';
+    mods.forEach((m, i) => { const seg = document.createElement('div'); seg.className = 'progress-seg' + (m.classList.contains('open') ? ' done' : ''); seg.title = `Module ${i+1}`; seg.onclick = () => toggle(m.id); bar.appendChild(seg); });
+  }
+  function answer(qid, chosen) {
+    const q = document.getElementById(qid);
+    const correct = q.querySelector('.correct-opt').dataset.correct;
+    q.querySelectorAll('.option').forEach(opt => opt.classList.remove('correct', 'wrong'));
+    const opts = q.querySelectorAll('.option'); const letters = ['a','b','c','d'];
+    opts.forEach((opt, i) => {
+      if (letters[i] === chosen) opt.classList.add(chosen === correct ? 'correct' : 'wrong');
+      if (letters[i] === correct && chosen !== correct) opt.classList.add('correct');
+    });
+  }
+  function checkFill(id, answers) {
+    const input = document.getElementById(id).value.trim().toLowerCase();
+    const result = document.getElementById(id + '-result');
+    const isCorrect = answers.some(a => input === a.toLowerCase());
+    result.style.color = isCorrect ? '#39d353' : '#f78166';
+    result.textContent = isCorrect ? '✅ Correct!' : `❌ Not quite. Accepted: ${answers[0]}`;
+  }
+  document.getElementById('m1').classList.add('open');
+  updateProgress();
+</script>
+</body>
+</html>
